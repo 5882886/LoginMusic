@@ -1,0 +1,11 @@
+{
+    "login_music": {
+        "subtitle": "sound.zhisuan11.login_music",
+        "sounds": [
+            {
+                "name": "login_music:login_music",
+                "stream": true
+            }
+        ]
+    }
+}

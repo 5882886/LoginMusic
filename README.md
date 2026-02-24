@@ -1,0 +1,1 @@
+A simple Minecraft mod that can play music when players join in the world.
