@@ -8,7 +8,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-public class Network {
+public class NetworkConfig {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             ResourceLocation.tryParse(LoginMusic.MODID + ":main"),
@@ -31,6 +31,10 @@ public class Network {
     }
 
     public static void sendLoginMusic(ServerPlayer player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new LoginMusicPacket());
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new LoginMusicPacket("login_music"));
+        player.displayClientMessage(
+                net.minecraft.network.chat.Component.literal("正在播放登录音乐！"),
+                true
+        );
     }
 }
