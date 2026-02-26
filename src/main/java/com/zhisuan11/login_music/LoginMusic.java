@@ -1,8 +1,8 @@
 package com.zhisuan11.login_music;
 
 import com.mojang.logging.LogUtils;
+import com.zhisuan11.login_music.Music.MusicConfig;
 import com.zhisuan11.login_music.Network.NetworkConfig;
-import com.zhisuan11.login_music.PlayMusic.Sounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,7 +25,7 @@ public class LoginMusic {
     // MODID 标识每个mod的唯一性
     public static final String MODID = "login_music";
     // 日志文件
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
 
     public LoginMusic(FMLJavaModLoadingContext context) {
@@ -34,8 +34,10 @@ public class LoginMusic {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-        Sounds.register(modEventBus);
+        // 注册网络
         NetworkConfig.register();
+        // 初始化配置
+        MusicConfig.InitialConfig(MODID);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

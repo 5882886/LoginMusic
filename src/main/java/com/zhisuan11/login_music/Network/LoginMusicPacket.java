@@ -1,6 +1,6 @@
 package com.zhisuan11.login_music.Network;
 
-import com.zhisuan11.login_music.PlayMusic.ClientMusicHandler;
+import com.zhisuan11.login_music.LoginMusic;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -12,25 +12,21 @@ public class LoginMusicPacket {
     // 播放音乐的ID
     private final String musicID;
 
-    public LoginMusicPacket(String musicID) {
-        this.musicID = musicID;
-    }
+    public LoginMusicPacket(String musicID) { this.musicID = musicID; }
 
     // 写入音乐ID
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeUtf(musicID);
-    }
+    public void encode(FriendlyByteBuf buf) { buf.writeUtf(musicID); }
 
     // 读取音乐ID
-    public static LoginMusicPacket decode(FriendlyByteBuf buf) {
-        return new LoginMusicPacket(buf.readUtf());
-    }
+    public static LoginMusicPacket decode(FriendlyByteBuf buf) { return new LoginMusicPacket(buf.readUtf()); }
 
+    // 处理数据包：当客户端收到此包时调用
     public static void handle(LoginMusicPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
+            LoginMusic.LOGGER.info("准备播放");
             DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
-                    ClientMusicHandler.PlayMusic(packet.musicID));
+                    ClientMusicHandler.PlayLoginMusic(packet.musicID));
         });
         context.setPacketHandled(true);
     }

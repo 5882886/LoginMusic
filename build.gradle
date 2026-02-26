@@ -1,5 +1,6 @@
 plugins {
     id 'eclipse'
+    id 'java'
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
@@ -16,6 +17,20 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+configurations {
+    javafx_configuration {
+        description = 'JavaFX dependencies'
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+// 将自定义配置加入 implementation
+configurations.implementation.extendsFrom(configurations.javafx_configuration)
+
+ext.javafxVersion = '19.0.2.1'
+
 minecraft {
     // The mappings can be changed at any time and must be in the following format.
     // Channel:   Version:
@@ -84,6 +99,12 @@ minecraft {
         client {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
+            jvmArgs = [
+                '--module-path', { configurations.javafx_configuration.resolve().collect { it.absolutePath }.join(File.pathSeparator) },
+                '--add-modules', 'javafx.media,javafx.controls,javafx.graphics,javafx.base',
+                '--add-opens', 'javafx.media/javafx.scene.media=ALL-UNNAMED',
+                '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+            ]
         }
 
         server {
@@ -122,6 +143,7 @@ repositories {
     // }
 }
 
+
 dependencies {
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
@@ -129,6 +151,15 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    def platforms = ['win', 'linux', 'mac']
+    def modules = ['base', 'graphics', 'media', 'controls']
+
+    modules.each { module ->
+        platforms.each { platform ->
+            javafx_configuration "org.openjfx:javafx-${module}:${javafxVersion}:${platform}"
+        }
+    }
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -144,6 +175,7 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -167,6 +199,14 @@ tasks.named('processResources', ProcessResources).configure {
 
 // Example for how to get properties into the manifest for reading at runtime.
 tasks.named('jar', Jar).configure {
+
+    from {
+        configurations.javafx_configuration.resolve().collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,

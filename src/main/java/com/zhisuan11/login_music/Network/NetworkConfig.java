@@ -8,8 +8,10 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
+// 网络包类
 public class NetworkConfig {
     private static final String PROTOCOL_VERSION = "1";
+
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             ResourceLocation.tryParse(LoginMusic.MODID + ":main"),
             () -> PROTOCOL_VERSION,
@@ -18,23 +20,25 @@ public class NetworkConfig {
     );
 
     private static int packetID = 0;
-    private static int id() {
-        return packetID ++;
-    }
+    private static int id() { return packetID ++; }
 
+    // 注册网络音乐数据包
     public static void register() {
         INSTANCE.messageBuilder(LoginMusicPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(LoginMusicPacket::encode)
                 .decoder(LoginMusicPacket::decode)
                 .consumerMainThread(LoginMusicPacket::handle)
                 .add();
+
+        LoginMusic.LOGGER.info("网络包注册完成");
     }
 
-    public static void sendLoginMusic(ServerPlayer player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new LoginMusicPacket("login_music"));
-        player.displayClientMessage(
-                net.minecraft.network.chat.Component.literal("正在播放登录音乐！"),
-                true
-        );
+    public static void sendLoginMusic(ServerPlayer player, String musicId) {
+        if (player == null) return;
+
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+                new LoginMusicPacket(musicId));
+
+        LoginMusic.LOGGER.info("已发送音乐 {} 给 {}", musicId, player.getName().getString());
     }
 }
