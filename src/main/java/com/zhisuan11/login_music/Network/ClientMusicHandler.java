@@ -45,8 +45,8 @@ public class ClientMusicHandler {
             return;
         }
 
-        RegisterListener();
         JavaFXMusicPlayer.PlayMusic(musicId, entry.getName(), entry.getUrl());
+        RegisterListener();
     }
 
     // 注册监听器
