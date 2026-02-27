@@ -32,11 +32,12 @@ public class MusicConfig {
 
         MUSIC_ENTRIES = BUILDER
                 .comment("音乐条目列表（字符串格式）",
-                        "每个条目是一个字符串：目标玩家|音乐名称|音乐URL",
-                        "示例：Player|欢迎音乐|https://example.com/music.mp3"
+                        "每个条目是一个字符串：\"目标玩家|音乐名称|音乐URL\"",
+                        "示例：\"Player|登录音乐.mp3|https://example.com/music.mp3\"",
+                        "优先获取本地LoginMusic文件夹中的同名文件，再尝试从URL下载"
                 )
                 .defineList("entries",
-                        new ArrayList<>(List.of("Player|登录音乐|https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")),
+                        new ArrayList<>(List.of("Default|登录音乐.mp3|https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")),
                         entry -> entry instanceof String
                 );
 

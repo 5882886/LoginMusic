@@ -29,13 +29,12 @@ public class JavaFXMusicPlayer {
 
     private static MediaPlayer currentMediaPlayer;
     private static String currentMusicId;
-    private static boolean isDownloaded;
 
     private static final AtomicBoolean isPlaying = new AtomicBoolean(false);
     private static final AtomicBoolean javafxInitialized = new AtomicBoolean(false);
 
     // 初始化播放器
-    private static void InitialJavaFx() {
+    private static void initialJavaFx() {
         if (javafxInitialized.get()) return;
         // 在一个新线程中初始化 JavaFX 运行时
         // 这个 start 方法会阻塞，直到 JavaFX 退出
@@ -71,8 +70,8 @@ public class JavaFXMusicPlayer {
     }
 
     // 播放音乐
-    public static void PlayMusic(String musicId, String musicName, String url) {
-        InitialJavaFx();
+    public static void playMusic(String musicId, String musicName, String url) {
+        initialJavaFx();
 
         if (!javafxInitialized.get()) {
             LoginMusic.LOGGER.warn("JavaFX 未初始化，无法播放");
@@ -90,11 +89,10 @@ public class JavaFXMusicPlayer {
                 // 下载或获取本地文件（这部分可以复用你之前 NetworkMusicPlayer 里的下载逻辑）
                 // 为了简单，这里假设我们已经有了一个本地文件，或者直接播放网络流？
                 // 更稳定的方式是先下载到本地再播放
-                isDownloaded = false;
-                File localFile = DownloadMusic(url, musicName); // 复用之前的下载方法
+                File localFile = downloadMusic(url, musicName); // 复用之前的下载方法
 
                 // 只播放原来就有的文件
-                if (localFile != null && localFile.exists() && !isDownloaded) {
+                if (localFile != null && localFile.exists()) {
                     // 创建 Media 对象
                     Media media = new Media(localFile.toURI().toString());
 
@@ -102,9 +100,8 @@ public class JavaFXMusicPlayer {
                     currentMediaPlayer = new MediaPlayer(media);
 
                     // 更新播放状态
-                    currentMediaPlayer.statusProperty().addListener((obs, oldStatus, newStatus) -> {
-                        isPlaying.set(newStatus == MediaPlayer.Status.PLAYING);
-                    });
+                    currentMediaPlayer.statusProperty().addListener((obs, oldStatus, newStatus)
+                            -> isPlaying.set(newStatus == MediaPlayer.Status.PLAYING));
 
                     // 设置播放完成监听
                     currentMediaPlayer.setOnEndOfMedia(() -> {
@@ -112,8 +109,8 @@ public class JavaFXMusicPlayer {
                         Minecraft.getInstance().execute(() -> {
                             if (Minecraft.getInstance().player != null) {
                                 Minecraft.getInstance().player.displayClientMessage(
-                                    Component.literal("§7[音乐] 播放结束: " + musicName),
-                                    false
+                                        Component.literal("§7[音乐] 播放结束: " + musicName),
+                                        false
                                 );
                             }
                         });
@@ -122,10 +119,8 @@ public class JavaFXMusicPlayer {
                     // 设置错误监听
                     currentMediaPlayer.setOnError(() -> {
                         LoginMusic.LOGGER.warn("JavaFX 播放错误");
-                        Platform.runLater(() -> {
-                            StopCurrentMusic();
-                            LoginMusic.LOGGER.error("{} 播放出错", musicId);
-                        });
+                        StopCurrentMusic();
+                        LoginMusic.LOGGER.error("{} 播放出错", musicId);
                     });
 
                     // 开始播放
@@ -136,16 +131,14 @@ public class JavaFXMusicPlayer {
                     Minecraft.getInstance().execute(() -> {
                         if (Minecraft.getInstance().player != null) {
                             Minecraft.getInstance().player.displayClientMessage(
-                                Component.literal("§a 正在播放: " + musicName),
-                                true
+                                    Component.literal("§a 正在播放: " + musicName),
+                                    true
                             );
                         }
                     });
 
                 } else {
-                    if (!isDownloaded) {
-                        showErrorToPlayer("找不到音频文件", musicName);
-                    }
+                    showErrorToPlayer("找不到音频文件", musicName);
                 }
             } catch (Exception e) {
                 LoginMusic.LOGGER.error("JavaFX 播放过程中发生异常", e);
@@ -179,8 +172,8 @@ public class JavaFXMusicPlayer {
         return currentMusicId;
     }
 
-    // 复用你之前 NetworkMusicPlayer 中的下载方法
-    private static File DownloadMusic(String urlStr, String name) {
+    // 下载方法
+    private static File downloadMusic(String urlStr, String name) {
         try {
             Path cacheFile = CACHE_DIR.resolve(name);
 
@@ -222,14 +215,13 @@ public class JavaFXMusicPlayer {
                     Minecraft.getInstance().execute(() -> {
                         if (Minecraft.getInstance().player != null) {
                             Minecraft.getInstance().player.displayClientMessage(
-                                    Component.literal("§a 下载完成，重进世界后生效！"),
+                                    Component.literal("§a 下载完成！"),
                                     false
                             );
                         }
                     });
                     LoginMusic.LOGGER.info("下载完成，共 {} 字节", totalBytes);
                 }
-                isDownloaded = true;
                 return cacheFile.toFile();
             } else {
                 LoginMusic.LOGGER.warn("下载失败，HTTP状态码：{}", responseCode);

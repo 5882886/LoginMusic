@@ -18,8 +18,6 @@ public class ClientMusicHandler {
 
     private static final Minecraft mc = Minecraft.getInstance();
 
-    // 音乐是否停止
-    private static boolean isStopped = false;
     // 是否初始化位置
     private static boolean isInitialPos = false;
     // 是否已注册活动
@@ -29,7 +27,6 @@ public class ClientMusicHandler {
 
     // 登录事件
     public static void PlayLoginMusic(String musicId) {
-        isStopped = false;
         isInitialPos = false;
 
         MusicEntry entry = MusicConfig.getMusic(musicId);
@@ -45,7 +42,7 @@ public class ClientMusicHandler {
             return;
         }
 
-        JavaFXMusicPlayer.PlayMusic(musicId, entry.getName(), entry.getUrl());
+        JavaFXMusicPlayer.playMusic(musicId, entry.getName(), entry.getUrl());
         RegisterListener();
     }
 
@@ -63,7 +60,7 @@ public class ClientMusicHandler {
         if (event.phase != TickEvent.Phase.END) return;
 
         // 已经停止则不再检测
-        if (isStopped || JavaFXMusicPlayer.getCurrentMusicId() == null) return;
+        if (!JavaFXMusicPlayer.isPlaying()) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;
@@ -84,14 +81,13 @@ public class ClientMusicHandler {
                     net.minecraft.network.chat.Component.literal("检测到移动，已停止音乐播放"),
                     true
             );
-            isStopped = true;
         }
     }
 
     // 检测键盘操作
     @SubscribeEvent
     public static void onInput(InputEvent event) {
-        if (isStopped || JavaFXMusicPlayer.getCurrentMusicId() == null) return;
+        if (!JavaFXMusicPlayer.isPlaying()) return;
 
         // 如果有任何键盘输入，也停止音乐
         if (mc.player != null) {
@@ -104,7 +100,6 @@ public class ClientMusicHandler {
                     );
                 }
             });
-            isStopped = true;
         }
     }
 }
