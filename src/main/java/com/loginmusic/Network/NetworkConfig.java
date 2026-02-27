@@ -1,6 +1,6 @@
-package com.zhisuan11.login_music.Network;
+package com.loginmusic.Network;
 
-import com.zhisuan11.login_music.LoginMusic;
+import com.loginmusic.LoginMusic;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;

@@ -1,11 +1,11 @@
-package com.zhisuan11.login_music.Network;
+package com.loginmusic.PlayMusic;
 
-import com.zhisuan11.login_music.LoginMusic;
-import com.zhisuan11.login_music.Music.MusicConfig;
-import com.zhisuan11.login_music.Music.MusicEntry;
-import com.zhisuan11.login_music.PlayMusic.JavaFXMusicPlayer;
+import com.loginmusic.LoginMusic;
+import com.loginmusic.Music.MusicConfig;
+import com.loginmusic.Music.MusicEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -38,8 +38,8 @@ public class ClientMusicHandler {
             LoginMusic.LOGGER.warn("未找到音乐 {}", musicId);
             if (mc.player != null) {
                 mc.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.literal("§c[音乐] 未找到音乐: " + musicId),
-                        true
+                        net.minecraft.network.chat.Component.literal("§未找到音乐: " + musicId),
+                        false
                 );
             }
             return;
@@ -96,6 +96,14 @@ public class ClientMusicHandler {
         // 如果有任何键盘输入，也停止音乐
         if (mc.player != null) {
             JavaFXMusicPlayer.StopCurrentMusic();
+            Minecraft.getInstance().execute(() -> {
+                if (Minecraft.getInstance().player != null) {
+                    Minecraft.getInstance().player.displayClientMessage(
+                            Component.literal("检测到移动，已停止音乐播放"),
+                            true
+                    );
+                }
+            });
             isStopped = true;
         }
     }

@@ -1,9 +1,9 @@
-package com.zhisuan11.login_music.PlayMusic;
+package com.loginmusic.PlayMusic;
 
-import com.zhisuan11.login_music.LoginMusic;
-import com.zhisuan11.login_music.Music.MusicConfig;
-import com.zhisuan11.login_music.Music.MusicEntry;
-import com.zhisuan11.login_music.Network.NetworkConfig;
+import com.loginmusic.LoginMusic;
+import com.loginmusic.Music.MusicConfig;
+import com.loginmusic.Music.MusicEntry;
+import com.loginmusic.Network.NetworkConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

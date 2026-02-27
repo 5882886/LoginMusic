@@ -1,8 +1,8 @@
-package com.zhisuan11.login_music;
+package com.loginmusic;
 
 import com.mojang.logging.LogUtils;
-import com.zhisuan11.login_music.Music.MusicConfig;
-import com.zhisuan11.login_music.Network.NetworkConfig;
+import com.loginmusic.Music.MusicConfig;
+import com.loginmusic.Network.NetworkConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,11 +31,10 @@ public class LoginMusic {
 
     public LoginMusic(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
+        ModLoadingContext modLoadingContext = new ModLoadingContext();
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-        ModLoadingContext modLoadingContext = new ModLoadingContext();
-
         // 注册网络
         NetworkConfig.register();
         // 初始化配置

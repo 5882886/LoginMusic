@@ -1,4 +1,4 @@
-package com.zhisuan11.login_music;
+package com.loginmusic;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

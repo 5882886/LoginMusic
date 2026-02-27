@@ -1,6 +1,6 @@
-package com.zhisuan11.login_music.PlayMusic;
+package com.loginmusic.PlayMusic;
 
-import com.zhisuan11.login_music.LoginMusic;
+import com.loginmusic.LoginMusic;
 import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -29,6 +29,7 @@ public class JavaFXMusicPlayer {
 
     private static MediaPlayer currentMediaPlayer;
     private static String currentMusicId;
+    private static boolean isDownloaded;
 
     private static final AtomicBoolean isPlaying = new AtomicBoolean(false);
     private static final AtomicBoolean javafxInitialized = new AtomicBoolean(false);
@@ -89,9 +90,11 @@ public class JavaFXMusicPlayer {
                 // 下载或获取本地文件（这部分可以复用你之前 NetworkMusicPlayer 里的下载逻辑）
                 // 为了简单，这里假设我们已经有了一个本地文件，或者直接播放网络流？
                 // 更稳定的方式是先下载到本地再播放
+                isDownloaded = false;
                 File localFile = DownloadMusic(url, musicName); // 复用之前的下载方法
 
-                if (localFile != null && localFile.exists()) {
+                // 只播放原来就有的文件
+                if (localFile != null && localFile.exists() && !isDownloaded) {
                     // 创建 Media 对象
                     Media media = new Media(localFile.toURI().toString());
 
@@ -110,7 +113,7 @@ public class JavaFXMusicPlayer {
                             if (Minecraft.getInstance().player != null) {
                                 Minecraft.getInstance().player.displayClientMessage(
                                     Component.literal("§7[音乐] 播放结束: " + musicName),
-                                    true
+                                    false
                                 );
                             }
                         });
@@ -140,7 +143,9 @@ public class JavaFXMusicPlayer {
                     });
 
                 } else {
-                    showErrorToPlayer("找不到音频文件", musicName);
+                    if (!isDownloaded) {
+                        showErrorToPlayer("找不到音频文件", musicName);
+                    }
                 }
             } catch (Exception e) {
                 LoginMusic.LOGGER.error("JavaFX 播放过程中发生异常", e);
@@ -190,7 +195,7 @@ public class JavaFXMusicPlayer {
                 if (Minecraft.getInstance().player != null) {
                     Minecraft.getInstance().player.displayClientMessage(
                         Component.literal("§a 正在下载您的登录音乐: " + currentMusicId),
-                        true
+                        false
                     );
                 }
             });
@@ -213,8 +218,18 @@ public class JavaFXMusicPlayer {
                         out.write(buffer, 0, bytesRead);
                         totalBytes += bytesRead;
                     }
+
+                    Minecraft.getInstance().execute(() -> {
+                        if (Minecraft.getInstance().player != null) {
+                            Minecraft.getInstance().player.displayClientMessage(
+                                    Component.literal("§a 下载完成，重进世界后生效！"),
+                                    false
+                            );
+                        }
+                    });
                     LoginMusic.LOGGER.info("下载完成，共 {} 字节", totalBytes);
                 }
+                isDownloaded = true;
                 return cacheFile.toFile();
             } else {
                 LoginMusic.LOGGER.warn("下载失败，HTTP状态码：{}", responseCode);
@@ -230,7 +245,7 @@ public class JavaFXMusicPlayer {
             if (Minecraft.getInstance().player != null) {
                 Minecraft.getInstance().player.displayClientMessage(
                         Component.literal("§c[LoginMusic] " + error + ": " + displayName),
-                        true
+                        false
                 );
             }
         });

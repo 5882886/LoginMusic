@@ -1,6 +1,7 @@
-package com.zhisuan11.login_music.Network;
+package com.loginmusic.Network;
 
-import com.zhisuan11.login_music.LoginMusic;
+import com.loginmusic.LoginMusic;
+import com.loginmusic.PlayMusic.ClientMusicHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;

@@ -1,6 +1,6 @@
-package com.zhisuan11.login_music.Music;
+package com.loginmusic.Music;
 
-import com.zhisuan11.login_music.LoginMusic;
+import com.loginmusic.LoginMusic;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 // 实现仅在服务端配置
+// 文件位于/serverconfig中
 @Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MusicConfig {
     private static final ForgeConfigSpec SPEC;
@@ -31,12 +32,11 @@ public class MusicConfig {
 
         MUSIC_ENTRIES = BUILDER
                 .comment("音乐条目列表（字符串格式）",
-                        "每个条目是一个字符串",
-                        "目标玩家|音乐名称|音乐URL",
+                        "每个条目是一个字符串：目标玩家|音乐名称|音乐URL",
                         "示例：Player|欢迎音乐|https://example.com/music.mp3"
                 )
                 .defineList("entries",
-                        new ArrayList<>(List.of("login_music|登录音乐|https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")),
+                        new ArrayList<>(List.of("Player|登录音乐|https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")),
                         entry -> entry instanceof String
                 );
 
