@@ -13,9 +13,9 @@ public class MusicDownloadScreen extends Screen {
     private volatile boolean completed = false;
     private volatile boolean error = false;
     private volatile String errorMessage = "";
+    private volatile float progress;
+    private volatile String status = "准备下载";
 
-    private float progress;
-    private String status = "准备下载";
     private boolean callbackTriggered = false;
 
     public MusicDownloadScreen(String musicId, Runnable onComplete) {
@@ -49,11 +49,11 @@ public class MusicDownloadScreen extends Screen {
         }
     }
 
+    // 正在下载
     private void renderDownload(GuiGraphics graphics, int centerX, int centerY) {
         graphics.drawCenteredString(this.font, "正在下载登录音乐", centerX, centerY - 30, 0xFFFFFF);
         graphics.drawCenteredString(this.font, musicId, centerX, centerY - 10, 0xFFFFFF);
-
-        // 进度条
+        // 进度条参数
         int barWidth = 200;
         int barHeight = 20;
         int barX = centerX - barWidth / 2;
@@ -61,14 +61,12 @@ public class MusicDownloadScreen extends Screen {
 
         // 背景
         graphics.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF333333);
-        // 边框
+        // 进度条
         int fillWith = (int) (barWidth * progress);
-        graphics.fill(barX, barY, barX + fillWith, barY + fillWith, 0xFF00AA00);
-
+        graphics.fill(barX, barY, barX + fillWith, barY + barHeight, 0xFF00AA00);
         // 进度文字
-        String progressText = String.format("%.0f%%", progress * 100);
+        String progressText = String.format("%.1f%%", progress * 100);
         graphics.drawCenteredString(this.font, progressText, centerX, barY + 5, 0xFFFFFF);
-
         // 状态文字
         graphics.drawCenteredString(this.font, status, centerX, barY + 30, 0xAAAAAA);
     }
@@ -89,7 +87,9 @@ public class MusicDownloadScreen extends Screen {
 
     // 线程安全的更新
     public synchronized void updateProgress(float progress, String status) {
-        this.progress = Math.min(0.0f, Math.max(0.0f, progress));
+        // 计算progress，保证在[0.0f, 1.0f]
+        // max和min别写反了
+        this.progress = Math.max(0.0f, Math.min(1.0f, progress));
         this.status = status;
     }
 
@@ -103,7 +103,8 @@ public class MusicDownloadScreen extends Screen {
     }
 
     @Override
+    // 只有出错时才允许ESC关闭
     public boolean shouldCloseOnEsc() {
-        return error; // 只有出错时才允许ESC关闭
+        return error;
     }
 }

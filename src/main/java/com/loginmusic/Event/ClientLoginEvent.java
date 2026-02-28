@@ -76,15 +76,21 @@ public class ClientLoginEvent {
         // 加载下载界面
         CompletableFuture.runAsync(() -> {
             try {
-                downloadMusic(url, name, (downloaded, total) -> {
-                        float progress = total > 0 ? (float) downloaded / total : 0f;
-                        String status = String.format("下载中... %.1f MB / %.1f MB",
-                            downloaded / 1024.0 / 1024.0,
-                            total / 1024.0 / 1024.0);
-                        // 在主进程中更新进度
-                        mc.execute(() -> screen.updateProgress(progress, status));
+                // 显示下载信息
+                downloadMusic(url, name, (downloaded, total, progress) -> {
+                    String status;
+                    if (total > 0) {
+                        status = String.format("下载中... %.1f MB / %.1f MB",
+                                downloaded / 1024.0 / 1024.0,
+                                total / 1024.0 / 1024.0);
+                    } else {
+                        status = String.format("下载中... %.1f MB (未知大小)",
+                                downloaded / 1024.0 / 1024.0);
                     }
-                );
+                    // 在主进程中更新进度
+                    screen.updateProgress(progress, status);
+                });
+                // 设置界面关闭状态
                 mc.execute(screen::setCompleted);
             } catch (Exception e) {
                 LoginMusic.LOGGER.error("下载音乐错误！");
@@ -95,7 +101,7 @@ public class ClientLoginEvent {
 
     @FunctionalInterface
     public interface DownloadCallback {
-        void onProgress(long downloadedBytes, long totalBytes);
+        void onProgress(long downloadedBytes, long totalBytes, float progress);
     }
 
     // 下载方法
@@ -107,7 +113,7 @@ public class ClientLoginEvent {
                 LoginMusic.LOGGER.info("文件已下载");
                 if (callback != null) {
                     long size = Files.size(cacheFile);
-                    callback.onProgress(size, size);
+                    callback.onProgress(size, size, 1.0f);
                 }
                 return;
             }
@@ -122,20 +128,26 @@ public class ClientLoginEvent {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == 200) {
+                // 获取文件大小
+                long totalBytes = connection.getContentLengthLong();
+                LoginMusic.LOGGER.info("文件大小：{}", totalBytes);
+                // 下载文件
                 try (InputStream in = connection.getInputStream()) {
                     OutputStream out = Files.newOutputStream(cacheFile);
                     byte[] buffer = new byte[8192];
                     int bytesRead;
-                    long totalBytes = 0;
+                    long downloadedBytes = 0;
                     while ((bytesRead = in.read(buffer)) != -1) {
                         out.write(buffer, 0, bytesRead);
-                        totalBytes += bytesRead;
+                        downloadedBytes += bytesRead;
                         // 回调进度
                         if (callback != null) {
-                            callback.onProgress(totalBytes, totalBytes);
+                            // (float) 必须在分母上，写在前面直接将转为 0.0f
+                            float progress = downloadedBytes / (float) totalBytes;
+                            callback.onProgress(downloadedBytes, totalBytes, progress);
                         }
                     }
-                    LoginMusic.LOGGER.info("下载完成，共 {} 字节", totalBytes);
+                    LoginMusic.LOGGER.info("下载完成，共 {} 字节", downloadedBytes);
                 }
             } else {
                 LoginMusic.LOGGER.warn("下载失败，HTTP状态码：{}", responseCode);
@@ -157,13 +169,11 @@ public class ClientLoginEvent {
     @SubscribeEvent
     public static void checkMove(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-
         // 已经停止则不再检测
         if (JavaFXMusicPlayer.isStopped()) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;
-
         // 获取玩家坐标
         if (!isInitialPos) {
             lastX = player.getX();

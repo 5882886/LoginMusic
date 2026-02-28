@@ -32,3 +32,7 @@ All music files are stored in the `/LoginMusic` folder.
     │   └── ...
     └── ...
 ```
+
+## Config
+
+### `login_music-common.toml`

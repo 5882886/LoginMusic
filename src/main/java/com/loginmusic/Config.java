@@ -45,17 +45,12 @@ public class Config {
         type = MUSIC_ID_TYPE.get();
         range = MUSIC_PLAY_RANGE.get();
         LoginMusic.LOGGER.info("音乐选择的关键字为：{}", type);
+        LoginMusic.LOGGER.info("允许播放半径：{} 格", range);
     }
 
-    public static ForgeConfigSpec getSpec() {
-        return SPEC;
-    }
+    public static ForgeConfigSpec getSpec() { return SPEC; }
 
-    public static String getType() {
-        return type;
-    }
+    public static String getType() { return type; }
 
-    public static Integer getRange() {
-        return range;
-    }
+    public static Integer getRange() { return range; }
 }
