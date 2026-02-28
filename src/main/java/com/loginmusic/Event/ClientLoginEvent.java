@@ -1,5 +1,6 @@
 package com.loginmusic.Event;
 
+import com.loginmusic.Config;
 import com.loginmusic.LoginMusic;
 import com.loginmusic.Music.MusicConfig;
 import com.loginmusic.Music.MusicEntry;
@@ -7,10 +8,9 @@ import com.loginmusic.PlayMusic.JavaFXMusicPlayer;
 import com.loginmusic.PlayMusic.MusicDownloadScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -102,8 +102,7 @@ public class ClientLoginEvent {
     public static void downloadMusic(String urlStr, String name, DownloadCallback callback) {
         try {
             Path cacheFile = LoginMusic.CACHE_DIR.resolve(name);
-            // 检查缓存
-            // 命中直接返回
+            // 检查缓存，命中直接返回
             if (Files.exists(cacheFile)) {
                 LoginMusic.LOGGER.info("文件已下载");
                 if (callback != null) {
@@ -174,32 +173,26 @@ public class ClientLoginEvent {
             return;
         }
 
-        // 检测是否移动
-        if (player.getX() != lastX || player.getY() != lastY || player.getZ() != lastZ) {
+        boolean outOfRange = (Math.abs(player.getX() - lastX) > Config.getRange())
+                || Math.abs(player.getY() - lastY) > Config.getRange()
+                || Math.abs(player.getZ() - lastZ) > Config.getRange();
+
+        // 检测移动范围
+        if (outOfRange) {
             JavaFXMusicPlayer.StopCurrentMusic();
             mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.literal("检测到移动，已停止音乐播放"),
-                    true
+                    net.minecraft.network.chat.Component.literal("移动超出范围，已停止音乐播放"),
+                    false
             );
         }
     }
 
-    // 检测键盘操作
+    // 检测退出世界操作
     @SubscribeEvent
-    public static void checkInput(InputEvent event) {
+    public static void checkLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         if (JavaFXMusicPlayer.isStopped()) return;
-        // 如果有任何键盘输入，也停止音乐
+        LoginMusic.LOGGER.info("玩家退出世界，停止音乐播放");
         // 解决玩家退出世界仍播放音乐的问题
-        if (mc.player != null) {
-            JavaFXMusicPlayer.StopCurrentMusic();
-            Minecraft.getInstance().execute(() -> {
-                if (Minecraft.getInstance().player != null) {
-                    Minecraft.getInstance().player.displayClientMessage(
-                            Component.literal("检测到移动，已停止音乐播放"),
-                            true
-                    );
-                }
-            });
-        }
+        JavaFXMusicPlayer.StopCurrentMusic();
     }
 }

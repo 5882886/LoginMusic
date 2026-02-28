@@ -94,7 +94,7 @@ public class JavaFXMusicPlayer {
                         Minecraft.getInstance().execute(() -> {
                             if (Minecraft.getInstance().player != null) {
                                 Minecraft.getInstance().player.displayClientMessage(
-                                        Component.literal("§7[音乐] 播放结束: " + musicName),
+                                        Component.literal("§7[LoginMusic] 播放结束: " + musicName),
                                         false
                                 );
                             }

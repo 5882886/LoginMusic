@@ -14,16 +14,27 @@ public class Config {
 
     // 音乐选择的关键字
     private static final ForgeConfigSpec.ConfigValue<String> MUSIC_ID_TYPE;
+    // 允许音乐播放的范围
+    private static final ForgeConfigSpec.ConfigValue<Integer> MUSIC_PLAY_RANGE;
+
+
     private static String type;
+    private static Integer range;
 
     static {
         BUILDER.comment("LoginMusic配置文件");
 
         BUILDER.push("Selection");
-
         MUSIC_ID_TYPE = BUILDER
                 .comment("音乐选择的关键字", "可选：name/uuid")
                 .define("type", "name");
+        BUILDER.pop();
+
+        BUILDER.push("Range");
+        MUSIC_PLAY_RANGE = BUILDER
+                .comment("允许音乐播放的范围", "必须为非负整数")
+                .defineInRange("range", 0, 0, 5);
+        BUILDER.pop();
 
         SPEC = BUILDER.build();
     }
@@ -32,6 +43,7 @@ public class Config {
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         type = MUSIC_ID_TYPE.get();
+        range = MUSIC_PLAY_RANGE.get();
         LoginMusic.LOGGER.info("音乐选择的关键字为：{}", type);
     }
 
@@ -41,5 +53,9 @@ public class Config {
 
     public static String getType() {
         return type;
+    }
+
+    public static Integer getRange() {
+        return range;
     }
 }
