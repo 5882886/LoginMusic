@@ -16,6 +16,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(LoginMusic.MODID)
 public class LoginMusic {
@@ -24,6 +27,8 @@ public class LoginMusic {
     public static final String MODID = "login_music";
     // 日志文件
     public static final Logger LOGGER = LogUtils.getLogger();
+    // 音乐缓存目录
+    public static final Path CACHE_DIR = Paths.get("LoginMusic");
 
 
     public LoginMusic(FMLJavaModLoadingContext context) {
@@ -39,7 +44,7 @@ public class LoginMusic {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
+        // 注册通用配置文件
         context.registerConfig(ModConfig.Type.COMMON, Config.getSpec());
     }
 

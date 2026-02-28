@@ -1,7 +1,7 @@
 package com.loginmusic.Network;
 
 import com.loginmusic.LoginMusic;
-import com.loginmusic.PlayMusic.ClientMusicHandler;
+import com.loginmusic.Event.ClientLoginEvent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -27,7 +27,7 @@ public class LoginMusicPacket {
         context.enqueueWork(() -> {
             LoginMusic.LOGGER.info("准备播放");
             DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
-                    ClientMusicHandler.PlayLoginMusic(packet.musicID));
+                    ClientLoginEvent.PlayLoginMusic(packet.musicID));
         });
         context.setPacketHandled(true);
     }

@@ -1,4 +1,4 @@
-package com.loginmusic.PlayMusic;
+package com.loginmusic.Event;
 
 import com.loginmusic.Config;
 import com.loginmusic.LoginMusic;
@@ -11,10 +11,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class LoginEvents {
+public class ServerJoinEvent {
     @SubscribeEvent
     // 玩家登录事件
-    public static void PlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         // 服务端
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 根据玩家名称获取音乐

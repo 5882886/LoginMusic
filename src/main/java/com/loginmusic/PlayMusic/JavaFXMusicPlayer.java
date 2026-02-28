@@ -10,13 +10,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,8 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // JavaFXMusicPlayer播放器
 @OnlyIn(Dist.CLIENT)
 public class JavaFXMusicPlayer {
-
-    private static final Path CACHE_DIR = Paths.get("LoginMusic");
 
     private static MediaPlayer currentMediaPlayer;
     private static String currentMusicId;
@@ -44,7 +35,7 @@ public class JavaFXMusicPlayer {
 
         try {
             CountDownLatch latch = new CountDownLatch(1);
-
+            // 在新线程中启动JavaFX
             new Thread(() -> {
                 try {
                     Platform.startup(() -> {
@@ -70,7 +61,7 @@ public class JavaFXMusicPlayer {
     }
 
     // 播放音乐
-    public static void playMusic(String musicId, String musicName, String url) {
+    public static void playMusic(String musicId, String musicName) {
         initialJavaFx();
 
         if (!javafxInitialized.get()) {
@@ -78,21 +69,15 @@ public class JavaFXMusicPlayer {
             showErrorToPlayer("JavaFX 初始化失败", musicName);
             return;
         }
-
         // 停止当前音乐
         StopCurrentMusic();
         currentMusicId = musicId;
-
         // 在 JavaFX 应用线程中执行播放操作
         Platform.runLater(() -> {
             try {
-                // 下载或获取本地文件（这部分可以复用你之前 NetworkMusicPlayer 里的下载逻辑）
-                // 为了简单，这里假设我们已经有了一个本地文件，或者直接播放网络流？
-                // 更稳定的方式是先下载到本地再播放
-                File localFile = downloadMusic(url, musicName); // 复用之前的下载方法
-
+                File localFile = LoginMusic.CACHE_DIR.resolve(musicName).toFile();
                 // 只播放原来就有的文件
-                if (localFile != null && localFile.exists()) {
+                if (localFile.exists()) {
                     // 创建 Media 对象
                     Media media = new Media(localFile.toURI().toString());
 
@@ -147,89 +132,27 @@ public class JavaFXMusicPlayer {
         });
     }
 
+    // 停止当前音乐
     public static void StopCurrentMusic() {
-        if (currentMediaPlayer != null) {
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            if (currentMediaPlayer != null) {
                 currentMediaPlayer.stop();
                 currentMediaPlayer.dispose();
                 currentMediaPlayer = null;
-                currentMusicId = null;
-                isPlaying.set(false);
-            });
-        } else {
+            }
             currentMusicId = null;
             isPlaying.set(false);
-        }
+        });
     }
 
-    // 检查是否正在播放
-    public static boolean isPlaying() {
-        return isPlaying.get() && currentMediaPlayer != null;
+    // 检查是否已经停止
+    public static boolean isStopped() {
+        return !isPlaying.get() || currentMediaPlayer == null;
     }
 
     // 获取当前播放的音乐ID
     public static String getCurrentMusicId() {
         return currentMusicId;
-    }
-
-    // 下载方法
-    private static File downloadMusic(String urlStr, String name) {
-        try {
-            Path cacheFile = CACHE_DIR.resolve(name);
-
-            // 检查缓存
-            if (Files.exists(cacheFile)) {
-                LoginMusic.LOGGER.info("文件已下载");
-                return cacheFile.toFile();
-            }
-
-            LoginMusic.LOGGER.info("下载音乐：{}", urlStr);
-            Minecraft.getInstance().execute(() -> {
-                if (Minecraft.getInstance().player != null) {
-                    Minecraft.getInstance().player.displayClientMessage(
-                        Component.literal("§a 正在下载您的登录音乐: " + currentMusicId),
-                        false
-                    );
-                }
-            });
-
-            URL url = new URL(urlStr);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(30000);
-            connection.setRequestProperty("User-Agent", "LoginMusic");
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == 200) {
-                try (InputStream in = connection.getInputStream()) {
-                    OutputStream out = Files.newOutputStream(cacheFile);
-                    byte[] buffer = new byte[8192];
-                    int bytesRead;
-                    long totalBytes = 0;
-                    while ((bytesRead = in.read(buffer)) != -1) {
-                        out.write(buffer, 0, bytesRead);
-                        totalBytes += bytesRead;
-                    }
-
-                    Minecraft.getInstance().execute(() -> {
-                        if (Minecraft.getInstance().player != null) {
-                            Minecraft.getInstance().player.displayClientMessage(
-                                    Component.literal("§a 下载完成！"),
-                                    false
-                            );
-                        }
-                    });
-                    LoginMusic.LOGGER.info("下载完成，共 {} 字节", totalBytes);
-                }
-                return cacheFile.toFile();
-            } else {
-                LoginMusic.LOGGER.warn("下载失败，HTTP状态码：{}", responseCode);
-            }
-        } catch (Exception e) {
-            LoginMusic.LOGGER.warn("下载异常！{}", String.valueOf(e));
-        }
-        return null; // 替换为实际的返回值
     }
 
     private static void showErrorToPlayer(String error, String displayName) {
