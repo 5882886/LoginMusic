@@ -32,7 +32,6 @@ public class JavaFXMusicPlayer {
         // 但因为我们没有传递任何参数，它会启动一个无窗口的 JavaFX 应用
         // 一个更优雅的方式是用 com.sun.javafx.application.PlatformImpl 来启动，但这里是简易方案
         // 警告：这种启动方式可能在某些环境下不是最优的，但对于一个独立 Mod 来说足够简单。
-
         try {
             CountDownLatch latch = new CountDownLatch(1);
             // 在新线程中启动JavaFX

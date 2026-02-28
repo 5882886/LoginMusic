@@ -16,6 +16,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -33,6 +35,13 @@ public class LoginMusic {
 
     public LoginMusic(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
+
+        // 创建缓存目录
+        try {
+            Files.createDirectories(CACHE_DIR);
+        } catch (IOException e) {
+            LOGGER.error("Failed to create cache directory!", e);
+        }
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
