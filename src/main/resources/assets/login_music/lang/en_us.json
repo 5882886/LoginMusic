@@ -1,0 +1,7 @@
+{
+    "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
+    "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
+
+    "login_music.configui.music_config": "Configure music on the server here, and the configuration will be automatically synchronized to the client",
+    "login_music.configui.music_entries": "Each entry is a string: \"Target player | Music name | Music URL \""
+}

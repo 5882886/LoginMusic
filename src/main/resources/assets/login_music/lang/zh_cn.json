@@ -1,0 +1,7 @@
+{
+    "login_music.configui.music_id_type": "音乐选择的关键字（可选：名称/uuid）",
+    "login_music.configui.music_play_range": "音乐播放的范围（非负整数）",
+
+    "login_music.configui.music_config": "配置服务器上的音乐，自动同步给客户端",
+    "login_music.configui.music_entries": "格式：\"目标玩家|音乐名称|音乐URL\""
+}

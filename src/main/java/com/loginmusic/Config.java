@@ -22,17 +22,17 @@ public class Config {
     private static Integer range;
 
     static {
-        BUILDER.comment("LoginMusic配置文件");
-
         BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
-                .comment("音乐选择的关键字", "可选：name/uuid")
+                .comment("音乐选择的关键字（name/uuid）")
+                .translation(LoginMusic.MODID + ".configui.music_id_type")
                 .define("type", "name");
         BUILDER.pop();
 
         BUILDER.push("Range");
         MUSIC_PLAY_RANGE = BUILDER
-                .comment("允许音乐播放的范围", "必须为非负整数")
+                .comment("允许音乐播放的范围（非负整数）")
+                .translation(LoginMusic.MODID + ".configui.music_play_range")
                 .defineInRange("range", 0, 0, 5);
         BUILDER.pop();
 
