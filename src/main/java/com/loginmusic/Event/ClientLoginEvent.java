@@ -8,6 +8,7 @@ import com.loginmusic.PlayMusic.JavaFXMusicPlayer;
 import com.loginmusic.PlayMusic.MusicDownloadScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -45,8 +46,8 @@ public class ClientLoginEvent {
             LoginMusic.LOGGER.warn("未找到音乐 {}", musicId);
             if (mc.player != null) {
                 mc.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.literal("§未找到音乐: " + musicId),
-                        false
+                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId),
+                    false
                 );
             }
             return;
@@ -79,16 +80,12 @@ public class ClientLoginEvent {
                 // 显示下载信息
                 downloadMusic(url, name, (downloaded, total, progress) -> {
                     String status;
-                    if (total > 0) {
-                        status = String.format("下载中... %.1f MB / %.1f MB",
-                                downloaded / 1024.0 / 1024.0,
-                                total / 1024.0 / 1024.0);
-                    } else {
-                        status = String.format("下载中... %.1f MB (未知大小)",
-                                downloaded / 1024.0 / 1024.0);
-                    }
+                    status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
+                            String.format("%.1f", downloaded / 1024.0 / 1024.0),
+                            String.format("%.1f", total / 1024.0 / 1024.0)
+                    ).getString();
                     // 在主进程中更新进度
-                    screen.updateProgress(progress, status);
+                    if (screen != null) { screen.updateProgress(progress, status); }
                 });
                 // 设置界面关闭状态
                 mc.execute(screen::setCompleted);
@@ -191,8 +188,8 @@ public class ClientLoginEvent {
         if (outOfRange) {
             JavaFXMusicPlayer.StopCurrentMusic();
             mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.literal("移动超出范围，已停止音乐播放"),
-                    false
+                net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
+                false
             );
         }
     }

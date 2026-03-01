@@ -1,5 +1,6 @@
 package com.loginmusic.PlayMusic;
 
+import com.loginmusic.LoginMusic;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -14,12 +15,12 @@ public class MusicDownloadScreen extends Screen {
     private volatile boolean error = false;
     private volatile String errorMessage = "";
     private volatile float progress;
-    private volatile String status = "准备下载";
+    private volatile String status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.start").getString();
 
     private boolean callbackTriggered = false;
 
     public MusicDownloadScreen(String musicId, Runnable onComplete) {
-        super(Component.literal("下载登录音乐"));
+        super(Component.translatable(LoginMusic.MODID + ".gui.logindownload.title"));
         this.musicId = musicId;
         this.onComplete = onComplete;
     }
@@ -51,7 +52,13 @@ public class MusicDownloadScreen extends Screen {
 
     // 正在下载
     private void renderDownload(GuiGraphics graphics, int centerX, int centerY) {
-        graphics.drawCenteredString(this.font, "正在下载登录音乐", centerX, centerY - 30, 0xFFFFFF);
+        graphics.drawCenteredString(
+                this.font,
+                Component.translatable(LoginMusic.MODID + ".gui.logindownload.downloading"),
+                centerX,
+                centerY - 30,
+                0xFFFFFF);
+
         graphics.drawCenteredString(this.font, musicId, centerX, centerY - 10, 0xFFFFFF);
         // 进度条参数
         int barWidth = 200;
@@ -103,8 +110,6 @@ public class MusicDownloadScreen extends Screen {
     }
 
     @Override
-    // 只有出错时才允许ESC关闭
-    public boolean shouldCloseOnEsc() {
-        return error;
-    }
+    // 是否允许ESC关闭
+    public boolean shouldCloseOnEsc() { return error; }
 }

@@ -34,7 +34,7 @@ public class MusicConfig {
                 .comment("格式：\"目标玩家|音乐名称|音乐URL\"")
                 .translation(LoginMusic.MODID + ".configui.music_entries")
                 .defineList("entries",
-                        new ArrayList<>(List.of("Default|登录音乐.mp3|https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")),
+                        new ArrayList<>(List.of("Default|Default.mp3|https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")),
                         entry -> entry instanceof String
                 );
 

@@ -2,6 +2,16 @@
     "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
     "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
 
-    "login_music.configui.music_config": "Configure music on the server here, and the configuration will be automatically synchronized to the client",
-    "login_music.configui.music_entries": "Each entry is a string: \"Target player | Music name | Music URL \""
+    "login_music.configui.music_config": "Configure server musics (automatically synchronized)",
+    "login_music.configui.music_entries": "Each entry is a string: \"Target player | Music name | Music URL \"",
+
+    "login_music.gui.logindownload.start": "Start downloading...",
+    "login_music.gui.logindownload.downloading": "Downloading login music",
+    "login_music.gui.logindownload.title": "Login Music download",
+    "login_music.gui.logindownload.progress": "Downloading... %.1f MB / %.1f MB",
+
+    "login_music.message.out_of_range": "Moving out of range, music playback has stopped!",
+    "login_music.message.music_not_found": "Music not found!",
+    "login_music.message.play_music": "Playing music: %s",
+    "login_music.message.play_ended": "Music ends: %s"
 }

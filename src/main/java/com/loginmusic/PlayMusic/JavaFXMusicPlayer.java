@@ -93,8 +93,8 @@ public class JavaFXMusicPlayer {
                         Minecraft.getInstance().execute(() -> {
                             if (Minecraft.getInstance().player != null) {
                                 Minecraft.getInstance().player.displayClientMessage(
-                                        Component.literal("§7[LoginMusic] 播放结束: " + musicName),
-                                        false
+                                    Component.translatable( LoginMusic.MODID + ".message.play_ended", musicName),
+                                    false
                                 );
                             }
                         });
@@ -115,8 +115,8 @@ public class JavaFXMusicPlayer {
                     Minecraft.getInstance().execute(() -> {
                         if (Minecraft.getInstance().player != null) {
                             Minecraft.getInstance().player.displayClientMessage(
-                                    Component.literal("§a 正在播放: " + musicName),
-                                    true
+                                Component.translatable(LoginMusic.MODID + ".message.play_music", musicName),
+                                true
                             );
                         }
                     });
@@ -145,21 +145,17 @@ public class JavaFXMusicPlayer {
     }
 
     // 检查是否已经停止
-    public static boolean isStopped() {
-        return !isPlaying.get() || currentMediaPlayer == null;
-    }
+    public static boolean isStopped() { return !isPlaying.get() || currentMediaPlayer == null; }
 
     // 获取当前播放的音乐ID
-    public static String getCurrentMusicId() {
-        return currentMusicId;
-    }
+    public static String getCurrentMusicId() { return currentMusicId; }
 
     private static void showErrorToPlayer(String error, String displayName) {
         Minecraft.getInstance().execute(() -> {
             if (Minecraft.getInstance().player != null) {
                 Minecraft.getInstance().player.displayClientMessage(
-                        Component.literal("§c[LoginMusic] " + error + ": " + displayName),
-                        false
+                    Component.literal("§c[LoginMusic] " + error + ": " + displayName),
+                    false
                 );
             }
         });

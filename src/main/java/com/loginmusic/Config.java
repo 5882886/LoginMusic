@@ -33,7 +33,7 @@ public class Config {
         MUSIC_PLAY_RANGE = BUILDER
                 .comment("允许音乐播放的范围（非负整数）")
                 .translation(LoginMusic.MODID + ".configui.music_play_range")
-                .defineInRange("range", 0, 0, 5);
+                .defineInRange("range", 3, 0, 100);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
