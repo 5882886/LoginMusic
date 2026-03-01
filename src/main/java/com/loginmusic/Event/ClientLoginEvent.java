@@ -79,11 +79,10 @@ public class ClientLoginEvent {
             try {
                 // 显示下载信息
                 downloadMusic(url, name, (downloaded, total, progress) -> {
-                    String status;
-                    status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
-                            String.format("%.1f", downloaded / 1024.0 / 1024.0),
-                            String.format("%.1f", total / 1024.0 / 1024.0)
-                    ).getString();
+                    Component status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
+                        String.format("%.1f", downloaded / 1024.0 / 1024.0),
+                        String.format("%.1f", total / 1024.0 / 1024.0)
+                    );
                     // 在主进程中更新进度
                     if (screen != null) { screen.updateProgress(progress, status); }
                 });

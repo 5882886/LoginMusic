@@ -24,14 +24,14 @@ public class Config {
     static {
         BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
-                .comment("音乐选择的关键字（name/uuid）")
+                .comment("Keywords for music selection (name/uuid)")
                 .translation(LoginMusic.MODID + ".configui.music_id_type")
                 .define("type", "name");
         BUILDER.pop();
 
         BUILDER.push("Range");
         MUSIC_PLAY_RANGE = BUILDER
-                .comment("允许音乐播放的范围（非负整数）")
+                .comment("Range of music play (a non negative integer)")
                 .translation(LoginMusic.MODID + ".configui.music_play_range")
                 .defineInRange("range", 3, 0, 100);
         BUILDER.pop();

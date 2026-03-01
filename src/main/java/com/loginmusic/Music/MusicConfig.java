@@ -24,21 +24,20 @@ public class MusicConfig {
     private static boolean configLoaded = false;
 
     static {
-        BUILDER.comment("在这里配置服务器上的音乐，配置会自动同步给客户端")
+        BUILDER.comment("Configure server musics (automatically synchronized)")
                 .translation(LoginMusic.MODID + ".configui.music_config");
 
         // push 创建一个配置节
         BUILDER.push("music");
-
         MUSIC_ENTRIES = BUILDER
-                .comment("格式：\"目标玩家|音乐名称|音乐URL\"")
+                .comment("Each entry is a string: \"Target player | Music name | Music URL \"")
                 .translation(LoginMusic.MODID + ".configui.music_entries")
                 .defineList("entries",
                         new ArrayList<>(List.of("Default|Default.mp3|https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")),
                         entry -> entry instanceof String
                 );
-
         BUILDER.pop();
+
         SPEC = BUILDER.build();
     }
 

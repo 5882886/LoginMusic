@@ -1,9 +1,15 @@
 {
     "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
+    "login_music.configui.music_id_type.tooltip": "Keywords for music selection\nOptional: name/uid",
+
     "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
+    "login_music.configui.music_play_range.tooltip": "Range of music play\na non negative integer",
 
     "login_music.configui.music_config": "Configure server musics (automatically synchronized)",
+    "login_music.configui.music_config.tooltip": "Configure server musics (automatically synchronized)",
+
     "login_music.configui.music_entries": "Each entry is a string: \"Target player | Music name | Music URL \"",
+    "login_music.configui.music_entries.tooltip": "Each entry is a string: \"Target player | Music name | Music URL \"",
 
     "login_music.gui.logindownload.start": "Start downloading...",
     "login_music.gui.logindownload.downloading": "Downloading login music",

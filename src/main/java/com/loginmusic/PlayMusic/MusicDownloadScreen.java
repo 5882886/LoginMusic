@@ -15,7 +15,7 @@ public class MusicDownloadScreen extends Screen {
     private volatile boolean error = false;
     private volatile String errorMessage = "";
     private volatile float progress;
-    private volatile String status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.start").getString();
+    private volatile Component status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.start");
 
     private boolean callbackTriggered = false;
 
@@ -93,16 +93,14 @@ public class MusicDownloadScreen extends Screen {
     }
 
     // 线程安全的更新
-    public synchronized void updateProgress(float progress, String status) {
+    public synchronized void updateProgress(float progress, Component status) {
         // 计算progress，保证在[0.0f, 1.0f]
         // max和min别写反了
         this.progress = Math.max(0.0f, Math.min(1.0f, progress));
         this.status = status;
     }
 
-    public void setCompleted() {
-        this.completed = true;
-    }
+    public void setCompleted() { this.completed = true; }
 
     public void setError(String Message) {
         this.error = true;
