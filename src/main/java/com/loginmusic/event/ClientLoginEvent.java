@@ -113,6 +113,17 @@ public class ClientLoginEvent {
                 }
                 return;
             }
+            // 不允许下载则直接返回
+            if (!Config.getAllowDownload()) {
+                if (mc.player != null) {
+                    mc.player.displayClientMessage(
+                        net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.download_forbidden"),
+                        false
+                    );
+                }
+                return;
+            }
+
             LoginMusic.LOGGER.info("开始下载音乐：{}", urlStr);
 
             URL url = new URL(urlStr);

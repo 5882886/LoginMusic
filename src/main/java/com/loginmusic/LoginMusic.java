@@ -35,6 +35,8 @@ public class LoginMusic {
 
     public LoginMusic(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
 
         // 创建缓存目录
         try {
@@ -43,19 +45,16 @@ public class LoginMusic {
             LOGGER.error("Failed to create cache directory!", e);
         }
 
-        // Register the commonSetup method for modloading
-        modEventBus.addListener(this::commonSetup);
         // 注册网络
         NetworkConfig.register();
-        // 初始化配置
-        context.registerConfig(ModConfig.Type.SERVER, MusicConfig.getSpec(), "login_music.toml");
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new Command());
 
-        // 注册通用配置文件
-        context.registerConfig(ModConfig.Type.COMMON, Config.getSpec());
+        // 生成配置文件
+        context.registerConfig(ModConfig.Type.CLIENT, Config.getSpec());
+        context.registerConfig(ModConfig.Type.SERVER, MusicConfig.getSpec());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
