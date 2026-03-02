@@ -1,4 +1,4 @@
-package com.loginmusic.Music;
+package com.loginmusic.music;
 
 import com.loginmusic.LoginMusic;
 import net.minecraftforge.common.ForgeConfigSpec;

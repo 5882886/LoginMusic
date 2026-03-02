@@ -1,11 +1,11 @@
-package com.loginmusic.Event;
+package com.loginmusic.event;
 
 import com.loginmusic.Config;
 import com.loginmusic.LoginMusic;
-import com.loginmusic.Music.MusicConfig;
-import com.loginmusic.Music.MusicEntry;
-import com.loginmusic.PlayMusic.JavaFXMusicPlayer;
-import com.loginmusic.PlayMusic.MusicDownloadScreen;
+import com.loginmusic.music.JavaFXMusicPlayer;
+import com.loginmusic.music.MusicConfig;
+import com.loginmusic.music.MusicEntry;
+import com.loginmusic.music.MusicDownloadScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;

@@ -1,7 +1,7 @@
-package com.loginmusic.Network;
+package com.loginmusic.network;
 
 import com.loginmusic.LoginMusic;
-import com.loginmusic.Event.ClientLoginEvent;
+import com.loginmusic.event.ClientLoginEvent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;

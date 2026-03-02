@@ -1,4 +1,4 @@
-package com.loginmusic.Music;
+package com.loginmusic.music;
 
 import java.util.Objects;
 

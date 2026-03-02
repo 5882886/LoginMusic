@@ -1,4 +1,4 @@
-package com.loginmusic.Network;
+package com.loginmusic.network;
 
 import com.loginmusic.LoginMusic;
 import net.minecraft.resources.ResourceLocation;

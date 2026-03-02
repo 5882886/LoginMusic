@@ -1,10 +1,10 @@
-package com.loginmusic.Event;
+package com.loginmusic.event;
 
 import com.loginmusic.Config;
 import com.loginmusic.LoginMusic;
-import com.loginmusic.Music.MusicConfig;
-import com.loginmusic.Music.MusicEntry;
-import com.loginmusic.Network.NetworkConfig;
+import com.loginmusic.music.MusicConfig;
+import com.loginmusic.music.MusicEntry;
+import com.loginmusic.network.NetworkConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

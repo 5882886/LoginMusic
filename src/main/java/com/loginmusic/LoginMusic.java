@@ -1,8 +1,8 @@
 package com.loginmusic;
 
 import com.mojang.logging.LogUtils;
-import com.loginmusic.Music.MusicConfig;
-import com.loginmusic.Network.NetworkConfig;
+import com.loginmusic.music.MusicConfig;
+import com.loginmusic.network.NetworkConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;

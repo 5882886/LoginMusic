@@ -1,4 +1,4 @@
-package com.loginmusic.PlayMusic;
+package com.loginmusic.music;
 
 import com.loginmusic.LoginMusic;
 import net.minecraft.client.gui.GuiGraphics;
