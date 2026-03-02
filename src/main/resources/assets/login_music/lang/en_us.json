@@ -11,6 +11,9 @@
     "login_music.configui.music_entries": "Each entry is a string: \"Target player | Music name | Music URL \"",
     "login_music.configui.music_entries.tooltip": "Each entry is a string: \"Target player | Music name | Music URL \"",
 
+    "login_music.commands.reload.success": "Reload successfully!",
+    "login_music.commands.reload.fail": "Reload fail!, %s",
+
     "login_music.gui.logindownload.start": "Start downloading...",
     "login_music.gui.logindownload.downloading": "Downloading login music",
     "login_music.gui.logindownload.title": "Login Music download",

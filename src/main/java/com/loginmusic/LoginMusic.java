@@ -52,6 +52,7 @@ public class LoginMusic {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new Command());
 
         // 注册通用配置文件
         context.registerConfig(ModConfig.Type.COMMON, Config.getSpec());

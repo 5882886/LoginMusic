@@ -11,6 +11,9 @@
     "login_music.configui.music_entries": "格式：\"目标玩家|音乐名称|音乐URL\"",
     "login_music.configui.music_entries.tooltip": "格式：\"目标玩家|音乐名称|音乐URL\"",
 
+    "login_music.commands.reload.success": "配置重载成功！",
+    "login_music.commands.reload.fail": "配置重载失败！ %s",
+
     "login_music.gui.logindownload.start": "准备下载 ...",
     "login_music.gui.logindownload.downloading": "正在下载登录音乐",
     "login_music.gui.logindownload.title": "下载登录音乐",
@@ -20,5 +23,4 @@
     "login_music.message.music_not_found": "未找到音乐！",
     "login_music.message.play_music": "正在播放音乐：%s",
     "login_music.message.play_ended": "播放结束：%s"
-
 }

@@ -15,17 +15,26 @@ import java.util.concurrent.ConcurrentHashMap;
 // 文件位于/serverconfig中
 @Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MusicConfig {
+
     private static final ForgeConfigSpec SPEC;
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
+    // 音乐选择的关键字
+    private static final ForgeConfigSpec.ConfigValue<String> MUSIC_ID_TYPE;
     private static final ForgeConfigSpec.ConfigValue<List<? extends String>> MUSIC_ENTRIES;
+
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
+    private static String type;
 
     private static boolean configLoaded = false;
 
     static {
-        BUILDER.comment("Configure server musics (automatically synchronized)")
-                .translation(LoginMusic.MODID + ".configui.music_config");
+        BUILDER.push("Selection");
+        MUSIC_ID_TYPE = BUILDER
+                .comment("Keywords for music selection (name/uuid)")
+                .translation(LoginMusic.MODID + ".configui.music_id_type")
+                .define("type", "name");
+        BUILDER.pop();
 
         // push 创建一个配置节
         BUILDER.push("music");
@@ -41,9 +50,7 @@ public class MusicConfig {
         SPEC = BUILDER.build();
     }
 
-    public static ForgeConfigSpec getSpec() {
-        return SPEC;
-    }
+    public static ForgeConfigSpec getSpec() { return SPEC; }
 
 
     @SubscribeEvent
@@ -54,11 +61,24 @@ public class MusicConfig {
             loadFromConfig();
         }
     }
+    // 重载配置
+    @SubscribeEvent
+    public static void onReload(ModConfigEvent.Reloading event) {
+        if (event.getConfig().getSpec() == SPEC) {
+            LoginMusic.LOGGER.info("检测到配置文件变更，执行热重载");
+            loadFromConfig();
+        }
+    }
 
-    private static void loadFromConfig() {
+
+    public static void loadFromConfig() {
         try {
-            List<? extends String> entries = MUSIC_ENTRIES.get();
+            // 加载音乐播放范围
+            type = MUSIC_ID_TYPE.get();
+            LoginMusic.LOGGER.info("音乐选择的关键字为：{}", type);
+            // 加载音乐配置
             MUSIC_ENTRY_MAP.clear();
+            List<? extends String> entries = MUSIC_ENTRIES.get();
             if (entries != null) {
                 for (String entryStr : entries) {
                     try {
@@ -97,8 +117,8 @@ public class MusicConfig {
         return MUSIC_ENTRY_MAP.get(id);
     }
 
-    public static boolean isConfigLoaded() {
-        return configLoaded;
-    }
+    public static String getType() { return type; }
+
+    public static boolean isConfigLoaded() { return configLoaded; }
 }
 

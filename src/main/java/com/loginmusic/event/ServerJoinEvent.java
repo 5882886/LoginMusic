@@ -1,6 +1,5 @@
 package com.loginmusic.event;
 
-import com.loginmusic.Config;
 import com.loginmusic.LoginMusic;
 import com.loginmusic.music.MusicConfig;
 import com.loginmusic.music.MusicEntry;
@@ -26,9 +25,9 @@ public class ServerJoinEvent {
     // 选择音乐
     private static String chooseMusic(ServerPlayer player) {
         String result = "Default";
-        if (Config.getType().equalsIgnoreCase("name")) {
+        if (MusicConfig.getType().equalsIgnoreCase("name")) {
             result = chooseMusicByName(player);
-        } else if (Config.getType().equalsIgnoreCase("uuid")) {
+        } else if (MusicConfig.getType().equalsIgnoreCase("uuid")) {
             result = chooseMusicByUuid(player);
         }
         return result;
