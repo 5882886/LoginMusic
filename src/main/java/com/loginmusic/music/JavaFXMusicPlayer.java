@@ -28,8 +28,7 @@ public class JavaFXMusicPlayer {
     private static void initialJavaFx() {
         if (javafxInitialized.get()) return;
         // 在一个新线程中初始化 JavaFX 运行时
-        // 这个 start 方法会阻塞，直到 JavaFX 退出
-        // 但因为我们没有传递任何参数，它会启动一个无窗口的 JavaFX 应用
+        // 因为我们没有传递任何参数，它会启动一个无窗口的 JavaFX 应用
         // 一个更优雅的方式是用 com.sun.javafx.application.PlatformImpl 来启动，但这里是简易方案
         // 警告：这种启动方式可能在某些环境下不是最优的，但对于一个独立 Mod 来说足够简单。
         try {
@@ -52,7 +51,11 @@ public class JavaFXMusicPlayer {
                 }
             }).start();
 
-            latch.await(5, TimeUnit.SECONDS);
+            if (latch.await(5, TimeUnit.SECONDS)) {
+                LoginMusic.LOGGER.info("所有线程执行完成");
+            } else {
+                LoginMusic.LOGGER.info("等待超时");
+            }
 
         } catch (Exception e) {
             LoginMusic.LOGGER.error("JavaFX 初始化异常", e);

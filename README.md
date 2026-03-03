@@ -2,7 +2,7 @@ A simple Minecraft mod that can play music when players join in the world.
 
 > This mod uses AI to assist in development.
 > 
-> Currently, it uses javafx to play audio. As a result, it may not work well on some platforms.
+> Currently, it uses javafx to play audio. As a result, it may not work well on some platforms. JavaFX uses the GPLv2 + CE license.
 
 ## Functions
 
@@ -80,4 +80,4 @@ Then try to download it from its related url if it has failed before.
 
 > Tips: If there is a file with the same name in the folder, it will skip the download even if the file does not match the URL.
 
-If more entries need to be configured, please separate them with commas. Set `Default` for anyone that  
+If more entries need to be configured, please separate them with commas. 
