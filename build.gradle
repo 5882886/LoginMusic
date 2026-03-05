@@ -20,19 +20,6 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
-configurations {
-    javafx_configuration {
-        description = 'JavaFX dependencies'
-        canBeConsumed = true
-        canBeResolved = true
-    }
-}
-
-// 将自定义配置加入 implementation
-configurations.implementation.extendsFrom(configurations.javafx_configuration)
-
-ext.javafxVersion = '21'
-
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
 
@@ -65,12 +52,6 @@ minecraft {
         client {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
-            jvmArgs = [
-                '--module-path', { configurations.javafx_configuration.resolve().collect { it.absolutePath }.join(File.pathSeparator) },
-                '--add-modules', 'javafx.media,javafx.controls,javafx.graphics,javafx.base',
-                '--add-opens', 'javafx.media/javafx.scene.media=ALL-UNNAMED',
-                '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
-            ] as List<String>
         }
 
         server {
@@ -110,23 +91,23 @@ dependencies {
 
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // javafx 依赖
-    def platforms = ['win', 'linux', 'mac']
-    def modules = ['base', 'graphics', 'media', 'controls']
-
-    modules.each { module ->
-        platforms.each { platform ->
-            javafx_configuration "org.openjfx:javafx-${module}:${javafxVersion}:${platform}"
-        }
-    }
+    // 添加 MP3 支持
+    minecraftLibrary 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
 }
 
 shadowJar {
-    configurations = [project.configurations.javafx_configuration]
+    dependencies {
+        include(dependency("com.googlecode.soundlibs:mp3spi:1.9.5.4"))
+        include(dependency("com.googlecode.soundlibs:jlayer:1.0.1.4"))
+        include(dependency("com.googlecode.soundlibs:tritonus-share:0.3.7.4"))
+    }
+
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     // 重定位java文件
-    relocate 'javafx', 'com.loginmusic.javafx'
+    relocate 'javazoom.jl', 'com.loginmusic.soundlibs.javazoom.jl'
+    relocate 'javazoom.spi', 'com.loginmusic.soundlibs.javazoom.spi'
+    relocate 'org.tritonus', 'com.loginmusic.soundlibs.org.tritonus'
 
     archiveClassifier.set('all')
 
@@ -135,7 +116,7 @@ shadowJar {
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
 
-    // 合并 JavaFX 的模块信息（关键！）
+    // 合并模块信息（关键！）
     mergeServiceFiles()
 }
 

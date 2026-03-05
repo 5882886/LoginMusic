@@ -61,15 +61,6 @@ public class MusicConfig {
             loadFromConfig();
         }
     }
-    // 重载配置
-    @SubscribeEvent
-    public static void onReload(ModConfigEvent.Reloading event) {
-        if (event.getConfig().getSpec() == SPEC) {
-            LoginMusic.LOGGER.info("检测到配置文件变更，执行热重载");
-            loadFromConfig();
-        }
-    }
-
 
     public static void loadFromConfig() {
         try {

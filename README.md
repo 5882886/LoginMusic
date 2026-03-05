@@ -1,8 +1,10 @@
 A simple Minecraft mod that can play music when players join in the world.
 
 > This mod uses AI to assist in development.
+>
+> Since mod version 1.1.0, javafx has given place to `com.googlecode.soundlibs:mp3spi`, which provides MP3 support now.
 > 
-> Currently, it uses javafx to play audio. As a result, it may not work well on some platforms. JavaFX uses the GPLv2 + CE license.
+> Inspired by TartaricAcid's [Net Music](https://modrinth.com/mod/net-music) !
 
 ## Functions
 
@@ -36,7 +38,7 @@ All music files are stored in the `/LoginMusic` folder.
 
 ## Config
 
-### Client side
+### Client Side
 
 `login_music-client.toml` is effective only for the client:
 

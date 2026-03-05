@@ -2,10 +2,7 @@ package com.loginmusic.event;
 
 import com.loginmusic.Config;
 import com.loginmusic.LoginMusic;
-import com.loginmusic.music.JavaFXMusicPlayer;
-import com.loginmusic.music.MusicConfig;
-import com.loginmusic.music.MusicEntry;
-import com.loginmusic.music.MusicDownloadScreen;
+import com.loginmusic.music.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -61,7 +58,7 @@ public class ClientLoginEvent {
                     mc.setScreen(null);
                     // 关闭自定义界面，回到游戏
                     // 启动播放事件
-                    JavaFXMusicPlayer.playMusic(entry.getId(), entry.getName());
+                    SimpleMusicPlayer.playMusic(entry.getId(), entry.getName());
                 });
             });
 
@@ -177,7 +174,7 @@ public class ClientLoginEvent {
     public static void checkMove(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         // 已经停止则不再检测
-        if (JavaFXMusicPlayer.isStopped()) return;
+        if (SimpleMusicPlayer.isStopped()) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;
@@ -196,7 +193,7 @@ public class ClientLoginEvent {
 
         // 检测移动范围
         if (outOfRange) {
-            JavaFXMusicPlayer.StopCurrentMusic();
+            SimpleMusicPlayer.stopCurrentMusic();
             mc.player.displayClientMessage(
                 net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
                 false
@@ -207,9 +204,9 @@ public class ClientLoginEvent {
     // 检测退出世界操作
     @SubscribeEvent
     public static void checkLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        if (JavaFXMusicPlayer.isStopped()) return;
+        if (SimpleMusicPlayer.isStopped()) return;
         LoginMusic.LOGGER.info("玩家退出世界，停止音乐播放");
         // 解决玩家退出世界仍播放音乐的问题
-        JavaFXMusicPlayer.StopCurrentMusic();
+        SimpleMusicPlayer.stopCurrentMusic();
     }
 }
