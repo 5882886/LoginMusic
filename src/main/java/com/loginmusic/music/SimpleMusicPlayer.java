@@ -71,7 +71,6 @@ public class SimpleMusicPlayer {
                 DataLine.Info info = new DataLine.Info(Clip.class, targetFormat);
 
                 if (!AudioSystem.isLineSupported(info)) {
-                    LoginMusic.LOGGER.error("不支持的音频格式");
                     LoginMusic.LOGGER.error("不支持的音频格式：{}", musicName);
                     return;
                 }
@@ -86,7 +85,7 @@ public class SimpleMusicPlayer {
                             currentClip = null;
                             currentMusicId = null;
                             isPlaying = false;
-
+                            // 播放结束通知
                             mc.execute(() -> {
                                 if (Minecraft.getInstance().player != null) {
                                     Minecraft.getInstance().player.displayClientMessage(
@@ -100,12 +99,11 @@ public class SimpleMusicPlayer {
                 });
 
                 clip.open(audioStream);
-
+                // 在MC线程中执行
                 mc.execute(() -> {
                     currentClip = clip;
                     clip.start();
                     isPlaying = true;
-
                     // 通知玩家
                     if (Minecraft.getInstance().player != null) {
                         Minecraft.getInstance().player.displayClientMessage(
@@ -142,7 +140,5 @@ public class SimpleMusicPlayer {
     }
 
     // 获取播放状态
-    public static boolean isStopped() {
-        return !isPlaying;
-    }
+    public static boolean isStopped() { return !isPlaying; }
 }

@@ -23,6 +23,7 @@
     "login_music.gui.logindownload.downloading": "Downloading login music",
     "login_music.gui.logindownload.title": "Login Music download",
     "login_music.gui.logindownload.progress": "Downloading... %.1f MB / %.1f MB",
+    "login_music.gui.logindownload.warn": "Warning, the downloaded file may not be an audio file",
 
     "login_music.message.download_forbidden": "Already set to not allow downloading music from the network.",
     "login_music.message.out_of_range": "Moving out of range, music playback has stopped!",

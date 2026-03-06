@@ -23,6 +23,7 @@
     "login_music.gui.logindownload.downloading": "正在下载登录音乐",
     "login_music.gui.logindownload.title": "下载登录音乐",
     "login_music.gui.logindownload.progress": "下载中 ... %.1f MB / %.1f MB",
+    "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
 
     "login_music.message.download_forbidden": "已设置不允许从网络下载音乐",
     "login_music.message.out_of_range": "移动超出范围，已停止音乐播放！",

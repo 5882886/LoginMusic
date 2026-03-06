@@ -74,12 +74,20 @@ public class ClientLoginEvent {
         // 加载下载界面
         CompletableFuture.runAsync(() -> {
             try {
+                boolean[] typeMismatch = {false};
+                String[] mismatch = {""};
                 // 显示下载信息
-                downloadMusic(url, name, (downloaded, total, progress) -> {
-                    Component status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
-                        String.format("%.1f", downloaded / 1024.0 / 1024.0),
-                        String.format("%.1f", total / 1024.0 / 1024.0)
-                    );
+                downloadMusic(url, name, typeMismatch, mismatch, (downloaded, total, progress) -> {
+                    Component status;
+                    // 设置不同的提示信息
+                    if (typeMismatch[0]) {
+                        status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.warn");
+                    } else {
+                        status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
+                                String.format("%.1f", downloaded / 1024.0 / 1024.0),
+                                String.format("%.1f", total / 1024.0 / 1024.0)
+                        );
+                    }
                     // 在主进程中更新进度
                     if (screen != null) { screen.updateProgress(progress, status); }
                 });
@@ -98,7 +106,7 @@ public class ClientLoginEvent {
     }
 
     // 下载方法
-    public static void downloadMusic(String urlStr, String name, DownloadCallback callback) {
+    public static void downloadMusic(String urlStr, String name, boolean[] typeMismatch, String[] mismatchType, DownloadCallback callback) {
         try {
             Path cacheFile = LoginMusic.CACHE_DIR.resolve(name);
             // 检查缓存，命中直接返回
@@ -132,9 +140,25 @@ public class ClientLoginEvent {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == 200) {
-                // 获取文件大小
+                // 获取文件大小和类型
                 long totalBytes = connection.getContentLengthLong();
-                LoginMusic.LOGGER.info("文件大小：{}", totalBytes);
+                String mimeType = connection.getContentType();
+
+                LoginMusic.LOGGER.info("文件大小：{}; 文件类型：{}", totalBytes, mimeType);
+
+                // 检查文件类型
+                if (!mimeType.equals("audio/mpeg")) {
+                    LoginMusic.LOGGER.warn("下载的文件 {} 可能不是音频文件", mimeType);
+                    // 设置类型不匹配标志
+                    if (typeMismatch != null && typeMismatch.length > 0) {
+                        typeMismatch[0] = true;
+                    }
+                    if (mismatchType != null && mismatchType.length > 0) {
+                        mismatchType[0] = mimeType;
+                    }
+                    callback.onProgress(0, totalBytes, 0.0f);
+                }
+
                 // 下载文件
                 try (InputStream in = connection.getInputStream()) {
                     OutputStream out = Files.newOutputStream(cacheFile);
