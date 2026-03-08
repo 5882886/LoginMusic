@@ -6,14 +6,14 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-// 音乐下载界面
+
 public class MusicDownloadScreen extends Screen {
     private final String musicId;
     private final Runnable onComplete;
 
     private volatile boolean completed = false;
     private volatile boolean error = false;
-    private volatile String errorMessage = "";
+    private volatile String errorMessage;
     private volatile float progress;
     private volatile Component status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.start");
 
@@ -28,7 +28,8 @@ public class MusicDownloadScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         // 渲染背景
-        this.renderBackground(graphics);
+        // renderBackground函数有变化
+        this.renderBackground(graphics, mouseX, mouseY, partialTick);
 
         int centerX = this.width / 2;
         int centerY = this.height / 2;

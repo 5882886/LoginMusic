@@ -1,5 +1,5 @@
 {
-    "login_music.configui.title": "客户端基础设置",
+    "login_music.configuration.Basic": "客户端基础设置",
 
     "login_music.configui.allow_download": "是否允许从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "防止恶意链接\n请仅在您信任的服务器上开启此功能",
@@ -7,11 +7,12 @@
     "login_music.configui.music_play_range": "音乐播放的范围（非负整数）",
     "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n非负整数",
 
-    "login_music.configui.music_config": "配置服务器上的音乐（自动同步）",
+    "login_music.configuration.Music": "配置服务器上的音乐（自动同步）",
     "login_music.configui.music_config.tooltip": "配置服务器上的音乐（自动同步）",
 
-    "login_music.configui.music_id_type": "音乐选择的关键字（可选：name/uuid）",
+    "login_music.configuration.Selection": "音乐选择的关键字（可选：name/uuid）",
     "login_music.configui.music_id_type.tooltip": "音乐选择的关键字\n可选 name/uuid）",
+    "login_music.configuration.type": "音乐选择的关键字",
 
     "login_music.configui.music_entries": "格式：\"目标玩家|音乐名称|音乐URL\"",
     "login_music.configui.music_entries.tooltip": "格式：\"目标玩家|音乐名称|音乐URL\"",

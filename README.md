@@ -21,19 +21,14 @@ All music files are stored in the `/LoginMusic` folder.
 ```
 ├── {your minecraft version}
     ├── config
-    │   └── login_music-common.toml     # Universal config
+    │   ├── login_music-common.toml     # Universal config
+    │   └── login_music.toml        # Configure specific music
     │
     ├── LoginMusic                      # Store music files
     │   ├── music_1.mp3
     │   ├── music_2.wav
     │   └── ...
-    │
-    ├── saves/world
-    │   ├── serverconfig
-    │   │   ├── login_music.toml        # Configure specific music
-    │   │   └ ...
-    │   └── ...
-    └── ...
+    └ ...
 ```
 
 ## Config
@@ -43,7 +38,7 @@ All music files are stored in the `/LoginMusic` folder.
 `login_music-client.toml` is effective only for the client:
 
 ```toml
-["Basic client config"]
+["Basic"]
     #Range of music play (a non negative integer)
     #Range: 0 ~ 100
     range = 3
@@ -61,7 +56,7 @@ All music files are stored in the `/LoginMusic` folder.
     #Keywords for music selection (name/uuid)
     type = "name"
 
-[music]
+[Music]
     # Use 'Default' as the default setting
     entries = ["Default|Default.mp3|https://www.example.com/Example.mp3"]
 ```

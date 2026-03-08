@@ -24,7 +24,6 @@ public class MusicEntry {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -33,9 +32,5 @@ public class MusicEntry {
 
         MusicEntry that = (MusicEntry) object;
         return Objects.equals(id, that.id);
-    }
-
-    public int HashCode() {
-        return Objects.hash(id);
     }
 }

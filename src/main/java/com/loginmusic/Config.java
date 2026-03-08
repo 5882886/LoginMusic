@@ -1,27 +1,26 @@
 package com.loginmusic;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
-// 通用配置文件
-@Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = LoginMusic.MODID)
 public class Config {
 
-    private static final ForgeConfigSpec SPEC;
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ModConfigSpec SPEC;
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     // 允许音乐播放的范围
-    private static final ForgeConfigSpec.ConfigValue<Integer> MUSIC_PLAY_RANGE;
+    private static final ModConfigSpec.ConfigValue<Integer> MUSIC_PLAY_RANGE;
     // 是否允许从Url下载音乐
-    private static final ForgeConfigSpec.BooleanValue ALLOW_DOWNLOAD;
+    private static final ModConfigSpec.BooleanValue ALLOW_DOWNLOAD;
 
     private static Integer range;
     private static boolean allowDownload;
 
     static {
-        BUILDER.push("Basic client config").translation(LoginMusic.MODID + ".configui.title");
+        BUILDER.push("Basic");
         MUSIC_PLAY_RANGE = BUILDER
                 .comment("Range of music play (a non negative integer)")
                 .translation(LoginMusic.MODID + ".configui.music_play_range")
@@ -44,7 +43,7 @@ public class Config {
         LoginMusic.LOGGER.info("允许播放半径：{} 格", range);
     }
 
-    public static ForgeConfigSpec getSpec() { return SPEC; }
+    public static ModConfigSpec getSpec() { return SPEC; }
 
     public static Integer getRange() { return range; }
     public static boolean getAllowDownload() { return allowDownload; }

@@ -3,8 +3,8 @@ package com.loginmusic.music;
 import com.loginmusic.LoginMusic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -141,4 +141,7 @@ public class SimpleMusicPlayer {
 
     // 获取播放状态
     public static boolean isStopped() { return !isPlaying; }
+
+    // 获取播放的音乐id
+    public static String getCurrentMusicId() { return currentMusicId; }
 }

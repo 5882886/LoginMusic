@@ -3,32 +3,44 @@ package com.loginmusic.network;
 import com.loginmusic.LoginMusic;
 import com.loginmusic.event.ClientLoginEvent;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+public record LoginMusicPacket(String musicID) implements CustomPacketPayload {
+    // 定义包类型
+    public static final CustomPacketPayload.Type<LoginMusicPacket> TYPE =
+            new CustomPacketPayload.Type<>(
+                    ResourceLocation.fromNamespaceAndPath(LoginMusic.MODID, "login_music")
+            );
 
-public class LoginMusicPacket {
-    // 播放音乐的ID
-    private final String musicID;
+    // 定义流编解码器 - 使用 ByteBufCodecs
+    public static final StreamCodec<FriendlyByteBuf, LoginMusicPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.STRING_UTF8,      // 编码器
+                    LoginMusicPacket::musicID,      // 获取器
+                    LoginMusicPacket::new           // 构造器
+            );
 
-    public LoginMusicPacket(String musicID) { this.musicID = musicID; }
-
-    // 写入音乐ID
-    public void encode(FriendlyByteBuf buf) { buf.writeUtf(musicID); }
-
-    // 读取音乐ID
-    public static LoginMusicPacket decode(FriendlyByteBuf buf) { return new LoginMusicPacket(buf.readUtf()); }
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
 
     // 处理数据包：当客户端收到此包时调用
-    public static void handle(LoginMusicPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
+    public static void handle(final LoginMusicPacket packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            LoginMusic.LOGGER.info("准备播放");
-            DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
-                    ClientLoginEvent.PlayLoginMusic(packet.musicID));
+            LoginMusic.LOGGER.info("准备播放音乐: {}", packet.musicID());
+
+            // 只在客户端执行
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                ClientLoginEvent.PlayLoginMusic(packet.musicID());
+            }
         });
-        context.setPacketHandled(true);
     }
 }

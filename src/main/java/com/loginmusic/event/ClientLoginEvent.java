@@ -6,16 +6,17 @@ import com.loginmusic.music.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +34,6 @@ public class ClientLoginEvent {
     // 记录玩家位置
     private static double lastX, lastY, lastZ;
 
-
     // 登录事件
     public static void PlayLoginMusic(String musicId) {
         isInitialPos = false;
@@ -43,8 +43,8 @@ public class ClientLoginEvent {
             LoginMusic.LOGGER.warn("未找到音乐 {}", musicId);
             if (mc.player != null) {
                 mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId),
-                    false
+                        Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId),
+                        false
                 );
             }
             return;
@@ -89,13 +89,15 @@ public class ClientLoginEvent {
                         );
                     }
                     // 在主进程中更新进度
-                    if (screen != null) { screen.updateProgress(progress, status); }
+                    if (screen != null) {
+                        mc.execute(() -> screen.updateProgress(progress, status));
+                    }
                 });
                 // 设置界面关闭状态
                 mc.execute(screen::setCompleted);
             } catch (Exception e) {
-                LoginMusic.LOGGER.error("下载音乐错误！");
-                mc.execute(() -> screen.setError("下载失败" + e.getMessage()));
+                LoginMusic.LOGGER.error("下载音乐错误！", e);
+                mc.execute(() -> screen.setError("下载失败: " + e.getMessage()));
             }
         });
     }
@@ -122,8 +124,8 @@ public class ClientLoginEvent {
             if (!Config.getAllowDownload()) {
                 if (mc.player != null) {
                     mc.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.download_forbidden"),
-                        false
+                            Component.translatable(LoginMusic.MODID + ".message.download_forbidden"),
+                            false
                     );
                 }
                 return;
@@ -131,7 +133,10 @@ public class ClientLoginEvent {
 
             LoginMusic.LOGGER.info("开始下载音乐：{}", urlStr);
 
-            URL url = new URL(urlStr);
+            // Java20 之后不再使用 URL() 方法
+            // - URL url = new URL(urlStr);
+            URI uri = new URI(urlStr);
+            URL url = uri.toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
@@ -147,7 +152,7 @@ public class ClientLoginEvent {
                 LoginMusic.LOGGER.info("文件大小：{}; 文件类型：{}", totalBytes, mimeType);
 
                 // 检查文件类型
-                if (!mimeType.equals("audio/mpeg")) {
+                if (mimeType != null && !mimeType.equals("audio/mpeg")) {
                     LoginMusic.LOGGER.warn("下载的文件 {} 可能不是音频文件", mimeType);
                     // 设置类型不匹配标志
                     if (typeMismatch != null && typeMismatch.length > 0) {
@@ -156,12 +161,11 @@ public class ClientLoginEvent {
                     if (mismatchType != null && mismatchType.length > 0) {
                         mismatchType[0] = mimeType;
                     }
-                    callback.onProgress(0, totalBytes, 0.0f);
                 }
 
                 // 下载文件
-                try (InputStream in = connection.getInputStream()) {
-                    OutputStream out = Files.newOutputStream(cacheFile);
+                try (InputStream in = connection.getInputStream();
+                     OutputStream out = Files.newOutputStream(cacheFile)) {
                     byte[] buffer = new byte[8192];
                     int bytesRead;
                     long downloadedBytes = 0;
@@ -170,8 +174,7 @@ public class ClientLoginEvent {
                         downloadedBytes += bytesRead;
                         // 回调进度
                         if (callback != null) {
-                            // (float) 必须在分母上，写在前面直接将转为 0.0f
-                            float progress = downloadedBytes / (float) totalBytes;
+                            float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
                             callback.onProgress(downloadedBytes, totalBytes, progress);
                         }
                     }
@@ -181,22 +184,21 @@ public class ClientLoginEvent {
                 LoginMusic.LOGGER.warn("下载失败，HTTP状态码：{}", responseCode);
             }
         } catch (Exception e) {
-            LoginMusic.LOGGER.warn("下载异常！{}", String.valueOf(e));
+            LoginMusic.LOGGER.warn("下载异常！", e);
         }
     }
 
     // 注册监听器
     private static void registerListener() {
         if (!listenerRegistered) {
-            MinecraftForge.EVENT_BUS.register(ClientLoginEvent.class);
+            NeoForge.EVENT_BUS.register(ClientLoginEvent.class);
             listenerRegistered = true;
         }
     }
 
     // 检测玩家移动
     @SubscribeEvent
-    public static void checkMove(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
+    public static void checkMove(ClientTickEvent.Post event) {
         // 已经停止则不再检测
         if (SimpleMusicPlayer.isStopped()) return;
 
@@ -219,8 +221,8 @@ public class ClientLoginEvent {
         if (outOfRange) {
             SimpleMusicPlayer.stopCurrentMusic();
             mc.player.displayClientMessage(
-                net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
-                false
+                    Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
+                    false
             );
         }
     }
