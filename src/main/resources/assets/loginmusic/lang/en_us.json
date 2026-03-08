@@ -1,0 +1,34 @@
+{
+  "login_music.configuration.Basic": "Basic client config",
+
+  "login_music.configui.allow_download": "Whether to allow downloading music from the internet",
+  "login_music.configui.allow_download.tooltip": "Prevent malicious links\nPlease only enable this feature on servers that you trust",
+
+  "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
+  "login_music.configui.music_play_range.tooltip": "Range of music play\na non negative integer",
+
+  "login_music.configuration.Music": "Configure server musics (automatically synchronized)",
+  "login_music.configui.music_config.tooltip": "Configure server musics (automatically synchronized)",
+
+  "login_music.configuration.Selection": "Keywords for music selection (name/uuid)",
+  "login_music.configui.music_id_type.tooltip": "Keywords for music selection\nOptional: name/uid",
+  "login_music.configuration.type": "Keywords for music selection",
+
+  "login_music.configui.music_entries": "Each entry is a string: \"Target player | Music name | Music URL \"",
+  "login_music.configui.music_entries.tooltip": "Each entry is a string: \"Target player | Music name | Music URL \"",
+
+  "login_music.commands.reload.success": "Reload successfully!",
+  "login_music.commands.reload.fail": "Reload fail!, %s",
+
+  "login_music.gui.logindownload.start": "Start downloading...",
+  "login_music.gui.logindownload.downloading": "Downloading login music",
+  "login_music.gui.logindownload.title": "Login Music download",
+  "login_music.gui.logindownload.progress": "Downloading... %.1f MB / %.1f MB",
+  "login_music.gui.logindownload.warn": "Warning, the downloaded file may not be an audio file",
+
+  "login_music.message.download_forbidden": "Already set to not allow downloading music from the network.",
+  "login_music.message.out_of_range": "Moving out of range, music playback has stopped!",
+  "login_music.message.music_not_found": "Music not found!",
+  "login_music.message.play_music": "Playing music: %s",
+  "login_music.message.play_ended": "Music ends: %s"
+}

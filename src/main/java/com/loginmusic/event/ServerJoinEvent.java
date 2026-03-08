@@ -5,11 +5,11 @@ import com.loginmusic.music.MusicConfig;
 import com.loginmusic.music.MusicEntry;
 import com.loginmusic.network.NetworkConfig;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = LoginMusic.MODID)
 public class ServerJoinEvent {
     @SubscribeEvent
     // 玩家登录事件
