@@ -33,6 +33,7 @@ public class NetworkConfig {
         LoginMusic.LOGGER.info("网络包注册完成");
     }
 
+    // 发送音乐给特定玩家
     public static void sendLoginMusic(ServerPlayer player, String musicId) {
         if (player == null) return;
 
@@ -40,5 +41,10 @@ public class NetworkConfig {
                 new LoginMusicPacket(musicId));
 
         LoginMusic.LOGGER.info("已发送音乐 {} 给 {}", musicId, player.getName().getString());
+    }
+
+    // 同步数据给特定玩家
+    public static void sendToPlayer(Object packet, ServerPlayer player) {
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 }

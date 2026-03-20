@@ -3,6 +3,7 @@ package com.loginmusic.event;
 import com.loginmusic.LoginMusic;
 import com.loginmusic.music.MusicConfig;
 import com.loginmusic.music.MusicEntry;
+import com.loginmusic.network.LoginMusicPacket;
 import com.loginmusic.network.NetworkConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -18,6 +19,13 @@ public class ServerJoinEvent {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 根据玩家名称获取音乐
             String musicId = chooseMusic(serverPlayer);
+            // 玩家登录时发送音乐配置
+            if (!MusicConfig.isConfigLoaded()) {
+                MusicConfig.loadFromConfig();
+            }
+
+            LoginMusic.LOGGER.info("玩家 {} 登录，发送音乐配置", serverPlayer.getName().getString());
+            NetworkConfig.sendToPlayer(new LoginMusicPacket(MusicConfig.getMusicConfig()), serverPlayer);
             NetworkConfig.sendLoginMusic(serverPlayer, musicId);
         }
     }
