@@ -14,11 +14,10 @@
     "login_music.configui.music_id_type.tooltip": "音乐选择的关键字\n可选 name/uuid）",
     "login_music.configuration.type": "音乐选择的关键字",
 
-    "login_music.configui.music_entries": "格式：\"目标玩家|音乐名称|音乐URL\"",
-    "login_music.configui.music_entries.tooltip": "格式：\"目标玩家|音乐名称|音乐URL\"",
-
     "login_music.commands.reload.success": "配置重载成功！",
     "login_music.commands.reload.fail": "配置重载失败！ %s",
+    "login_music.commands.list.empty": "音乐配置为空！",
+    "login_music.commands.list.success": "音乐配置如下：",
 
     "login_music.gui.logindownload.start": "准备下载 ...",
     "login_music.gui.logindownload.downloading": "正在下载登录音乐",

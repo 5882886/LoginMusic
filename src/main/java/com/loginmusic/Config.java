@@ -40,7 +40,7 @@ public class Config {
     static void onLoad(final ModConfigEvent event) {
         range = MUSIC_PLAY_RANGE.get();
         allowDownload = ALLOW_DOWNLOAD.get();
-        LoginMusic.LOGGER.info("允许播放半径：{} 格", range);
+        LoginMusic.LOGGER.info("Music playing range: {} blocks", range);
     }
 
     public static ModConfigSpec getSpec() { return SPEC; }

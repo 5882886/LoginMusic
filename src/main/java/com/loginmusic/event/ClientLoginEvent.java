@@ -40,7 +40,7 @@ public class ClientLoginEvent {
         MusicEntry entry = MusicConfig.getMusic(musicId);
 
         if (entry == null) {
-            LoginMusic.LOGGER.warn("未找到音乐 {}", musicId);
+            LoginMusic.LOGGER.warn("Music not found {}", musicId);
             if (mc.player != null) {
                 mc.player.displayClientMessage(
                         Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId),
@@ -96,8 +96,8 @@ public class ClientLoginEvent {
                 // 设置界面关闭状态
                 mc.execute(screen::setCompleted);
             } catch (Exception e) {
-                LoginMusic.LOGGER.error("下载音乐错误！", e);
-                mc.execute(() -> screen.setError("下载失败: " + e.getMessage()));
+                LoginMusic.LOGGER.error("Downloading Music failed!");
+                mc.execute(() -> screen.setError("Downloading failed" + e.getMessage()));
             }
         });
     }
@@ -113,7 +113,7 @@ public class ClientLoginEvent {
             Path cacheFile = LoginMusic.CACHE_DIR.resolve(name);
             // 检查缓存，命中直接返回
             if (Files.exists(cacheFile)) {
-                LoginMusic.LOGGER.info("文件已下载");
+                LoginMusic.LOGGER.info("File has been downloaded!");
                 if (callback != null) {
                     long size = Files.size(cacheFile);
                     callback.onProgress(size, size, 1.0f);
@@ -131,7 +131,7 @@ public class ClientLoginEvent {
                 return;
             }
 
-            LoginMusic.LOGGER.info("开始下载音乐：{}", urlStr);
+            LoginMusic.LOGGER.info("Start downloading from {}", urlStr);
 
             // Java20 之后不再使用 URL() 方法
             // - URL url = new URL(urlStr);
@@ -149,11 +149,11 @@ public class ClientLoginEvent {
                 long totalBytes = connection.getContentLengthLong();
                 String mimeType = connection.getContentType();
 
-                LoginMusic.LOGGER.info("文件大小：{}; 文件类型：{}", totalBytes, mimeType);
+                LoginMusic.LOGGER.info("File size: {}; File type: {}", totalBytes, mimeType);
 
                 // 检查文件类型
                 if (mimeType != null && !mimeType.equals("audio/mpeg")) {
-                    LoginMusic.LOGGER.warn("下载的文件 {} 可能不是音频文件", mimeType);
+                    LoginMusic.LOGGER.warn("The downloading file {} may not be an audio file!", mimeType);
                     // 设置类型不匹配标志
                     if (typeMismatch != null && typeMismatch.length > 0) {
                         typeMismatch[0] = true;
@@ -178,13 +178,13 @@ public class ClientLoginEvent {
                             callback.onProgress(downloadedBytes, totalBytes, progress);
                         }
                     }
-                    LoginMusic.LOGGER.info("下载完成，共 {} 字节", downloadedBytes);
+                    LoginMusic.LOGGER.info("Downloading completed, total {} bytes", downloadedBytes);
                 }
             } else {
-                LoginMusic.LOGGER.warn("下载失败，HTTP状态码：{}", responseCode);
+                LoginMusic.LOGGER.warn("Download failed, error code: {}", responseCode);
             }
         } catch (Exception e) {
-            LoginMusic.LOGGER.warn("下载异常！", e);
+            LoginMusic.LOGGER.warn("Downloading error!", e);
         }
     }
 
@@ -231,7 +231,7 @@ public class ClientLoginEvent {
     @SubscribeEvent
     public static void checkLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         if (SimpleMusicPlayer.isStopped()) return;
-        LoginMusic.LOGGER.info("玩家退出世界，停止音乐播放");
+        LoginMusic.LOGGER.info("Player exits the world, stop playing!");
         // 解决玩家退出世界仍播放音乐的问题
         SimpleMusicPlayer.stopCurrentMusic();
     }

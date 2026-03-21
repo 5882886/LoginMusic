@@ -1,6 +1,5 @@
 package com.loginmusic;
 
-import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -26,6 +25,5 @@ public class LoginMusicClient {
     static void onClientSetup(FMLClientSetupEvent event) {
         // Some client setup code
         LoginMusic.LOGGER.info("HELLO FROM CLIENT SETUP");
-        LoginMusic.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
     }
 }

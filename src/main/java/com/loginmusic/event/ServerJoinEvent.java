@@ -18,6 +18,12 @@ public class ServerJoinEvent {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 根据玩家名称获取音乐
             String musicId = chooseMusic(serverPlayer);
+            // 玩家登录时发送音乐配置
+            if (MusicConfig.isConfigLoaded()) {
+                MusicConfig.loadFromConfig();
+            }
+
+            LoginMusic.LOGGER.info("Player {} is logging in, sending music config", serverPlayer.getName().getString());
             NetworkConfig.sendLoginMusic(serverPlayer, musicId);
         }
     }
