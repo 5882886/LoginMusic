@@ -1,11 +1,12 @@
 package com.loginmusic;
 
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-@EventBusSubscriber(modid = LoginMusic.MODID)
+@EventBusSubscriber(modid = LoginMusic.MODID, value = Dist.CLIENT)
 public class Config {
 
     private static final ModConfigSpec SPEC;
@@ -34,7 +35,6 @@ public class Config {
 
         SPEC = BUILDER.build();
     }
-
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
