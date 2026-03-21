@@ -13,11 +13,10 @@
     "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
     "login_music.configui.music_id_type.tooltip": "Keywords for music selection\nOptional: name/uid",
 
-    "login_music.configui.music_entries": "Each entry is a string: \"Target player | Music name | Music URL \"",
-    "login_music.configui.music_entries.tooltip": "Each entry is a string: \"Target player | Music name | Music URL \"",
-
     "login_music.commands.reload.success": "Reload successfully!",
     "login_music.commands.reload.fail": "Reload fail!, %s",
+    "login_music.commands.list.empty": "The music config is empty!",
+    "login_music.commands.list.success": "The following is the music config:",
 
     "login_music.gui.logindownload.start": "Start downloading...",
     "login_music.gui.logindownload.downloading": "Downloading login music",

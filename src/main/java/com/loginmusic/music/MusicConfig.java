@@ -29,7 +29,7 @@ public class MusicConfig {
     // 创建配置文件
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG = "music.json";
-    private static Path configPath;
+    private static Path configPath = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
 
     private static final ForgeConfigSpec SPEC;
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
@@ -55,12 +55,11 @@ public class MusicConfig {
 
     public static ForgeConfigSpec getSpec() { return SPEC; }
 
-
-    @SubscribeEvent
     // 加载配置
+    @SubscribeEvent
     public static void onLoad(ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() == SPEC) {
-            LoginMusic.LOGGER.info("正在加载登录音乐");
+            LoginMusic.LOGGER.info("Loading LoginMusic config!");
             configPath = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
             loadFromConfig();
         }
@@ -70,14 +69,14 @@ public class MusicConfig {
         try {
             // 加载音乐选择关键字
             type = MUSIC_ID_TYPE.get();
-            LoginMusic.LOGGER.info("音乐选择的关键字为：{}", type);
-
+            LoginMusic.LOGGER.info("Select music by: {}", type);
+            // 创建配置文件夹
             Files.createDirectories(configPath.getParent());
-
             if (!Files.exists(configPath)) {
                 createDefaultConfig();
             }
 
+            // 读取json文件
             try (Reader reader = Files.newBufferedReader(configPath)) {
                 Type listType = new TypeToken<Map<String, List<MusicEntry>>>(){}.getType();
 
@@ -87,16 +86,15 @@ public class MusicConfig {
                     MUSIC_ENTRY_MAP.clear();
                     for (MusicEntry music : config.get("musics")) {
                         MUSIC_ENTRY_MAP.put(music.getId(), music);
-                        LoginMusic.LOGGER.info("加载音乐: {} -> {}", music.getName(), music.getId());
+                        LoginMusic.LOGGER.info("Loading music: {} -> {}", music.getName(), music.getId());
                     }
                 }
             }
 
             configLoaded = true;
-            LoginMusic.LOGGER.info("音乐配置加载完成，共 {} 首音乐", MUSIC_ENTRY_MAP.size());
-
+            LoginMusic.LOGGER.info("Loading completed，total {} musics", MUSIC_ENTRY_MAP.size());
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("加载音乐配置失败", e);
+            LoginMusic.LOGGER.error("Loading musics failed!", e);
         }
     }
 
@@ -125,7 +123,7 @@ public class MusicConfig {
                     """;
             writer.write(defaultConfig);
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("创建配置文件失败！{}", e.getMessage());
+            LoginMusic.LOGGER.error("Fail to create default config！{}", e.getMessage());
         }
     }
 
@@ -135,16 +133,15 @@ public class MusicConfig {
         MUSIC_ENTRY_MAP.clear();
         MUSIC_ENTRY_MAP.putAll(config);
         configLoaded = true;
-        LoginMusic.LOGGER.info("客户端音乐配置更新完成，共 {} 首音乐", MUSIC_ENTRY_MAP.size());
+        LoginMusic.LOGGER.info("Client music config updated, total {} musics", MUSIC_ENTRY_MAP.size());
     }
 
     // 添加获取全部配置的方法（用于服务端发送）
-    public static Map<String, MusicEntry> getMusicConfig() {
-        return new HashMap<>(MUSIC_ENTRY_MAP);
-    }
-
+    public static Map<String, MusicEntry> getMusicConfig() { return new HashMap<>(MUSIC_ENTRY_MAP);}
 
     public static String getType() { return type; }
+    // 获取当前配置
+    public static Map<String, MusicEntry> getMusicEntryMap() { return MUSIC_ENTRY_MAP; }
 
     public static boolean isConfigLoaded() { return configLoaded; }
 }

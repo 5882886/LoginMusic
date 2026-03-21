@@ -24,8 +24,8 @@ public class ServerJoinEvent {
                 MusicConfig.loadFromConfig();
             }
 
-            LoginMusic.LOGGER.info("玩家 {} 登录，发送音乐配置", serverPlayer.getName().getString());
-            NetworkConfig.sendToPlayer(new LoginMusicPacket(MusicConfig.getMusicConfig()), serverPlayer);
+            LoginMusic.LOGGER.info("Player {} is logging in, sending music config", serverPlayer.getName().getString());
+            NetworkConfig.sendConfigToPlayer(new LoginMusicPacket(MusicConfig.getMusicConfig()), serverPlayer);
             NetworkConfig.sendLoginMusic(serverPlayer, musicId);
         }
     }
@@ -43,30 +43,30 @@ public class ServerJoinEvent {
 
     // 通过name选择音乐
     private static String chooseMusicByName(ServerPlayer player) {
-        String MusicID = "Default";
+        String musicID = "Default";
         MusicEntry entry;
         // 获取玩家名称
         String playerName = player.getName().getString();
         // 根据玩家名称获取音乐
         entry = MusicConfig.getMusic(playerName);
         if (entry == null) {
-            return MusicID;
+            return musicID;
         }
-        MusicID = entry.getId();
-        return MusicID;
+        musicID = entry.getId();
+        return musicID;
     }
 
     // 通过uuid选择音乐
     private static String chooseMusicByUuid(ServerPlayer player) {
-        String MusicID = "Default";
+        String musicID = "Default";
         MusicEntry entry;
 
         String playerStringUUID = player.getStringUUID();
         entry = MusicConfig.getMusic(playerStringUUID);
         if (entry == null) {
-            return MusicID;
+            return musicID;
         }
-        MusicID = entry.getId();
-        return MusicID;
+        musicID = entry.getId();
+        return musicID;
     }
 }

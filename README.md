@@ -4,6 +4,8 @@ A simple Minecraft mod that can play music when players join in the world.
 >
 > Since mod version 1.1.0, javafx has given place to `com.googlecode.soundlibs:mp3spi`, which provides MP3 support now.
 > 
+> Since mod version 1.2.0, the music config has changed to JSON type.
+> 
 > Inspired by TartaricAcid's [Net Music](https://modrinth.com/mod/net-music) !
 
 ## Functions
@@ -12,16 +14,18 @@ A simple Minecraft mod that can play music when players join in the world.
 - [x] Supported file types: mp3, wav
 - [x] Music Downloading screen
 - [x] Allow download switch
-- [ ] Play different musics based on the player's name (uuid)
+- [x] Play different musics based on the player's name (uuid)
 
-## Files Structure
+## File Structure
 
 All music files are stored in the `/LoginMusic` folder.
 
 ```
 ├── {your minecraft version}
     ├── config
-    │   └── login_music-common.toml     # Universal config
+    │   ├── login_music-client.toml     # Client config
+    │   └── login_music
+    │       └── music.json               # Configure specific music
     │
     ├── LoginMusic                      # Store music files
     │   ├── music_1.mp3
@@ -30,13 +34,13 @@ All music files are stored in the `/LoginMusic` folder.
     │
     ├── saves/world
     │   ├── serverconfig
-    │   │   ├── login_music.toml        # Configure specific music
+    │   │   ├── login_music.toml        
     │   │   └ ...
     │   └── ...
     └── ...
 ```
 
-## Config
+## Configuration
 
 ### Client Side
 
@@ -54,32 +58,48 @@ All music files are stored in the `/LoginMusic` folder.
 
 ### Server Side
 
-`login_music-server.toml` defines all the players' musics:
+`login_music-server.toml`:
 
 ```toml
 [Selection]
     #Keywords for music selection (name/uuid)
     type = "name"
-
-[music]
-    # Use 'Default' as the default setting
-    entries = ["Default|Default.mp3|https://www.example.com/Example.mp3"]
 ```
 
-Each entry is a string like: `" Target player | Music name | Music URL "`.
+**Since mod version 1.2.0, the music config has changed to JSON type, just as shown below.**
+
+If you enter a server with this mod, the config file on the server has higher priority, which will cover your custom settings.
+
+```json
+{
+    "musics": [
+        {
+            "id": "Default",
+            "name": "Default.mp3",
+            "url": "https://www.example.com/example1.mp4"
+        }, {
+            "id": "Steve",
+            "name": "login_music.mp3",
+            "url": "https://www.example.com/example2.mp4"
+        }
+    ]
+}
+```
 
 > The "Music URL" is available if and only if `InternetAccess` is set "true" (the default setting is "false").
 
-For example, 
-
-```toml
-[music]
-    entries = ["Steve|login_music.mp3|https://www.example.com/login_music.mp3", "Default|Default.mp3|https://www.example.com/Default.mp3"]
-```
-
-When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music.mp3` ) in the folder `/LoginMusic` first.
+For example, When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music.mp3` ) in the folder `/LoginMusic` first.
 Then try to download it from its related url if it has failed before.
 
 > Tips: If there is a file with the same name in the folder, it will skip the download even if the file does not match the URL.
 
-If more entries need to be configured, please separate them with commas. 
+If more entries need to be configured, please follow the JSON's rule.
+
+
+## Command
+
+All the commands need permission level 2.
+
+Use `/loginmusic reload` to reload config.
+
+Use `/loginmusic list` to show music config available currently.

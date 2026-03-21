@@ -85,14 +85,14 @@ public class LoginMusicPacket {
         context.enqueueWork(() -> {
             if (packet.isConfig) {
                 // 同步音乐配置到客户端
-                LoginMusic.LOGGER.info("接收到服务端音乐配置，共 {} 首音乐", packet.musicConfig.size());
+                LoginMusic.LOGGER.info("Receive musics from the server, total {} musics", packet.musicConfig.size());
                 DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
                         MusicConfig.receiveConfig(packet.musicConfig));
             } else {
                 // 播放音乐
-                LoginMusic.LOGGER.info("准备播放音乐: {}", packet.musicID);
+                LoginMusic.LOGGER.info("Prepare music: {}", packet.musicID);
                 DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
-                        ClientLoginEvent.PlayLoginMusic(packet.musicID));
+                        ClientLoginEvent.playLoginMusic(packet.musicID));
             }
         });
         context.setPacketHandled(true);

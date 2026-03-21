@@ -30,7 +30,7 @@ public class NetworkConfig {
                 .consumerMainThread(LoginMusicPacket::handle)
                 .add();
 
-        LoginMusic.LOGGER.info("网络包注册完成");
+        LoginMusic.LOGGER.info("Network config registered!");
     }
 
     // 发送音乐给特定玩家
@@ -40,11 +40,11 @@ public class NetworkConfig {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
                 new LoginMusicPacket(musicId));
 
-        LoginMusic.LOGGER.info("已发送音乐 {} 给 {}", musicId, player.getName().getString());
+        LoginMusic.LOGGER.info("Send music {} to {}", musicId, player.getName().getString());
     }
 
     // 同步数据给特定玩家
-    public static void sendToPlayer(Object packet, ServerPlayer player) {
+    public static void sendConfigToPlayer(Object packet, ServerPlayer player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 }

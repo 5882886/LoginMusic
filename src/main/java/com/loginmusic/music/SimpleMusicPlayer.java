@@ -21,7 +21,7 @@ public class SimpleMusicPlayer {
 
     static {
         AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes();
-        LoginMusic.LOGGER.info("系统支持的音频格式:");
+        LoginMusic.LOGGER.info("Supported music file: ");
         for (AudioFileFormat.Type type : types) {
             LoginMusic.LOGGER.info("  - {}", type.getExtension());
         }
@@ -29,16 +29,16 @@ public class SimpleMusicPlayer {
         // 检查MP3 SPI是否加载
         try {
             Class.forName("javazoom.spi.mpeg.sampled.file.MpegAudioFileReader");
-            LoginMusic.LOGGER.info("MP3支持已加载");
+            LoginMusic.LOGGER.info("MP3 support loaded!");
         } catch (ClassNotFoundException e) {
-            LoginMusic.LOGGER.warn("MP3支持未加载");
+            LoginMusic.LOGGER.warn("MP3 support not found!");
         }
     }
 
     // 播放音乐
     public static void playMusic(String musicId, String musicName) {
         try {
-            LoginMusic.LOGGER.info("播放音乐: {}", musicId);
+            LoginMusic.LOGGER.info("Playing: {}", musicId);
             stopCurrentMusic();
 
             currentMusicId = musicId;
@@ -64,14 +64,14 @@ public class SimpleMusicPlayer {
 
                 // 如果格式不匹配，进行转换
                 if (!sourceFormat.matches(targetFormat)) {
-                    LoginMusic.LOGGER.info("转换音频格式...");
+                    LoginMusic.LOGGER.info("Changing format...");
                     audioStream = AudioSystem.getAudioInputStream(targetFormat, audioStream);
                 }
 
                 DataLine.Info info = new DataLine.Info(Clip.class, targetFormat);
 
                 if (!AudioSystem.isLineSupported(info)) {
-                    LoginMusic.LOGGER.error("不支持的音频格式：{}", musicName);
+                    LoginMusic.LOGGER.error("Unsupported music file: {}", musicName);
                     return;
                 }
 
@@ -113,18 +113,16 @@ public class SimpleMusicPlayer {
                     }
                 });
 
-                LoginMusic.LOGGER.info("开始播放");
+                LoginMusic.LOGGER.info("Playing music: {}", musicName);
             } else {
-                LoginMusic.LOGGER.error("音乐不存在！");
+                LoginMusic.LOGGER.error("Music not found!");
             }
         } catch (UnsupportedAudioFileException e) {
-            LoginMusic.LOGGER.error("不支持的音频文件: {}", e.getMessage());
-            LoginMusic.LOGGER.error("不支持的音频格式：{}，请使用MP3/WAV", musicName);
+            LoginMusic.LOGGER.error("Unsupported type: {}", e.getMessage());
         } catch (LineUnavailableException e) {
-            LoginMusic.LOGGER.error("音频线路不可用: {}", e.getMessage());
-            LoginMusic.LOGGER.error("音频设备不可用：{}", musicName);
+            LoginMusic.LOGGER.error("Not available: {}", e.getMessage());
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("播放失败: {} ", musicName);
+            LoginMusic.LOGGER.error("Fail to play music: {} ", musicName);
         }
     }
 
