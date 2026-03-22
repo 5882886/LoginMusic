@@ -8,6 +8,8 @@ A simple Minecraft mod that can play music when players join in the world.
 > 
 > Inspired by TartaricAcid's [Net Music](https://modrinth.com/mod/net-music) !
 
+The logo comes from [here](https://www.flaticon.com/free-icon/music_9325026?term=music&page=1&position=87&origin=search&related_id=9325026), designed by juicy_fish.
+
 ## Functions
 
 - [x] Play music
@@ -76,11 +78,11 @@ If you enter a server with this mod, the config file on the server has higher pr
         {
             "id": "Default",
             "name": "Default.mp3",
-            "url": "https://www.example.com/example1.mp4"
+            "url": "https://www.example.com/example1.mp3"
         }, {
             "id": "Steve",
             "name": "login_music.mp3",
-            "url": "https://www.example.com/example2.mp4"
+            "url": "https://www.example.com/example2.mp3"
         }
     ]
 }

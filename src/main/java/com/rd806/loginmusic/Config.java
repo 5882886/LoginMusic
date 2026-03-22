@@ -1,4 +1,4 @@
-package com.loginmusic;
+package com.rd806.loginmusic;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,12 +16,15 @@ public class Config {
     private static final ForgeConfigSpec.ConfigValue<Integer> MUSIC_PLAY_RANGE;
     // 是否允许从Url下载音乐
     private static final ForgeConfigSpec.BooleanValue ALLOW_DOWNLOAD;
+    // 是否允许展示歌词
+    private static final ForgeConfigSpec.BooleanValue ALLOW_LYRICS;
 
     private static Integer range;
     private static boolean allowDownload;
+    private static boolean allowLyrics;
 
     static {
-        BUILDER.push("Basic client config").translation(LoginMusic.MODID + ".configui.title");
+        BUILDER.push("Basic").translation(LoginMusic.MODID + ".configui.title");
         MUSIC_PLAY_RANGE = BUILDER
                 .comment("Range of music play (a non negative integer)")
                 .translation(LoginMusic.MODID + ".configui.music_play_range")
@@ -30,8 +33,13 @@ public class Config {
                 .comment("Whether to allow downloading music from the internet")
                 .translation(LoginMusic.MODID + ".configui.allow_download")
                 .define("InternetAccess", false);
-
         BUILDER.pop();
+
+        BUILDER.push("Lyrics").translation(LoginMusic.MODID + ".configui.title");
+        ALLOW_LYRICS = BUILDER
+                .comment("Whether to show lyrics while playing music")
+                .translation(LoginMusic.MODID + ".configui.allow_lyrics")
+                .define("ShowLyrics", true);
 
         SPEC = BUILDER.build();
     }
@@ -41,6 +49,7 @@ public class Config {
     static void onLoad(final ModConfigEvent event) {
         range = MUSIC_PLAY_RANGE.get();
         allowDownload = ALLOW_DOWNLOAD.get();
+        allowLyrics = ALLOW_LYRICS.get();
         LoginMusic.LOGGER.info("Music playing range: {} blocks", range);
     }
 
@@ -48,4 +57,5 @@ public class Config {
 
     public static Integer getRange() { return range; }
     public static boolean getAllowDownload() { return allowDownload; }
+    public static boolean getAllowLyrics() { return allowLyrics; }
 }

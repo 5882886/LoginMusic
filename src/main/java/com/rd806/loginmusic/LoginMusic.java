@@ -1,8 +1,8 @@
-package com.loginmusic;
+package com.rd806.loginmusic;
 
 import com.mojang.logging.LogUtils;
-import com.loginmusic.music.MusicConfig;
-import com.loginmusic.network.NetworkConfig;
+import com.rd806.loginmusic.music.MusicConfig;
+import com.rd806.loginmusic.network.NetworkConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;

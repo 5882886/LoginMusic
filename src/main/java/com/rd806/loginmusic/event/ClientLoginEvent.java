@@ -1,8 +1,11 @@
-package com.loginmusic.event;
+package com.rd806.loginmusic.event;
 
-import com.loginmusic.Config;
-import com.loginmusic.LoginMusic;
-import com.loginmusic.music.*;
+import com.rd806.loginmusic.Config;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.music.MusicConfig;
+import com.rd806.loginmusic.music.MusicDownloadScreen;
+import com.rd806.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.music.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;

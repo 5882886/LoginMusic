@@ -1,6 +1,6 @@
-package com.loginmusic.music;
+package com.rd806.loginmusic.music;
 
-import com.loginmusic.LoginMusic;
+import com.rd806.loginmusic.LoginMusic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;

@@ -1,9 +1,9 @@
-package com.loginmusic.music;
+package com.rd806.loginmusic.music;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.loginmusic.LoginMusic;
+import com.rd806.loginmusic.LoginMusic;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;

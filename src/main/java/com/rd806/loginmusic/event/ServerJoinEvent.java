@@ -1,10 +1,10 @@
-package com.loginmusic.event;
+package com.rd806.loginmusic.event;
 
-import com.loginmusic.LoginMusic;
-import com.loginmusic.music.MusicConfig;
-import com.loginmusic.music.MusicEntry;
-import com.loginmusic.network.LoginMusicPacket;
-import com.loginmusic.network.NetworkConfig;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.music.MusicConfig;
+import com.rd806.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.network.LoginMusicPacket;
+import com.rd806.loginmusic.network.NetworkConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

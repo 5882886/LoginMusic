@@ -1,9 +1,9 @@
-package com.loginmusic.network;
+package com.rd806.loginmusic.network;
 
-import com.loginmusic.LoginMusic;
-import com.loginmusic.event.ClientLoginEvent;
-import com.loginmusic.music.MusicConfig;
-import com.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.event.ClientLoginEvent;
+import com.rd806.loginmusic.music.MusicConfig;
+import com.rd806.loginmusic.music.MusicEntry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
