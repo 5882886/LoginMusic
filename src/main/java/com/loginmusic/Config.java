@@ -6,6 +6,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+// 客户端配置文件
 @EventBusSubscriber(modid = LoginMusic.MODID, value = Dist.CLIENT)
 public class Config {
 

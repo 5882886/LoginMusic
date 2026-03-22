@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.loginmusic.LoginMusic;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -15,6 +17,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -124,6 +127,18 @@ public class MusicConfig {
         }
         return MUSIC_ENTRY_MAP.get(id);
     }
+
+    // 接收服务端的音乐配置
+    @OnlyIn(Dist.CLIENT)
+    public static void receiveConfig(Map<String, MusicEntry> config) {
+        MUSIC_ENTRY_MAP.clear();
+        MUSIC_ENTRY_MAP.putAll(config);
+        configLoaded = true;
+        LoginMusic.LOGGER.info("Client music config updated, total {} musics", MUSIC_ENTRY_MAP.size());
+    }
+
+    // 添加获取全部配置的方法（用于服务端发送）
+    public static Map<String, MusicEntry> getMusicConfig() { return new HashMap<>(MUSIC_ENTRY_MAP);}
 
     public static String getType() { return type; }
 

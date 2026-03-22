@@ -1,11 +1,14 @@
 package com.loginmusic.network;
 
 import com.loginmusic.LoginMusic;
+import com.loginmusic.music.MusicEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+
+import java.util.Map;
 
 // 网络包类
 public class NetworkConfig {
@@ -26,15 +29,26 @@ public class NetworkConfig {
                 LoginMusicPacket::handle
         );
 
-        LoginMusic.LOGGER.info("网络包注册完成");
+        LoginMusic.LOGGER.info("Network config registered!");
     }
 
+    // 发送音乐给特定玩家
     public static void sendLoginMusic(ServerPlayer player, String musicId) {
         if (player == null) return;
 
         // 发送数据包到客户端
         PacketDistributor.sendToPlayer(player, new LoginMusicPacket(musicId));
 
-        LoginMusic.LOGGER.info("已发送音乐 {} 给 {}", musicId, player.getName().getString());
+        LoginMusic.LOGGER.info("Send music {} to {}", musicId, player.getName().getString());
+    }
+
+    // 同步数据给玩家
+    public static void sendConfigToPlayer(Map<String, MusicEntry> musicConfig, ServerPlayer player) {
+        if (player == null || musicConfig == null) return;
+
+        // 发送配置同步包到客户端
+        PacketDistributor.sendToPlayer(player, new LoginMusicPacket(musicConfig));
+
+        LoginMusic.LOGGER.info("Sending music config to {}，total {} musics", player.getName().getString(), musicConfig.size());
     }
 }

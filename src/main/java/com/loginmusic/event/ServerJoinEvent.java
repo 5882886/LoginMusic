@@ -24,6 +24,7 @@ public class ServerJoinEvent {
             }
 
             LoginMusic.LOGGER.info("Player {} is logging in, sending music config", serverPlayer.getName().getString());
+            NetworkConfig.sendConfigToPlayer(MusicConfig.getMusicConfig(), serverPlayer);
             NetworkConfig.sendLoginMusic(serverPlayer, musicId);
         }
     }

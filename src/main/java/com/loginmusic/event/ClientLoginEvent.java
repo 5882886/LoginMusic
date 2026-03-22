@@ -35,7 +35,7 @@ public class ClientLoginEvent {
     private static double lastX, lastY, lastZ;
 
     // 登录事件
-    public static void PlayLoginMusic(String musicId) {
+    public static void playLoginMusic(String musicId) {
         isInitialPos = false;
         MusicEntry entry = MusicConfig.getMusic(musicId);
 

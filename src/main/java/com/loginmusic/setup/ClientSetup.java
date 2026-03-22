@@ -1,5 +1,6 @@
-package com.loginmusic;
+package com.loginmusic.setup;
 
+import com.loginmusic.LoginMusic;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -13,8 +14,8 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @Mod(value = LoginMusic.MODID, dist = Dist.CLIENT)
 // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
 @EventBusSubscriber(modid = LoginMusic.MODID, value = Dist.CLIENT)
-public class LoginMusicClient {
-    public LoginMusicClient(ModContainer container) {
+public class ClientSetup {
+    public ClientSetup(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
         // Do not forget to add translations for your config options to the en_us.json file.
@@ -24,6 +25,6 @@ public class LoginMusicClient {
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
         // Some client setup code
-        LoginMusic.LOGGER.info("HELLO FROM CLIENT SETUP");
+        LoginMusic.LOGGER.info("Start LoginMusic on client!");
     }
 }
