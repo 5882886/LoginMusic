@@ -3,7 +3,6 @@ package com.loginmusic;
 import com.mojang.logging.LogUtils;
 import com.loginmusic.music.MusicConfig;
 import com.loginmusic.network.NetworkConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -59,7 +58,7 @@ public class LoginMusic {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
-        LOGGER.info("Start LoginMusic on client!");
+        LOGGER.info("[LoginMusic] If you have any issues with LoginMusic, please report it at https://github.com/rd806/LoginMusic!");
     }
 
 
@@ -76,8 +75,7 @@ public class LoginMusic {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            LOGGER.info("Start LoginMusic on client!");
         }
     }
 }
