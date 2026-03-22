@@ -1,7 +1,6 @@
 package com.rd806.loginmusic.lyric;
 
 import com.rd806.loginmusic.LoginMusic;
-import com.rd806.loginmusic.music.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
@@ -13,47 +12,49 @@ import java.util.concurrent.atomic.AtomicReference;
 // 歌词播放器
 public class LyricPlayer {
     private static final Minecraft mc = Minecraft.getInstance();
+    // 定时任务
     private static Timer lyricTimer;
     private static List<LyricEntry> currentLyrics;
-    private static long startTime = 0;
+    // 当前播放时间
+    private static long startTime;
+    private static long currentPlayTime;
     private static LyricEntry lastLyricEntry = null;
     private static boolean isPlaying = false;
-    private static AtomicReference<Long> currentPosition = new AtomicReference<>(0L);
+    private static final AtomicReference<Long> currentPosition = new AtomicReference<>(0L);
 
     // 开始显示歌词
-    public static void startLyricDisplay(List<LyricEntry> lyrics, long startTimeMillis) {
+    public static void startLyricDisplay(List<LyricEntry> lyrics, long elapsedTime) {
         if (lyrics == null ||  lyrics.isEmpty()) {
             LoginMusic.LOGGER.info("Lyrics is empty");
             return;
         }
 
-        stopLyricDisplay();
-
         currentLyrics = lyrics;
-        startTime = startTimeMillis;
+        // 开始时间为当前时间减去已播放的时间
+        startTime = System.currentTimeMillis() - elapsedTime;
         lastLyricEntry = null;
         isPlaying = true;
 
         // 启动定时器
         lyricTimer = new Timer("LyricTimer", true);
-        lyricTimer.scheduleAtFixedRate(new  TimerTask() {
+        lyricTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 if (!isPlaying) { return; }
+                // 获取当前应处于的播放位置
+                currentPlayTime = System.currentTimeMillis() - startTime;
+                currentPosition.set(currentPlayTime);
+                LyricEntry currentLyric = LyricParser.getCurrentLyric(currentLyrics, currentPlayTime);
 
-                long elapsed = System.currentTimeMillis() - startTime;
-                currentPosition.set(elapsed);
-
-                LyricEntry currentLyric = LyricParser.getCurrentLyric(currentLyrics, elapsed);
-
-                if (currentLyric != null && (lastLyricEntry == null || !lastLyricEntry.text().equals(currentLyric.text()))) {
+                if (currentLyric != null && (lastLyricEntry == null || !lastLyricEntry.getText().equals(currentLyric.getText()))) {
                     lastLyricEntry = currentLyric;
+                    LoginMusic.LOGGER.info("Lyric player is now playing");
 
                     mc.execute(() -> {
                         if (mc.player != null) {
                             Component lyricMessage = Component.literal("")
                                     .append(Component.literal("♪ "))
-                                    .append(Component.literal(currentLyric.text()))
+                                    .append(Component.literal(currentLyric.getText()))
                                     .append(Component.literal(" ♪"));
                             // 在屏幕底部显示歌词
                             mc.player.displayClientMessage(lyricMessage, true);
@@ -62,12 +63,6 @@ public class LyricPlayer {
                 }
             }
         }, 0, 100);
-
-        // 音乐播放结束，歌词也结束
-        if (SimpleMusicPlayer.isStopped()) {
-            stopLyricDisplay();
-        }
-
     }
 
     // 停止显示歌词

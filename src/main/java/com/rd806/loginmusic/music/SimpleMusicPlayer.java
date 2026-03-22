@@ -1,6 +1,9 @@
 package com.rd806.loginmusic.music;
 
 import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.lyric.LyricEntry;
+import com.rd806.loginmusic.lyric.LyricParser;
+import com.rd806.loginmusic.lyric.LyricPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
@@ -8,6 +11,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.sound.sampled.*;
 import java.io.File;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class SimpleMusicPlayer {
@@ -16,6 +20,10 @@ public class SimpleMusicPlayer {
     private static Clip currentClip;
     private static String currentMusicId;
     private static boolean isPlaying = false;
+    private static long startTimeMillis;
+
+    private static List<LyricEntry> currentLyrics;
+    private static boolean lyricStarted = false;
 
     private SimpleMusicPlayer() {}
 
@@ -104,6 +112,7 @@ public class SimpleMusicPlayer {
                     currentClip = clip;
                     clip.start();
                     isPlaying = true;
+                    startTimeMillis = System.currentTimeMillis();
                     // 通知玩家
                     if (Minecraft.getInstance().player != null) {
                         Minecraft.getInstance().player.displayClientMessage(
@@ -112,6 +121,31 @@ public class SimpleMusicPlayer {
                         );
                     }
                 });
+
+                // 播放歌词
+                MusicEntry musicEntry = MusicConfig.getMusic(musicId);
+                if (musicEntry != null && musicEntry.getLyrics() != null) {
+                    LoginMusic.LOGGER.info("Lyrics prepared!");
+                    LyricParser.loadLyricAsync(musicEntry).thenAccept(lyricContent  -> {
+                        if (lyricContent != null && !lyricContent.isEmpty()) {
+                            currentLyrics = LyricParser.parseLRC(lyricContent);
+                            lyricStarted = true;
+
+                            if (isPlaying && startTimeMillis > 0) {
+                                LoginMusic.LOGGER.info("Lyrics playing!");
+                                // 计算展示歌词与播放开始的间隔时间
+                                // 即已播放的时间
+                                long elapsedTime = System.currentTimeMillis() - startTimeMillis;
+                                LyricPlayer.startLyricDisplay(currentLyrics, elapsedTime);
+                            } else  {
+                                LoginMusic.LOGGER.warn("No lyrics found!");
+                            }
+                        }
+                    }).exceptionally(throwable -> {
+                       LoginMusic.LOGGER.warn("Error loading lyrics!", throwable);
+                       return null;
+                    });
+                }
 
                 LoginMusic.LOGGER.info("Playing music: {}", musicName);
             } else {
@@ -134,6 +168,7 @@ public class SimpleMusicPlayer {
             currentClip = null;
             currentMusicId = null;
             isPlaying = false;
+            LyricPlayer.stopLyricDisplay();
         }
     }
 

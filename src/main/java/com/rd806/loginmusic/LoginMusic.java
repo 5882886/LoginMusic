@@ -30,7 +30,8 @@ public class LoginMusic {
     public static final Logger LOGGER = LogUtils.getLogger();
     // 音乐缓存目录
     public static final Path CACHE_DIR = Paths.get("LoginMusic");
-
+    // 歌词缓存目录
+    public static final Path LYRICS_DIR = Paths.get("LoginMusic/Lyrics");
 
     public LoginMusic(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
@@ -40,6 +41,7 @@ public class LoginMusic {
         // 创建缓存目录
         try {
             Files.createDirectories(CACHE_DIR);
+            Files.createDirectories(LYRICS_DIR);
         } catch (IOException e) {
             LOGGER.error("Failed to create cache directory!", e);
         }

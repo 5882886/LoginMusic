@@ -18,4 +18,7 @@ public record LyricEntry(long time, String text) implements Comparable<LyricEntr
         LyricEntry entry = (LyricEntry) o;
         return time == entry.time;
     }
+
+    public long getTime() { return time; }
+    public String getText() { return text; }
 }

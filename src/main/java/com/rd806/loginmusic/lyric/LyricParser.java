@@ -1,12 +1,17 @@
 package com.rd806.loginmusic.lyric;
 
 import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.music.MusicEntry;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,14 +95,57 @@ public class LyricParser {
         }
 
         LyricEntry current = null;
-        for (LyricEntry entry : lyrics) {
-            if (entry.time() == currentTime) {
-                current = entry;
+        for (LyricEntry lyric : lyrics) {
+            if (lyric.getTime() <= currentTime) {
+                current = lyric;
             } else {
                 break;
             }
         }
 
         return current;
+    }
+
+    // 从音乐条目加载歌词
+    public static String loadLyrics(MusicEntry entry) {
+        if (entry == null || entry.getLyrics() == null || entry.getLyrics().isEmpty()) {
+            return null;
+        }
+
+        return loadFromFile(entry.getLyrics());
+    }
+
+    private static String loadFromFile(String filePath) {
+        try {
+            LoginMusic.LOGGER.info("Loading Lyric from {}", filePath);
+
+            Path path = Paths.get(filePath);
+
+            // 如果是相对路径，尝试从配置目录查找
+            if (!path.isAbsolute()) {
+                Path configPath = LoginMusic.LYRICS_DIR.resolve(filePath);
+                if (Files.exists(configPath)) {
+                    path = configPath;
+                }
+            }
+
+            if (!Files.exists(path)) {
+                LoginMusic.LOGGER.error("No lyrics file found: {}", path);
+                return null;
+            }
+
+            String lyricContent = Files.readString(path);
+            LoginMusic.LOGGER.info("Lyric file loaded");
+            return lyricContent;
+
+        } catch (Exception e) {
+            LoginMusic.LOGGER.error("Error while loading Lyric from {}", filePath, e);
+            return null;
+        }
+    }
+
+    // 异步加载歌词
+    public static CompletableFuture<String> loadLyricAsync(MusicEntry entry) {
+        return CompletableFuture.supplyAsync(() -> loadLyrics(entry));
     }
 }

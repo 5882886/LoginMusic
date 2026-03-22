@@ -45,6 +45,7 @@ public class LoginMusicPacket {
                     MusicEntry music = entry.getValue();
                     buf.writeUtf(music.getName());
                     buf.writeUtf(music.getUrl());
+                    buf.writeUtf(music.getLyrics());
                 }
             }
         } else {
@@ -66,10 +67,12 @@ public class LoginMusicPacket {
                 String id = buf.readUtf();
                 String name = buf.readUtf();
                 String url = buf.readUtf();
+                String lyrics = buf.readUtf();
                 MusicEntry musicEntry = new MusicEntry();
                 musicEntry.setId(id);
                 musicEntry.setName(name);
                 musicEntry.setUrl(url);
+                musicEntry.setLyrics(lyrics);
                 config.put(id, musicEntry);
             }
             return new LoginMusicPacket(config);

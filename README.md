@@ -17,6 +17,7 @@ The logo comes from [here](https://www.flaticon.com/free-icon/music_9325026?term
 - [x] Music Downloading screen
 - [x] Allow download switch
 - [x] Play different musics based on the player's name (uuid)
+- [ ] Show lyrics while playing music
 
 ## File Structure
 
