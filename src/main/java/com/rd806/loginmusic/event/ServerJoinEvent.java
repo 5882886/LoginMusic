@@ -1,6 +1,7 @@
 package com.rd806.loginmusic.event;
 
 import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.config.ServerConfig;
 import com.rd806.loginmusic.music.MusicConfig;
 import com.rd806.loginmusic.music.MusicEntry;
 import com.rd806.loginmusic.network.LoginMusicPacket;
@@ -33,9 +34,9 @@ public class ServerJoinEvent {
     // 选择音乐
     private static String chooseMusic(ServerPlayer player) {
         String result = "Default";
-        if (MusicConfig.getType().equalsIgnoreCase("name")) {
+        if (ServerConfig.getType().equalsIgnoreCase("name")) {
             result = chooseMusicByName(player);
-        } else if (MusicConfig.getType().equalsIgnoreCase("uuid")) {
+        } else if (ServerConfig.getType().equalsIgnoreCase("uuid")) {
             result = chooseMusicByUuid(player);
         }
         return result;

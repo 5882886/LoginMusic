@@ -105,9 +105,9 @@ shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     // 重定位java文件
-    relocate 'javazoom.jl', 'com.loginmusic.soundlibs.javazoom.jl'
-    relocate 'javazoom.spi', 'com.loginmusic.soundlibs.javazoom.spi'
-    relocate 'org.tritonus', 'com.loginmusic.soundlibs.org.tritonus'
+    relocate 'javazoom.jl', 'com.rd806.loginmusic.soundlibs.javazoom.jl'
+    relocate 'javazoom.spi', 'com.rd806.loginmusic.soundlibs.javazoom.spi'
+    relocate 'org.tritonus', 'com.rd806.loginmusic.soundlibs.org.tritonus'
 
     archiveClassifier.set('all')
 

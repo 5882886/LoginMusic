@@ -6,9 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.rd806.loginmusic.LoginMusic;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -23,53 +21,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 // 实现仅在服务端配置
-@Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MusicConfig {
-
     // 创建配置文件
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG = "music.json";
     private static Path configPath = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
 
-    private static final ForgeConfigSpec SPEC;
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-
-    // 音乐选择的关键字
-    private static final ForgeConfigSpec.ConfigValue<String> MUSIC_ID_TYPE;
-
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
-    private static String type;
-
     private static boolean configLoaded = false;
 
-    static {
-        BUILDER.push("Selection");
-        MUSIC_ID_TYPE = BUILDER
-                .comment("Keywords for music selection (name/uuid)")
-                .translation(LoginMusic.MODID + ".configui.music_id_type")
-                .define("type", "name");
-        BUILDER.pop();
-
-        SPEC = BUILDER.build();
-    }
-
-    public static ForgeConfigSpec getSpec() { return SPEC; }
-
-    // 加载配置
-    @SubscribeEvent
-    public static void onLoad(ModConfigEvent.Loading event) {
-        if (event.getConfig().getSpec() == SPEC) {
-            LoginMusic.LOGGER.info("Loading LoginMusic config!");
-            configPath = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
-            loadFromConfig();
-        }
-    }
-
+    // 从配置文件加载音乐
     public static void loadFromConfig() {
         try {
-            // 加载音乐选择关键字
-            type = MUSIC_ID_TYPE.get();
-            LoginMusic.LOGGER.info("Select music by: {}", type);
             // 创建配置文件夹
             Files.createDirectories(configPath.getParent());
             if (!Files.exists(configPath)) {
@@ -139,8 +102,6 @@ public class MusicConfig {
 
     // 添加获取全部配置的方法（用于服务端发送）
     public static Map<String, MusicEntry> getMusicConfig() { return new HashMap<>(MUSIC_ENTRY_MAP);}
-
-    public static String getType() { return type; }
     // 获取当前配置
     public static Map<String, MusicEntry> getMusicEntryMap() { return MUSIC_ENTRY_MAP; }
 

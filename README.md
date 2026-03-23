@@ -50,12 +50,15 @@ All music files are stored in the `/LoginMusic` folder.
 `login_music-client.toml` is effective only for the client:
 
 ```toml
-["Basic client config"]
+[Basic]
     #Range of music play (a non negative integer)
     #Range: 0 ~ 100
     range = 3
     #Whether to allow downloading music from the internet
     InternetAccess = true
+[Lyrics]
+    #Whether to show lyrics while playing music
+    ShowLyrics = true
 ```
 
 

@@ -1,6 +1,7 @@
 package com.rd806.loginmusic.music;
 
 import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.lyric.LyricEntry;
 import com.rd806.loginmusic.lyric.LyricParser;
 import com.rd806.loginmusic.lyric.LyricPlayer;
@@ -28,12 +29,12 @@ public class SimpleMusicPlayer {
     private SimpleMusicPlayer() {}
 
     static {
+        // 获取原生支持的音频格式
         AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes();
         LoginMusic.LOGGER.info("Supported music file: ");
         for (AudioFileFormat.Type type : types) {
             LoginMusic.LOGGER.info("  - {}", type.getExtension());
         }
-
         // 检查MP3 SPI是否加载
         try {
             Class.forName("javazoom.spi.mpeg.sampled.file.MpegAudioFileReader");
@@ -117,15 +118,16 @@ public class SimpleMusicPlayer {
                     if (Minecraft.getInstance().player != null) {
                         Minecraft.getInstance().player.displayClientMessage(
                                 Component.translatable(LoginMusic.MODID + ".message.play_music", musicName),
-                                true
+                                false
                         );
                     }
                 });
 
                 // 播放歌词
                 MusicEntry musicEntry = MusicConfig.getMusic(musicId);
-                if (musicEntry != null && musicEntry.getLyrics() != null) {
+                if (musicEntry != null && musicEntry.getLyrics() != null && ClientConfig.getAllowLyrics()) {
                     LoginMusic.LOGGER.info("Lyrics prepared!");
+                    // 异步播放歌词
                     LyricParser.loadLyricAsync(musicEntry).thenAccept(lyricContent  -> {
                         if (lyricContent != null && !lyricContent.isEmpty()) {
                             currentLyrics = LyricParser.parseLRC(lyricContent);
@@ -145,6 +147,9 @@ public class SimpleMusicPlayer {
                        LoginMusic.LOGGER.warn("Error loading lyrics!", throwable);
                        return null;
                     });
+
+                } else if (!ClientConfig.getAllowLyrics()) {
+                    LoginMusic.LOGGER.warn("Lyrics are disabled!");
                 }
 
                 LoginMusic.LOGGER.info("Playing music: {}", musicName);

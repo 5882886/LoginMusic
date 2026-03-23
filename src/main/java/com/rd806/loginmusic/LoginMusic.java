@@ -1,7 +1,8 @@
 package com.rd806.loginmusic;
 
 import com.mojang.logging.LogUtils;
-import com.rd806.loginmusic.music.MusicConfig;
+import com.rd806.loginmusic.config.ClientConfig;
+import com.rd806.loginmusic.config.ServerConfig;
 import com.rd806.loginmusic.network.NetworkConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -54,8 +55,8 @@ public class LoginMusic {
         MinecraftForge.EVENT_BUS.register(new Command());
 
         // 生成配置文件
-        context.registerConfig(ModConfig.Type.CLIENT, Config.getSpec());
-        context.registerConfig(ModConfig.Type.SERVER, MusicConfig.getSpec());
+        context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.getSpec());
+        context.registerConfig(ModConfig.Type.SERVER, ServerConfig.getSpec());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

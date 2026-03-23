@@ -1,5 +1,6 @@
 {
     "login_music.configui.title": "客户端基础设置",
+    "login_music.configui.lyrics": "歌词设置",
 
     "login_music.configui.allow_download": "是否允许从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "防止恶意链接\n请仅在您信任的服务器上开启此功能",
@@ -12,6 +13,9 @@
 
     "login_music.configui.music_id_type": "音乐选择的关键字（可选：name/uuid）",
     "login_music.configui.music_id_type.tooltip": "音乐选择的关键字\n可选 name/uuid）",
+
+    "login_music.configui.allow_lyrics": "播放音乐时是否展示歌词",
+    "login_music.configui.allow_lyrics.tooltip": "播放音乐时是否展示歌词",
 
     "login_music.commands.reload.success": "配置重载成功！",
     "login_music.commands.reload.fail": "配置重载失败！ %s",

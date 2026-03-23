@@ -1,5 +1,6 @@
-package com.rd806.loginmusic;
+package com.rd806.loginmusic.config;
 
+import com.rd806.loginmusic.LoginMusic;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -7,7 +8,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 // 通用配置文件
 @Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class Config {
+public class ClientConfig {
 
     private static final ForgeConfigSpec SPEC;
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
@@ -35,7 +36,7 @@ public class Config {
                 .define("InternetAccess", false);
         BUILDER.pop();
 
-        BUILDER.push("Lyrics").translation(LoginMusic.MODID + ".configui.title");
+        BUILDER.push("Lyrics").translation(LoginMusic.MODID + ".configui.lyrics");
         ALLOW_LYRICS = BUILDER
                 .comment("Whether to show lyrics while playing music")
                 .translation(LoginMusic.MODID + ".configui.allow_lyrics")

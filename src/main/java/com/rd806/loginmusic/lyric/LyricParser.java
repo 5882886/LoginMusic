@@ -91,7 +91,7 @@ public class LyricParser {
     // 获取当前时间对应的歌词
     public static LyricEntry getCurrentLyric(List<LyricEntry> lyrics, long currentTime) {
         if (lyrics == null || lyrics.isEmpty()) {
-            return null;
+            return new LyricEntry(0, "Lyrics unavailable");
         }
 
         LyricEntry current = null;
@@ -115,6 +115,7 @@ public class LyricParser {
         return loadFromFile(entry.getLyrics());
     }
 
+    // 从本地文件加载歌词
     private static String loadFromFile(String filePath) {
         try {
             LoginMusic.LOGGER.info("Loading Lyric from {}", filePath);

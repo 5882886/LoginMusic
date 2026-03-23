@@ -48,7 +48,6 @@ public class LyricPlayer {
 
                 if (currentLyric != null && (lastLyricEntry == null || !lastLyricEntry.getText().equals(currentLyric.getText()))) {
                     lastLyricEntry = currentLyric;
-                    LoginMusic.LOGGER.info("Lyric player is now playing");
 
                     mc.execute(() -> {
                         if (mc.player != null) {
@@ -74,6 +73,6 @@ public class LyricPlayer {
         isPlaying = false;
         currentLyrics = null;
         lastLyricEntry = null;
-        LoginMusic.LOGGER.info("Lyrics is stopped");
+        LoginMusic.LOGGER.info("Lyrics is stopped!");
     }
 }

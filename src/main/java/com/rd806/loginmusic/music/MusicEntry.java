@@ -8,13 +8,13 @@ public class MusicEntry {
     private String name;
     private String lyrics;
 
-    public MusicEntry() {}
-
-    public MusicEntry(String id, String url, String name, String lyrics) {
-        this.id = id;
-        this.url = url;
-        this.name = name;
-        this.lyrics = lyrics;
+    // 默认构造函数
+    // 防止因配置文件缺少部分字段而无法进入游戏
+    public MusicEntry() {
+        this.id = "Default";
+        this.url = "Default";
+        this.name = "Default.mp3";
+        this.lyrics = "Default.lrc";
     }
 
     public String getId() { return id; }
@@ -37,9 +37,5 @@ public class MusicEntry {
 
         MusicEntry that = (MusicEntry) object;
         return Objects.equals(id, that.id);
-    }
-
-    public int HashCode() {
-        return Objects.hash(id);
     }
 }

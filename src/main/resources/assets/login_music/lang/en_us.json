@@ -1,5 +1,6 @@
 {
     "login_music.configui.title": "Basic client config",
+    "login_music.configui.lyrics": "Lyrics Config",
 
     "login_music.configui.allow_download": "Whether to allow downloading music from the internet",
     "login_music.configui.allow_download.tooltip": "Prevent malicious links\nPlease only enable this feature on servers that you trust",
@@ -12,6 +13,9 @@
 
     "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
     "login_music.configui.music_id_type.tooltip": "Keywords for music selection\nOptional: name/uid",
+
+    "login_music.configui.allow_lyrics": "Whether to show lyrics when playing music",
+    "login_music.configui.allow_lyrics.tooltip": "Whether to show lyrics when playing music",
 
     "login_music.commands.reload.success": "Reload successfully!",
     "login_music.commands.reload.fail": "Reload fail!, %s",
