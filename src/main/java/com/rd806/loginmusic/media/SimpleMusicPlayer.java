@@ -1,10 +1,12 @@
-package com.rd806.loginmusic.music;
+package com.rd806.loginmusic.media;
 
 import com.rd806.loginmusic.LoginMusic;
 import com.rd806.loginmusic.config.ClientConfig;
-import com.rd806.loginmusic.lyric.LyricEntry;
-import com.rd806.loginmusic.lyric.LyricParser;
-import com.rd806.loginmusic.lyric.LyricPlayer;
+import com.rd806.loginmusic.media.lyric.LyricEntry;
+import com.rd806.loginmusic.media.lyric.LyricParser;
+import com.rd806.loginmusic.media.lyric.LyricPlayer;
+import com.rd806.loginmusic.media.music.MusicConfig;
+import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
@@ -94,6 +96,7 @@ public class SimpleMusicPlayer {
                             currentClip = null;
                             currentMusicId = null;
                             isPlaying = false;
+                            LyricPlayer.stopLyricDisplay();
                             // 播放结束通知
                             mc.execute(() -> {
                                 if (Minecraft.getInstance().player != null) {

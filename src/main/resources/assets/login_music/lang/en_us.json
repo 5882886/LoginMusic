@@ -17,6 +17,12 @@
     "login_music.configui.allow_lyrics": "Whether to show lyrics when playing music",
     "login_music.configui.allow_lyrics.tooltip": "Whether to show lyrics when playing music",
 
+    "login_music.configui.lyrics_pos": "Defines the position of the lyrics",
+    "login_music.configui.lyrics_pos.tooltip": "Defines the position of the lyrics",
+
+    "login_music.configui.lyrics_color": "Defines the color of the lyrics you want to use",
+    "login_music.configui.lyrics_color.tooltip": "Currently it only supports the RGB form",
+
     "login_music.commands.reload.success": "Reload successfully!",
     "login_music.commands.reload.fail": "Reload fail!, %s",
     "login_music.commands.list.empty": "The music config is empty!",

@@ -2,8 +2,8 @@ package com.rd806.loginmusic.event;
 
 import com.rd806.loginmusic.LoginMusic;
 import com.rd806.loginmusic.config.ServerConfig;
-import com.rd806.loginmusic.music.MusicConfig;
-import com.rd806.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.media.music.MusicConfig;
+import com.rd806.loginmusic.media.music.MusicEntry;
 import com.rd806.loginmusic.network.LoginMusicPacket;
 import com.rd806.loginmusic.network.NetworkConfig;
 import net.minecraft.server.level.ServerPlayer;

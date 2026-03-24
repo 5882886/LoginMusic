@@ -1,8 +1,7 @@
-package com.rd806.loginmusic.lyric;
+package com.rd806.loginmusic.media.lyric;
 
 import com.rd806.loginmusic.LoginMusic;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 
 import java.util.List;
 import java.util.Timer;
@@ -36,6 +35,7 @@ public class LyricPlayer {
         isPlaying = true;
 
         // 启动定时器
+        // 每500ms检查一次
         lyricTimer = new Timer("LyricTimer", true);
         lyricTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -51,12 +51,9 @@ public class LyricPlayer {
 
                     mc.execute(() -> {
                         if (mc.player != null) {
-                            Component lyricMessage = Component.literal("")
-                                    .append(Component.literal("♪ "))
-                                    .append(Component.literal(currentLyric.getText()))
-                                    .append(Component.literal(" ♪"));
+                            String lyricMessage = "♪ " + currentLyric.getText() + " ♪";
                             // 在屏幕底部显示歌词
-                            mc.player.displayClientMessage(lyricMessage, true);
+                            LyricLayer.getInstance().showLyric(lyricMessage);
                         }
                     });
                 }
@@ -73,6 +70,8 @@ public class LyricPlayer {
         isPlaying = false;
         currentLyrics = null;
         lastLyricEntry = null;
+        // 清除歌词内容
+        LyricLayer.getInstance().showLyric(null);
         LoginMusic.LOGGER.info("Lyrics is stopped!");
     }
 }

@@ -3,6 +3,7 @@ package com.rd806.loginmusic;
 import com.mojang.logging.LogUtils;
 import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.config.ServerConfig;
+import com.rd806.loginmusic.media.lyric.LyricLayer;
 import com.rd806.loginmusic.network.NetworkConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,6 +79,7 @@ public class LoginMusic {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
+            LyricLayer.getInstance();
             LOGGER.info("Start LoginMusic on client!");
         }
     }

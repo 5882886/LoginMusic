@@ -1,7 +1,7 @@
-package com.rd806.loginmusic.lyric;
+package com.rd806.loginmusic.media.lyric;
 
 import com.rd806.loginmusic.LoginMusic;
-import com.rd806.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.media.music.MusicEntry;
 
 import java.io.BufferedReader;
 import java.io.StringReader;

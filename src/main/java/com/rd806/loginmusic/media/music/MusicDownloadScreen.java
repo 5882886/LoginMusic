@@ -1,4 +1,4 @@
-package com.rd806.loginmusic.music;
+package com.rd806.loginmusic.media.music;
 
 import com.rd806.loginmusic.LoginMusic;
 import net.minecraft.client.gui.GuiGraphics;

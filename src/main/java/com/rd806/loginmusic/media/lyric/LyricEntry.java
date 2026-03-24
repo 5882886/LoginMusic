@@ -1,4 +1,4 @@
-package com.rd806.loginmusic.lyric;
+package com.rd806.loginmusic.media.lyric;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,7 @@
 package com.rd806.loginmusic;
 
-import com.rd806.loginmusic.music.MusicConfig;
-import com.rd806.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.media.music.MusicConfig;
+import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.RegisterCommandsEvent;

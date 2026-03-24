@@ -17,6 +17,12 @@
     "login_music.configui.allow_lyrics": "播放音乐时是否展示歌词",
     "login_music.configui.allow_lyrics.tooltip": "播放音乐时是否展示歌词",
 
+    "login_music.configui.lyrics_pos": "歌词的显示位置",
+    "login_music.configui.lyrics_pos.tooltip": "歌词的显示位置",
+
+    "login_music.configui.lyrics_color": "歌词的显示颜色",
+    "login_music.configui.lyrics_color.tooltip": "目前仅支持RGB颜色格式",
+
     "login_music.commands.reload.success": "配置重载成功！",
     "login_music.commands.reload.fail": "配置重载失败！ %s",
     "login_music.commands.list.empty": "音乐配置为空！",

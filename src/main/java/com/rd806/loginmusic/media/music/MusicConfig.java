@@ -1,4 +1,4 @@
-package com.rd806.loginmusic.music;
+package com.rd806.loginmusic.media.music;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,8 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import com.rd806.loginmusic.LoginMusic;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.Reader;
