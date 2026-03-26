@@ -1,5 +1,6 @@
 package com.rd806.loginmusic;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.commands.Commands;
@@ -61,6 +62,33 @@ public class Command {
                                     }
                                     return 1;
                                 })
+                        )
+
+                        //  /loginmusic show
+                        .then(Commands.literal("show")
+                                .then(Commands.argument("targetPlayer", StringArgumentType.word())
+                                    .requires(source -> source.hasPermission(2))
+                                    .executes(context -> {
+
+                                        String targetPlayerName = StringArgumentType.getString(context, "targetPlayer");
+                                        MusicEntry entry = MusicConfig.getMusic(targetPlayerName);
+
+                                        if (entry == null) {
+                                            context.getSource().sendFailure(
+                                                    Component.translatable(LoginMusic.MODID + ".commands.show.fail")
+                                            );
+                                            return 0;
+                                        }
+
+                                        context.getSource().sendSuccess(() -> Component.translatable(LoginMusic.MODID + ".commands.show.success"), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("id: " + entry.getId()), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("name: " + entry.getName()), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("musicUrl: " + entry.getUrl()), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyrics()), false);
+
+                                        return 1;
+                                    })
+                                )
                         )
         );
     }

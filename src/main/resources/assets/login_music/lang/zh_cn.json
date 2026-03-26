@@ -27,6 +27,8 @@
     "login_music.commands.reload.fail": "配置重载失败！ %s",
     "login_music.commands.list.empty": "音乐配置为空！",
     "login_music.commands.list.success": "音乐配置如下：",
+    "login_music.commands.show.fail": "显示音乐配置失败",
+    "login_music.commands.show.success": "音乐配置如下：",
 
     "login_music.gui.logindownload.start": "准备下载 ...",
     "login_music.gui.logindownload.downloading": "正在下载登录音乐",

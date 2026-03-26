@@ -27,6 +27,8 @@
     "login_music.commands.reload.fail": "Reload fail!, %s",
     "login_music.commands.list.empty": "The music config is empty!",
     "login_music.commands.list.success": "The following is the music config:",
+    "login_music.commands.show.fail": "Fail to show player's music config!",
+    "login_music.commands.show.success": "The player's music config:",
 
     "login_music.gui.logindownload.start": "Start downloading...",
     "login_music.gui.logindownload.downloading": "Downloading login music",
