@@ -2,11 +2,15 @@ A simple Minecraft mod that can play music when players join in the world.
 
 > This mod uses AI to assist in development.
 >
-> Since mod version 1.1.0, javafx has given place to `com.googlecode.soundlibs:mp3spi`, which provides MP3 support now.
->
-> Since mod version 1.2.0, the music config has changed to JSON type.
->
 > Inspired by TartaricAcid's [Net Music](https://modrinth.com/mod/net-music) !
+
+| Milestone | Big changes                                                                                  |
+|-----------|----------------------------------------------------------------------------------------------|
+| 1.1.0     | javafx has given place to `com.googlecode.soundlibs:mp3spi`, which provides MP3 support now. |
+| 1.2.0     | the music config has changed to JSON type.                                                   |
+| 1.2.1     | Music can be played directly through the Internet without downloading; lyrics support!       |
+
+The logo comes from [here](https://www.flaticon.com/free-icon/music_9325026?term=music&page=1&position=87&origin=search&related_id=9325026), designed by juicy_fish.
 
 ## Functions
 
@@ -15,6 +19,7 @@ A simple Minecraft mod that can play music when players join in the world.
 - [x] Music Downloading screen
 - [x] Allow download switch
 - [x] Play different musics based on the player's name (uuid)
+- [x] Show lyrics while playing music
 
 ## File Structure
 
@@ -43,12 +48,20 @@ All music files are stored in the `/LoginMusic` folder.
 `login_music-client.toml` is effective only for the client:
 
 ```toml
-["Basic client config"]
+[Basic]
     #Range of music play (a non negative integer)
     #Range: 0 ~ 100
     range = 3
-    #Whether to allow downloading music from the internet
+    #Whether to allow downloading music first from the internet
     InternetAccess = true
+[Lyrics]
+    #Whether to show lyrics while playing music
+    ShowLyrics = true
+    #Defines the color of the lyrics you want to use
+    LyricsColor = "#FFFFFF"
+    #Defines the position of the lyrics
+    #Allowed Values: UP, MIDDLE, DOWN
+    LyricsPosition = "DOWN"
 ```
 
 
@@ -82,7 +95,7 @@ If you enter a server with this mod, the config file on the server has higher pr
 }
 ```
 
-> The "Music URL" is available if and only if `InternetAccess` is set "true" (the default setting is "false").
+> The music will be downloaded if `InternetAccess` is set "true" (the default setting is "false"), otherwise, the music is played through network audio streams, which may cause a short pause when entering a world.
 
 For example, When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music.mp3` ) in the folder `/LoginMusic` first.
 Then try to download it from its related url if it has failed before.

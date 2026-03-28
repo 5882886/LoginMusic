@@ -23,7 +23,7 @@ public class ClientConfig {
 
     // 允许音乐播放的范围
     private static final ModConfigSpec.ConfigValue<Integer> MUSIC_PLAY_RANGE;
-    // 是否允许从Url下载音乐
+    // 是否允许先从Url下载音乐
     private static final ModConfigSpec.BooleanValue ALLOW_DOWNLOAD;
     // 是否允许展示歌词
     private static final ModConfigSpec.BooleanValue ALLOW_LYRICS;
@@ -68,15 +68,17 @@ public class ClientConfig {
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-        range = MUSIC_PLAY_RANGE.get();
-        allowDownload = ALLOW_DOWNLOAD.get();
-        allowLyrics = ALLOW_LYRICS.get();
+        if (event.getConfig().getSpec() == SPEC) {
+            range = MUSIC_PLAY_RANGE.get();
+            allowDownload = ALLOW_DOWNLOAD.get();
+            allowLyrics = ALLOW_LYRICS.get();
 
-        Position lyricPos = LYRIC_POS.get();
-        String lyricsColor = LYRICS_COLOR.get();
-        LyricLayer.getInstance().setLyricLayer(lyricPos, lyricsColor);
+            Position lyricPos = LYRIC_POS.get();
+            String lyricsColor = LYRICS_COLOR.get();
+            LyricLayer.getInstance().setLyricLayer(lyricPos, lyricsColor);
 
-        LoginMusic.LOGGER.info("Music playing range: {} blocks", range);
+            LoginMusic.LOGGER.info("Music playing range: {} blocks", range);
+        }
     }
 
     public static ModConfigSpec getSpec() { return SPEC; }
