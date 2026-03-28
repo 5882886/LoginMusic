@@ -23,7 +23,7 @@ public class MusicConfig {
     // 创建配置文件
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG = "music.json";
-    private static Path configPath = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
+    private static final Path configPath = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
 
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
     private static boolean configLoaded = false;
@@ -77,7 +77,7 @@ public class MusicConfig {
                             {
                                 "id": "Default",
                                 "name": "Default.mp3",
-                                "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1",
+                                "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
                                 "lyrics": "example.lrc"
                             }
                         ]

@@ -30,8 +30,10 @@ public class ServerConfig {
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-        type = MUSIC_ID_TYPE.get();
-        LoginMusic.LOGGER.info("Select music by: {}", type);
+        if (event.getConfig().getSpec() == SPEC) {
+            type = MUSIC_ID_TYPE.get();
+            LoginMusic.LOGGER.info("Select music by: {}", type);
+        }
     }
 
     public static ForgeConfigSpec getSpec() { return SPEC; }

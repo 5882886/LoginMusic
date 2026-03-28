@@ -68,15 +68,17 @@ public class ClientConfig {
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-        range = MUSIC_PLAY_RANGE.get();
-        allowDownload = ALLOW_DOWNLOAD.get();
-        allowLyrics = ALLOW_LYRICS.get();
+        if (event.getConfig().getSpec() == SPEC) {
+            range = MUSIC_PLAY_RANGE.get();
+            allowDownload = ALLOW_DOWNLOAD.get();
+            allowLyrics = ALLOW_LYRICS.get();
 
-        Position lyricPos = LYRIC_POS.get();
-        String lyricsColor = LYRICS_COLOR.get();
-        LyricLayer.getInstance().setLyricLayer(lyricPos, lyricsColor);
+            Position lyricPos = LYRIC_POS.get();
+            String lyricsColor = LYRICS_COLOR.get();
+            LyricLayer.getInstance().setLyricLayer(lyricPos, lyricsColor);
 
-        LoginMusic.LOGGER.info("Music playing range: {} blocks", range);
+            LoginMusic.LOGGER.info("Music playing range: {} blocks", range);
+        }
     }
 
     public static ForgeConfigSpec getSpec() { return SPEC; }
