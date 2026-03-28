@@ -1,6 +1,6 @@
-package com.loginmusic.music;
+package com.rd806.loginmusic.media.music;
 
-import com.loginmusic.LoginMusic;
+import com.rd806.loginmusic.LoginMusic;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

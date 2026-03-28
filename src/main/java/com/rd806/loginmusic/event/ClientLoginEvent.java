@@ -1,8 +1,11 @@
-package com.loginmusic.event;
+package com.rd806.loginmusic.event;
 
-import com.loginmusic.Config;
-import com.loginmusic.LoginMusic;
-import com.loginmusic.music.*;
+import com.rd806.loginmusic.config.ClientConfig;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.media.music.MusicConfig;
+import com.rd806.loginmusic.media.music.MusicDownloadScreen;
+import com.rd806.loginmusic.media.music.MusicEntry;
+import com.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -58,7 +61,7 @@ public class ClientLoginEvent {
                     mc.setScreen(null);
                     // 关闭自定义界面，回到游戏
                     // 启动播放事件
-                    SimpleMusicPlayer.playMusic(entry.getId(), entry.getName());
+                    SimpleMusicPlayer.playMusic(entry);
                 });
             });
 
@@ -121,7 +124,7 @@ public class ClientLoginEvent {
                 return;
             }
             // 不允许下载则直接返回
-            if (!Config.getAllowDownload()) {
+            if (!ClientConfig.getAllowDownload()) {
                 if (mc.player != null) {
                     mc.player.displayClientMessage(
                             Component.translatable(LoginMusic.MODID + ".message.download_forbidden"),
@@ -213,9 +216,9 @@ public class ClientLoginEvent {
             return;
         }
 
-        boolean outOfRange = (Math.abs(player.getX() - lastX) > Config.getRange())
-                || Math.abs(player.getY() - lastY) > Config.getRange()
-                || Math.abs(player.getZ() - lastZ) > Config.getRange();
+        boolean outOfRange = (Math.abs(player.getX() - lastX) > ClientConfig.getRange())
+                || Math.abs(player.getY() - lastY) > ClientConfig.getRange()
+                || Math.abs(player.getZ() - lastZ) > ClientConfig.getRange();
 
         // 检测移动范围
         if (outOfRange) {

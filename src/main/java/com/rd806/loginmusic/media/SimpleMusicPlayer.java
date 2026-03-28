@@ -1,6 +1,11 @@
-package com.loginmusic.music;
+package com.rd806.loginmusic.media;
 
-import com.loginmusic.LoginMusic;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.config.ClientConfig;
+import com.rd806.loginmusic.media.lyric.LyricEntry;
+import com.rd806.loginmusic.media.lyric.LyricParser;
+import com.rd806.loginmusic.media.lyric.LyricPlayer;
+import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
@@ -8,6 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.sound.sampled.*;
 import java.io.File;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class SimpleMusicPlayer {
@@ -16,6 +22,10 @@ public class SimpleMusicPlayer {
     private static Clip currentClip;
     private static String currentMusicId;
     private static boolean isPlaying = false;
+    private static long startTimeMillis;
+
+    private static List<LyricEntry> currentLyrics;
+    private static boolean lyricStarted = false;
 
     private SimpleMusicPlayer() {}
 
@@ -36,20 +46,21 @@ public class SimpleMusicPlayer {
     }
 
     // 播放音乐
-    public static void playMusic(String musicId, String musicName) {
+    public static void playMusic(MusicEntry entry) {
         try {
-            LoginMusic.LOGGER.info("Playing: {}", musicId);
+            LoginMusic.LOGGER.info("Playing: {}", entry.getId());
             stopCurrentMusic();
 
-            currentMusicId = musicId;
+            currentMusicId = entry.getId();
             isPlaying = true;
 
-            File localFile = LoginMusic.CACHE_DIR.resolve(musicName).toFile();
+            File localFile = LoginMusic.CACHE_DIR.resolve(entry.getName()).toFile();
 
             if (localFile.exists()) {
                 // 获取音频输入流
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(localFile);
                 AudioFormat sourceFormat = audioStream.getFormat();
+
 
                 // 转换为PCM格式（如果需要）
                 AudioFormat targetFormat = new AudioFormat(
@@ -71,7 +82,7 @@ public class SimpleMusicPlayer {
                 DataLine.Info info = new DataLine.Info(Clip.class, targetFormat);
 
                 if (!AudioSystem.isLineSupported(info)) {
-                    LoginMusic.LOGGER.error("Unsupported music file: {}", musicName);
+                    LoginMusic.LOGGER.error("Unsupported music file: {}", entry.getName());
                     return;
                 }
 
@@ -89,7 +100,7 @@ public class SimpleMusicPlayer {
                             mc.execute(() -> {
                                 if (Minecraft.getInstance().player != null) {
                                     Minecraft.getInstance().player.displayClientMessage(
-                                            Component.translatable( LoginMusic.MODID + ".message.play_ended", musicName),
+                                            Component.translatable( LoginMusic.MODID + ".message.play_ended", entry.getName()),
                                             false
                                     );
                                 }
@@ -104,16 +115,45 @@ public class SimpleMusicPlayer {
                     currentClip = clip;
                     clip.start();
                     isPlaying = true;
+                    startTimeMillis = System.currentTimeMillis();
                     // 通知玩家
                     if (Minecraft.getInstance().player != null) {
                         Minecraft.getInstance().player.displayClientMessage(
-                                Component.translatable(LoginMusic.MODID + ".message.play_music", musicName),
-                                true
+                                Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getName()),
+                                false
                         );
                     }
                 });
 
-                LoginMusic.LOGGER.info("Playing music: {}", musicName);
+                // 播放歌词
+                if (entry.getLyrics() != null && ClientConfig.getAllowLyrics()) {
+                    LoginMusic.LOGGER.info("Lyrics prepared!");
+                    // 异步播放歌词
+                    LyricParser.loadLyricAsync(entry).thenAccept(lyricContent  -> {
+                        if (lyricContent != null && !lyricContent.isEmpty()) {
+                            currentLyrics = LyricParser.parseLRC(lyricContent);
+                            lyricStarted = true;
+
+                            if (isPlaying && startTimeMillis > 0) {
+                                LoginMusic.LOGGER.info("Lyrics playing!");
+                                // 计算展示歌词与播放开始的间隔时间
+                                // 即已播放的时间
+                                long elapsedTime = System.currentTimeMillis() - startTimeMillis;
+                                LyricPlayer.startLyricDisplay(currentLyrics, elapsedTime);
+                            } else  {
+                                LoginMusic.LOGGER.warn("No lyrics found!");
+                            }
+                        }
+                    }).exceptionally(throwable -> {
+                        LoginMusic.LOGGER.warn("Error loading lyrics!", throwable);
+                        return null;
+                    });
+
+                } else if (!ClientConfig.getAllowLyrics()) {
+                    LoginMusic.LOGGER.warn("Lyrics are disabled!");
+                }
+
+                LoginMusic.LOGGER.info("Playing music: {}", entry.getName());
             } else {
                 LoginMusic.LOGGER.error("Music not found!");
             }
@@ -122,7 +162,7 @@ public class SimpleMusicPlayer {
         } catch (LineUnavailableException e) {
             LoginMusic.LOGGER.error("Not available: {}", e.getMessage());
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Fail to play music: {} ", musicName);
+            LoginMusic.LOGGER.error("Fail to play music: {} ", entry.getName());
         }
     }
 
@@ -134,6 +174,7 @@ public class SimpleMusicPlayer {
             currentClip = null;
             currentMusicId = null;
             isPlaying = false;
+            LyricPlayer.stopLyricDisplay();
         }
     }
 

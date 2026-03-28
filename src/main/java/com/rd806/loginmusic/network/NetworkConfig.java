@@ -1,7 +1,7 @@
-package com.loginmusic.network;
+package com.rd806.loginmusic.network;
 
-import com.loginmusic.LoginMusic;
-import com.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;

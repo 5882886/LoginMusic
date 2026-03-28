@@ -1,4 +1,4 @@
-package com.loginmusic.music;
+package com.rd806.loginmusic.media.music;
 
 import java.util.Objects;
 
@@ -6,13 +6,15 @@ public class MusicEntry {
     private String id;
     private String url;
     private String name;
+    private String lyrics;
 
-    public MusicEntry() {}
-
-    public MusicEntry(String id, String url, String name) {
-        this.id = id;
-        this.url = url;
-        this.name = name;
+    // 默认构造函数
+    // 防止因配置文件缺少部分字段而无法进入游戏
+    public MusicEntry() {
+        this.id = "Default";
+        this.url = "Default";
+        this.name = "Default.mp3";
+        this.lyrics = "Default.lrc";
     }
 
     public String getId() { return id; }
@@ -23,6 +25,9 @@ public class MusicEntry {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public String getLyrics() { return lyrics; }
+    public void setLyrics(String lyrics) { this.lyrics = lyrics; }
 
     @Override
     public boolean equals(Object object) {

@@ -1,6 +1,6 @@
-package com.loginmusic.setup;
+package com.rd806.loginmusic.setup;
 
-import com.loginmusic.LoginMusic;
+import com.rd806.loginmusic.LoginMusic;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;

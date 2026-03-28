@@ -1,5 +1,6 @@
 {
-  "login_music.configuration.Basic": "Basic client config",
+  "login_music.configui.title": "Basic client config",
+  "login_music.configui.lyrics": "Lyrics Config",
 
   "login_music.configui.allow_download": "Whether to allow downloading music from the internet",
   "login_music.configui.allow_download.tooltip": "Prevent malicious links\nPlease only enable this feature on servers that you trust",
@@ -7,17 +8,27 @@
   "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
   "login_music.configui.music_play_range.tooltip": "Range of music play\na non negative integer",
 
-  "login_music.configuration.Music": "Configure server musics (automatically synchronized)",
+  "login_music.configui.music_config": "Configure server musics (automatically synchronized)",
   "login_music.configui.music_config.tooltip": "Configure server musics (automatically synchronized)",
 
-  "login_music.configuration.Selection": "Keywords for music selection (name/uuid)",
+  "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
   "login_music.configui.music_id_type.tooltip": "Keywords for music selection\nOptional: name/uid",
-  "login_music.configuration.type": "Keywords for music selection",
+
+  "login_music.configui.allow_lyrics": "Whether to show lyrics when playing music",
+  "login_music.configui.allow_lyrics.tooltip": "Whether to show lyrics when playing music",
+
+  "login_music.configui.lyrics_pos": "Defines the position of the lyrics",
+  "login_music.configui.lyrics_pos.tooltip": "Defines the position of the lyrics",
+
+  "login_music.configui.lyrics_color": "Defines the color of the lyrics you want to use",
+  "login_music.configui.lyrics_color.tooltip": "Currently it only supports the RGB form",
 
   "login_music.commands.reload.success": "Reload successfully!",
   "login_music.commands.reload.fail": "Reload fail!, %s",
   "login_music.commands.list.empty": "The music config is empty!",
   "login_music.commands.list.success": "The following is the music config:",
+  "login_music.commands.show.fail": "Fail to show player's music config!",
+  "login_music.commands.show.success": "The player's music config:",
 
   "login_music.gui.logindownload.start": "Start downloading...",
   "login_music.gui.logindownload.downloading": "Downloading login music",

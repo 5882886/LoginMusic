@@ -1,16 +1,12 @@
-package com.loginmusic.music;
+package com.rd806.loginmusic.media.music;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.loginmusic.LoginMusic;
+import com.rd806.loginmusic.LoginMusic;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -23,54 +19,19 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 // 实现仅在服务端配置
-@EventBusSubscriber(modid = LoginMusic.MODID)
 public class MusicConfig {
-
-    private static final ModConfigSpec SPEC;
-    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
-
     // 使用JSON配置文件
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG = "music.json";
-    private static Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
-
-    // 音乐选择的关键字
-    private static final ModConfigSpec.ConfigValue<String> MUSIC_ID_TYPE;
+    private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
 
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
-    private static String type;
 
     private static boolean configLoaded = false;
-
-    static {
-        BUILDER.push("Selection");
-        MUSIC_ID_TYPE = BUILDER
-                .comment("Keywords for music selection (name/uuid)")
-                .define("type", "name");
-        BUILDER.pop();
-
-        SPEC = BUILDER.build();
-    }
-
-    public static ModConfigSpec getSpec() { return SPEC; }
-
-    // 加载配置
-    @SubscribeEvent
-    public static void onLoad(ModConfigEvent.Loading event) {
-        if (event.getConfig().getSpec() == SPEC) {
-            LoginMusic.LOGGER.info("Loading LoginMusic config!");
-            CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
-            loadFromConfig();
-        }
-    }
 
     // 从配置文件加载
     public static void loadFromConfig() {
         try {
-            // 加载音乐播放范围
-            type = MUSIC_ID_TYPE.get();
-            LoginMusic.LOGGER.info("Select music by: {}", type);
-
             // 创建配置文件夹
             Files.createDirectories(CONFIG_PATH.getParent());
             if (!Files.exists(CONFIG_PATH)) {
@@ -108,7 +69,8 @@ public class MusicConfig {
                             {
                                 "id": "Default",
                                 "name": "Default.mp3",
-                                "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1"
+                                "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1",
+                                "lyrics": "example.lrc"
                             }
                         ]
                     }
@@ -139,9 +101,7 @@ public class MusicConfig {
 
     // 添加获取全部配置的方法（用于服务端发送）
     public static Map<String, MusicEntry> getMusicConfig() { return new HashMap<>(MUSIC_ENTRY_MAP);}
-
-    public static String getType() { return type; }
-
+    // 获取当前配置
     public static Map<String, MusicEntry> getMusicEntryMap() { return MUSIC_ENTRY_MAP; }
 
     public static boolean isConfigLoaded() { return configLoaded; }

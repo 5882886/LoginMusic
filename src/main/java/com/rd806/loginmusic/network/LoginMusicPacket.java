@@ -1,9 +1,9 @@
-package com.loginmusic.network;
+package com.rd806.loginmusic.network;
 
-import com.loginmusic.LoginMusic;
-import com.loginmusic.event.ClientLoginEvent;
-import com.loginmusic.music.MusicConfig;
-import com.loginmusic.music.MusicEntry;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.event.ClientLoginEvent;
+import com.rd806.loginmusic.media.music.MusicConfig;
+import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -58,6 +58,7 @@ public class LoginMusicPacket implements CustomPacketPayload {
                         MusicEntry music = entry.getValue();
                         buf.writeUtf(music.getName());
                         buf.writeUtf(music.getUrl());
+                        buf.writeUtf(music.getLyrics());
                     }
                 } else {
                     buf.writeInt(0);
@@ -77,13 +78,17 @@ public class LoginMusicPacket implements CustomPacketPayload {
                 int size = buf.readInt();
                 Map<String, MusicEntry> config = new HashMap<>();
                 for (int i = 0; i < size; i++) {
+                    // 获取信息
                     String id = buf.readUtf();
                     String name = buf.readUtf();
                     String url = buf.readUtf();
+                    String lyrics = buf.readUtf();
+                    // 写入信息
                     MusicEntry musicEntry = new MusicEntry();
                     musicEntry.setId(id);
                     musicEntry.setName(name);
                     musicEntry.setUrl(url);
+                    musicEntry.setLyrics(lyrics);
                     config.put(id, musicEntry);
                 }
                 return new LoginMusicPacket(config);

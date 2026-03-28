@@ -1,5 +1,6 @@
 {
-    "login_music.configuration.Basic": "客户端基础设置",
+    "login_music.configui.title": "客户端基础设置",
+    "login_music.configui.lyrics": "歌词设置",
 
     "login_music.configui.allow_download": "是否允许从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "防止恶意链接\n请仅在您信任的服务器上开启此功能",
@@ -7,17 +8,27 @@
     "login_music.configui.music_play_range": "音乐播放的范围（非负整数）",
     "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n非负整数",
 
-    "login_music.configuration.Music": "配置服务器上的音乐（自动同步）",
+    "login_music.configui.music_config": "配置服务器上的音乐（自动同步）",
     "login_music.configui.music_config.tooltip": "配置服务器上的音乐（自动同步）",
 
-    "login_music.configuration.Selection": "音乐选择的关键字（可选：name/uuid）",
+    "login_music.configui.music_id_type": "音乐选择的关键字（可选：name/uuid）",
     "login_music.configui.music_id_type.tooltip": "音乐选择的关键字\n可选 name/uuid）",
-    "login_music.configuration.type": "音乐选择的关键字",
+
+    "login_music.configui.allow_lyrics": "播放音乐时是否展示歌词",
+    "login_music.configui.allow_lyrics.tooltip": "播放音乐时是否展示歌词",
+
+    "login_music.configui.lyrics_pos": "歌词的显示位置",
+    "login_music.configui.lyrics_pos.tooltip": "歌词的显示位置",
+
+    "login_music.configui.lyrics_color": "歌词的显示颜色",
+    "login_music.configui.lyrics_color.tooltip": "目前仅支持RGB颜色格式",
 
     "login_music.commands.reload.success": "配置重载成功！",
     "login_music.commands.reload.fail": "配置重载失败！ %s",
     "login_music.commands.list.empty": "音乐配置为空！",
     "login_music.commands.list.success": "音乐配置如下：",
+    "login_music.commands.show.fail": "显示音乐配置失败",
+    "login_music.commands.show.success": "音乐配置如下：",
 
     "login_music.gui.logindownload.start": "准备下载 ...",
     "login_music.gui.logindownload.downloading": "正在下载登录音乐",

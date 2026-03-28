@@ -1,7 +1,9 @@
-package com.loginmusic;
+package com.rd806.loginmusic;
 
-import com.loginmusic.music.MusicConfig;
-import com.loginmusic.network.NetworkConfig;
+import com.rd806.loginmusic.config.ClientConfig;
+import com.rd806.loginmusic.config.ServerConfig;
+import com.rd806.loginmusic.media.lyric.LyricLayer;
+import com.rd806.loginmusic.network.NetworkConfig;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -30,6 +32,8 @@ public class LoginMusic {
     public static final Logger LOGGER = LogUtils.getLogger();
     // 音乐缓存目录
     public static final Path CACHE_DIR = Paths.get("LoginMusic");
+    // 歌词缓存目录
+    public static final Path LYRICS_DIR = Paths.get("LoginMusic/Lyrics");
 
 
     public LoginMusic(IEventBus modEventBus, ModContainer modContainer) {
@@ -41,6 +45,7 @@ public class LoginMusic {
         // 创建缓存目录
         try {
             Files.createDirectories(CACHE_DIR);
+            Files.createDirectories(LYRICS_DIR);
         } catch (IOException e) {
             LOGGER.warn("Failed to create cache directory!", e);
         }
@@ -52,8 +57,8 @@ public class LoginMusic {
         NeoForge.EVENT_BUS.register(new Command());
 
         // 生成配置文件
-        modContainer.registerConfig(ModConfig.Type.CLIENT, Config.getSpec());
-        modContainer.registerConfig(ModConfig.Type.SERVER, MusicConfig.getSpec());
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.getSpec());
+        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.getSpec());
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -65,6 +70,7 @@ public class LoginMusic {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
+        LyricLayer.getInstance();
         LOGGER.info("Start LoginMusic on server!");
     }
 }

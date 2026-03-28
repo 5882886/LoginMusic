@@ -1,9 +1,10 @@
-package com.loginmusic.event;
+package com.rd806.loginmusic.event;
 
-import com.loginmusic.LoginMusic;
-import com.loginmusic.music.MusicConfig;
-import com.loginmusic.music.MusicEntry;
-import com.loginmusic.network.NetworkConfig;
+import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.config.ServerConfig;
+import com.rd806.loginmusic.media.music.MusicConfig;
+import com.rd806.loginmusic.media.music.MusicEntry;
+import com.rd806.loginmusic.network.NetworkConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -32,9 +33,9 @@ public class ServerJoinEvent {
     // 选择音乐
     private static String chooseMusic(ServerPlayer player) {
         String result = "Default";
-        if (MusicConfig.getType().equalsIgnoreCase("name")) {
+        if (ServerConfig.getType().equalsIgnoreCase("name")) {
             result = chooseMusicByName(player);
-        } else if (MusicConfig.getType().equalsIgnoreCase("uuid")) {
+        } else if (ServerConfig.getType().equalsIgnoreCase("uuid")) {
             result = chooseMusicByUuid(player);
         }
         return result;
