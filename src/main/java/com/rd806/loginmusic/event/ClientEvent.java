@@ -17,10 +17,9 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @OnlyIn(Dist.CLIENT)
-public class ClientLoginEvent {
+public class ClientEvent {
 
     private static final Minecraft mc = Minecraft.getInstance();
-
     // 是否初始化位置
     private static boolean isInitialPos = false;
     // 是否已注册活动
@@ -28,12 +27,21 @@ public class ClientLoginEvent {
     // 记录玩家位置
     private static double lastX, lastY, lastZ;
 
-
     // 登录事件
     public static void playLoginMusic(String musicId) {
+        if (mc.player == null) return;
+
+        // 是否播放来自其他玩家的音乐
+        if (!mc.player.getName().getString().equals(musicId) && !ClientConfig.getAllowOthersMusic() && !SimpleMusicPlayer.isStopped()) {
+            mc.player.displayClientMessage(
+                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId),
+                    false
+            );
+            return;
+        }
+
         isInitialPos = false;
         MusicEntry entry = MusicConfig.getMusic(musicId);
-
         if (entry == null) {
             LoginMusic.LOGGER.warn("Music not found {}", musicId);
             if (mc.player != null) {
@@ -81,7 +89,7 @@ public class ClientLoginEvent {
     // 注册监听器
     private static void registerListener() {
         if (!listenerRegistered) {
-            MinecraftForge.EVENT_BUS.register(ClientLoginEvent.class);
+            MinecraftForge.EVENT_BUS.register(ClientEvent.class);
             listenerRegistered = true;
         }
     }

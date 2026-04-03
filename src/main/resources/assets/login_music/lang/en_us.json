@@ -37,6 +37,9 @@
     "login_music.gui.logindownload.warn": "Warning, the downloaded file may not be an audio file",
 
     "login_music.message.download_forbidden": "Already set to not allow downloading music from the network, playing audio streams now",
+    "login_music.message.loading_music": "Loading music: %s",
+    "login_music.message.not_allow_others_music": "Skip playing other players' music",
+    "login_music.message.load_failed": "Failed to load music!",
     "login_music.message.out_of_range": "Moving out of range, music playback has stopped!",
     "login_music.message.music_not_found": "Music not found!",
     "login_music.message.play_music": "Playing music: %s",

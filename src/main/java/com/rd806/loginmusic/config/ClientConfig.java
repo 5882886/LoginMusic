@@ -30,10 +30,13 @@ public class ClientConfig {
     private static final ForgeConfigSpec.EnumValue<Position> LYRIC_POS;
     // 歌词颜色
     private static final ForgeConfigSpec.ConfigValue<String> LYRICS_COLOR;
+    // 是否播放来自其他玩家的音频
+    private static final ForgeConfigSpec.BooleanValue ALLOW_OTHERS_MUSIC;
 
     private static Integer range;
     private static boolean allowDownload;
     private static boolean allowLyrics;
+    private static boolean allowOthersMusic;
 
     static {
         BUILDER.push("Basic").translation(LoginMusic.MODID + ".configui.title");
@@ -45,6 +48,10 @@ public class ClientConfig {
                 .comment("Whether to allow downloading music from the internet")
                 .translation(LoginMusic.MODID + ".configui.allow_download")
                 .define("InternetAccess", false);
+        ALLOW_OTHERS_MUSIC = BUILDER
+                .comment("Whether to play musics from other players")
+                .translation(LoginMusic.MODID + ".configui.allow_others_music")
+                .define("AllowOthersMusic", false);
         BUILDER.pop();
 
         BUILDER.push("Lyrics").translation(LoginMusic.MODID + ".configui.lyrics");
@@ -72,6 +79,7 @@ public class ClientConfig {
             range = MUSIC_PLAY_RANGE.get();
             allowDownload = ALLOW_DOWNLOAD.get();
             allowLyrics = ALLOW_LYRICS.get();
+            allowOthersMusic = ALLOW_OTHERS_MUSIC.get();
 
             Position lyricPos = LYRIC_POS.get();
             String lyricsColor = LYRICS_COLOR.get();
@@ -86,4 +94,5 @@ public class ClientConfig {
     public static Integer getRange() { return range; }
     public static boolean getAllowDownload() { return allowDownload; }
     public static boolean getAllowLyrics() { return allowLyrics; }
+    public static boolean getAllowOthersMusic() { return allowOthersMusic; }
 }

@@ -37,6 +37,9 @@
     "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
 
     "login_music.message.download_forbidden": "已设置不允许从网络下载音乐，直接播放网络流",
+    "login_music.message.loading_music": "加载音乐：%s",
+    "login_music.message.not_allow_others_music": "跳过其他玩家的音乐",
+            "login_music.message.load_failed": "加载音乐失败！",
     "login_music.message.out_of_range": "移动超出范围，已停止音乐播放！",
     "login_music.message.music_not_found": "未找到音乐！",
     "login_music.message.play_music": "正在播放音乐：%s",

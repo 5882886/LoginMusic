@@ -12,17 +12,21 @@ public class ServerConfig {
     private static final ForgeConfigSpec SPEC;
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
+    public enum Selection {
+        NAME,
+        UUID,
+    }
     // 音乐选择的关键字
-    private static final ForgeConfigSpec.ConfigValue<String> MUSIC_ID_TYPE;
+    private static final ForgeConfigSpec.EnumValue<Selection> MUSIC_ID_TYPE;
 
-    private static String type;
+    private static Selection type;
 
     static {
         BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
                 .comment("Keywords for music selection (name/uuid)")
                 .translation(LoginMusic.MODID + ".configui.music_id_type")
-                .define("type", "name");
+                .defineEnum("type", Selection.NAME);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -38,5 +42,5 @@ public class ServerConfig {
 
     public static ForgeConfigSpec getSpec() { return SPEC; }
 
-    public static String getType() { return type; }
+    public static Selection getType() { return type; }
 }
