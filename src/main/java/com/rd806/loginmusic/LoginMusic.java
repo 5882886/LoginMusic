@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.config.ServerConfig;
 import com.rd806.loginmusic.media.lyric.LyricLayer;
+import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.network.NetworkConfig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,7 +32,7 @@ public class LoginMusic {
     // 日志文件
     public static final Logger LOGGER = LogUtils.getLogger();
     // 音乐缓存目录
-    public static final Path CACHE_DIR = Paths.get("LoginMusic");
+    public static final Path CACHE_DIR = Paths.get("LoginMusic/MusicCache");
     // 歌词缓存目录
     public static final Path LYRICS_DIR = Paths.get("LoginMusic/Lyrics");
 
@@ -39,14 +40,6 @@ public class LoginMusic {
         IEventBus modEventBus = context.getModEventBus();
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
-        // 创建缓存目录
-        try {
-            Files.createDirectories(CACHE_DIR);
-            Files.createDirectories(LYRICS_DIR);
-        } catch (IOException e) {
-            LOGGER.error("Failed to create cache directory!", e);
-        }
 
         // 注册网络
         NetworkConfig.register();
@@ -70,6 +63,7 @@ public class LoginMusic {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
+        MusicConfig.loadFromConfig();
         LOGGER.info("Start LoginMusic on server!");
     }
 
@@ -78,7 +72,13 @@ public class LoginMusic {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            // Some client setup code
+            // 创建缓存目录
+            try {
+                Files.createDirectories(CACHE_DIR);
+                Files.createDirectories(LYRICS_DIR);
+            } catch (IOException e) {
+                LOGGER.error("Failed to create cache directory!", e);
+            }
             LyricLayer.getInstance();
             LOGGER.info("Start LoginMusic on client!");
         }

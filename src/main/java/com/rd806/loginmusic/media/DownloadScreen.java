@@ -1,4 +1,4 @@
-package com.rd806.loginmusic.media.music;
+package com.rd806.loginmusic.media;
 
 import com.rd806.loginmusic.LoginMusic;
 import net.minecraft.client.gui.GuiGraphics;
@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 // 音乐下载界面
-public class MusicDownloadScreen extends Screen {
+public class DownloadScreen extends Screen {
     private final String musicId;
     private final Runnable onComplete;
 
@@ -19,7 +19,7 @@ public class MusicDownloadScreen extends Screen {
 
     private boolean callbackTriggered = false;
 
-    public MusicDownloadScreen(String musicId, Runnable onComplete) {
+    public DownloadScreen(String musicId, Runnable onComplete) {
         super(Component.translatable(LoginMusic.MODID + ".gui.logindownload.title"));
         this.musicId = musicId;
         this.onComplete = onComplete;

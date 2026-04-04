@@ -1,5 +1,5 @@
 {
-    "login_music.configuration.Basic": "Basic client config",
+    "login_music.configuration.Music": "Music config",
     "login_music.configuration.Lyrics": "Lyrics Config",
 
     "login_music.configui.allow_download": "Whether to allow downloading music from the internet first",
@@ -8,8 +8,8 @@
     "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
     "login_music.configui.music_play_range.tooltip": "Range of music play\na non negative integer",
 
-    "login_music.configui.music_config": "Configure server musics (automatically synchronized)",
-    "login_music.configui.music_config.tooltip": "Configure server musics (automatically synchronized)",
+    "login_music.configui.allow_others_music": "Whether to allow playing music from other players",
+    "login_music.configui.allow_others_music.tooltip": "If true, you will have to do music playing logic when other players join in the world",
 
     "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
     "login_music.configui.music_id_type.tooltip": "Keywords for music selection\nOptional: name/uid",
@@ -39,6 +39,7 @@
     "login_music.message.download_forbidden": "Already set to not allow downloading music from the network, playing audio streams now",
     "login_music.message.loading_music": "Loading music: %s",
     "login_music.message.not_allow_others_music": "Skip playing other players' music",
+    "login_music.message.play_others_music": "Playing music from %s",
     "login_music.message.load_failed": "Failed to load music!",
     "login_music.message.out_of_range": "Moving out of range, music playback has stopped!",
     "login_music.message.music_not_found": "Music not found!",

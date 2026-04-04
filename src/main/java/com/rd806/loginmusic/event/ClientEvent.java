@@ -3,7 +3,7 @@ package com.rd806.loginmusic.event;
 import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.LoginMusic;
 import com.rd806.loginmusic.media.music.MusicConfig;
-import com.rd806.loginmusic.media.music.MusicDownloadScreen;
+import com.rd806.loginmusic.media.DownloadScreen;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import com.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
@@ -20,6 +20,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class ClientEvent {
 
     private static final Minecraft mc = Minecraft.getInstance();
+    // 记录自己的musicId
+    private static boolean initial = false;
+    private static String ownId = null;
     // 是否初始化位置
     private static boolean isInitialPos = false;
     // 是否已注册活动
@@ -30,14 +33,30 @@ public class ClientEvent {
     // 登录事件
     public static void playLoginMusic(String musicId) {
         if (mc.player == null) return;
-
-        // 是否播放来自其他玩家的音乐
-        if (!mc.player.getName().getString().equals(musicId) && !ClientConfig.getAllowOthersMusic() && !SimpleMusicPlayer.isStopped()) {
+        // 获取自己的musicId
+        if (!initial) {
+            ownId = musicId;
+            initial = true;
+        }
+        // 是否为来自其他玩家的音乐
+        if (!musicId.equals(ownId)) {
+            // 设置为不允许则跳过
+            if (!ClientConfig.getAllowOthersMusic()) {
+                mc.player.displayClientMessage(
+                        net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId),
+                        false
+                );
+                return;
+            }
+            // 当前有正在播放的音乐也跳过
+            if (!SimpleMusicPlayer.isStopped()) {
+                return;
+            }
+            // 播放来自其他玩家的音乐
             mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId),
+                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId),
                     false
             );
-            return;
         }
 
         isInitialPos = false;
@@ -57,7 +76,7 @@ public class ClientEvent {
         if (ClientConfig.getAllowDownload()) {
             mc.execute(() -> {
                 // 创建并显示下载界面
-                MusicDownloadScreen screen = new MusicDownloadScreen(musicId, () -> {
+                DownloadScreen screen = new DownloadScreen(musicId, () -> {
                     // 下载完成后播放音乐
                     mc.execute(() -> {
                         mc.setScreen(null);
@@ -70,9 +89,8 @@ public class ClientEvent {
                 mc.setScreen(screen);
                 SimpleMusicPlayer.startDownload(entry.getUrl(), entry.getName(), screen);
             });
-        }
-        // 不启用下载，直接读取音频流
-        else {
+        } else {
+            // 不启用下载，直接读取音频流
             if (mc.player != null) {
                 mc.player.displayClientMessage(
                         Component.translatable(LoginMusic.MODID + ".message.download_forbidden"),

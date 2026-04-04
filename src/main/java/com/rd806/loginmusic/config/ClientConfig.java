@@ -39,7 +39,7 @@ public class ClientConfig {
     private static boolean allowOthersMusic;
 
     static {
-        BUILDER.push("Basic").translation(LoginMusic.MODID + ".configui.title");
+        BUILDER.push("Music").translation(LoginMusic.MODID + ".configui.title");
         MUSIC_PLAY_RANGE = BUILDER
                 .comment("Range of music play (a non negative integer)")
                 .translation(LoginMusic.MODID + ".configui.music_play_range")

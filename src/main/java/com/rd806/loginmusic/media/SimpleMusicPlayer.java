@@ -5,7 +5,6 @@ import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.media.lyric.LyricEntry;
 import com.rd806.loginmusic.media.lyric.LyricParser;
 import com.rd806.loginmusic.media.lyric.LyricPlayer;
-import com.rd806.loginmusic.media.music.MusicDownloadScreen;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -30,7 +29,7 @@ public class SimpleMusicPlayer {
     private static final Minecraft mc = Minecraft.getInstance();
 
     private static Clip currentClip;
-    private static String currentMusicId;
+    private static MusicEntry currentMusicEntry;
     private static boolean isPlaying = false;
     private static long startTimeMillis;
 
@@ -63,16 +62,15 @@ public class SimpleMusicPlayer {
     }
 
     /* ----- 加载音频逻辑 ----- */
-
     // 播放音乐，加载和播放音乐分为两个线程
     public static void playMusic(MusicEntry entry) {
         stopCurrentMusic();
-        currentMusicId = entry.getId();
+        currentMusicEntry = entry;
 
         // 显示加载提示
         if (mc.player != null) {
             mc.player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.loading_music", entry.getName()),
+                    Component.translatable(LoginMusic.MODID + ".message.loading_music", currentMusicEntry.getName()),
                     false
             );
         }
@@ -81,16 +79,16 @@ public class SimpleMusicPlayer {
         AUDIO_LOADER.submit(() -> {
             try {
                 // 加载音频数据
-                PreparedAudio prepared = prepareAudio(entry);
+                PreparedAudio prepared = prepareAudio(currentMusicEntry);
                 if (prepared == null) return;
                 // 切换到渲染线程播放
-                mc.execute(() -> startCurrentMusic(entry, prepared));
+                mc.execute(() -> startCurrentMusic(currentMusicEntry, prepared));
             } catch (Exception e) {
                 LoginMusic.LOGGER.error("Failed to load audio", e);
                 mc.execute(() -> {
                     if (mc.player != null) {
                         mc.player.displayClientMessage(
-                                Component.translatable(LoginMusic.MODID + ".message.load_failed", entry.getName()),
+                                Component.translatable(LoginMusic.MODID + ".message.load_failed", currentMusicEntry.getName()),
                                 false
                         );
                     }
@@ -155,7 +153,7 @@ public class SimpleMusicPlayer {
     private static void startCurrentMusic(MusicEntry entry, PreparedAudio prepared) {
         try {
             Clip clip = (Clip) AudioSystem.getLine(prepared.info);
-
+            // 音频结束操作
             clip.addLineListener(event -> {
                 if (event.getType() == LineEvent.Type.STOP) {
                     clip.close();
@@ -202,7 +200,7 @@ public class SimpleMusicPlayer {
             LoginMusic.LOGGER.info("Lyrics prepared!");
             // 异步播放歌词
             LyricParser.loadLyricAsync(entry).thenAccept(lyricContent  -> {
-                if (lyricContent != null && !lyricContent.isEmpty()) {
+                if (lyricContent != null && !lyricContent.isEmpty() && !lyricStarted) {
                     currentLyrics = LyricParser.parseLRC(lyricContent);
                     lyricStarted = true;
 
@@ -231,15 +229,16 @@ public class SimpleMusicPlayer {
             currentClip.stop();
             currentClip.close();
             currentClip = null;
-            currentMusicId = null;
+            currentMusicEntry = null;
             isPlaying = false;
             LyricPlayer.stopLyricDisplay();
+            lyricStarted = false;
         }
     }
 
     /* ----- 下载逻辑 ----- */
     // 开始下载
-    public static void startDownload(String url, String name, MusicDownloadScreen screen) {
+    public static void startDownload(String url, String name, DownloadScreen screen) {
         // 加载下载界面
         CompletableFuture.runAsync(() -> {
             try {
@@ -288,9 +287,7 @@ public class SimpleMusicPlayer {
                 }
                 return;
             }
-
             LoginMusic.LOGGER.info("Start downloading from {}", urlStr);
-
             // Java20 之后不再使用 URL() 方法
             // - URL url = new URL(urlStr);
             URI uri = new URI(urlStr);
