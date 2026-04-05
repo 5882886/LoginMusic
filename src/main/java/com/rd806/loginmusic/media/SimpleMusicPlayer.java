@@ -13,14 +13,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.sound.sampled.*;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -106,7 +102,7 @@ public class SimpleMusicPlayer {
             if (localFile.exists()) {
                 audioStream = AudioSystem.getAudioInputStream(localFile);
             } else {
-                URI uri = new URI(entry.getUrl());
+                URI uri = new URI(entry.getMusicUrl());
                 URL url = uri.toURL();
                 URLConnection connection = url.openConnection();
                 connection.setConnectTimeout(5000);
@@ -233,112 +229,6 @@ public class SimpleMusicPlayer {
             isPlaying = false;
             LyricPlayer.stopLyricDisplay();
             lyricStarted = false;
-        }
-    }
-
-    /* ----- 下载逻辑 ----- */
-    // 开始下载
-    public static void startDownload(String url, String name, DownloadScreen screen) {
-        // 加载下载界面
-        CompletableFuture.runAsync(() -> {
-            try {
-                boolean[] typeMismatch = {false};
-                String[] mismatch = {""};
-                // 显示下载信息
-                downloadMusic(url, name, typeMismatch, mismatch, (downloaded, total, progress) -> {
-                    Component status;
-                    // 设置不同的提示信息
-                    if (typeMismatch[0]) {
-                        status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.warn");
-                    } else {
-                        status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
-                                String.format("%.1f", downloaded / 1024.0 / 1024.0),
-                                String.format("%.1f", total / 1024.0 / 1024.0)
-                        );
-                    }
-                    // 在主进程中更新进度
-                    if (screen != null) {
-                        mc.execute(() -> screen.updateProgress(progress, status));
-                    }
-                });
-                // 设置界面关闭状态
-                mc.execute(screen::setCompleted);
-            } catch (Exception e) {
-                LoginMusic.LOGGER.error("Downloading Music failed!");
-                mc.execute(() -> screen.setError("Downloading failed" + e.getMessage()));
-            }
-        });
-    }
-    // 进度回调
-    @FunctionalInterface
-    private interface DownloadCallback {
-        void onProgress(long downloadedBytes, long totalBytes, float progress);
-    }
-    // 下载方法
-    private static void downloadMusic(String urlStr, String name, boolean[] typeMismatch, String[] mismatchType, DownloadCallback callback) {
-        try {
-            Path cacheFile = LoginMusic.CACHE_DIR.resolve(name);
-            // 检查缓存，命中直接返回
-            if (Files.exists(cacheFile)) {
-                LoginMusic.LOGGER.info("File has been downloaded!");
-                if (callback != null) {
-                    long size = Files.size(cacheFile);
-                    callback.onProgress(size, size, 1.0f);
-                }
-                return;
-            }
-            LoginMusic.LOGGER.info("Start downloading from {}", urlStr);
-            // Java20 之后不再使用 URL() 方法
-            // - URL url = new URL(urlStr);
-            URI uri = new URI(urlStr);
-            URL url = uri.toURL();
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(30000);
-            connection.setRequestProperty("User-Agent", "LoginMusic");
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == 200) {
-                // 获取文件大小和类型
-                long totalBytes = connection.getContentLengthLong();
-                String mimeType = connection.getContentType();
-
-                LoginMusic.LOGGER.info("File size: {}; File type: {}", totalBytes, mimeType);
-
-                // 检查文件类型
-                if (mimeType != null && !mimeType.equals("audio/mpeg")) {
-                    LoginMusic.LOGGER.warn("The downloading file {} may not be an audio file!", mimeType);
-                    // 设置类型不匹配标志
-                    if (typeMismatch != null && typeMismatch.length > 0) {
-                        typeMismatch[0] = true;
-                    }
-                    if (mismatchType != null && mismatchType.length > 0) {
-                        mismatchType[0] = mimeType;
-                    }
-                }
-                // 下载文件
-                try (InputStream in = connection.getInputStream();
-                     OutputStream out = Files.newOutputStream(cacheFile)) {
-                    byte[] buffer = new byte[8192];
-                    int bytesRead;
-                    long downloadedBytes = 0;
-                    while ((bytesRead = in.read(buffer)) != -1) {
-                        out.write(buffer, 0, bytesRead);
-                        downloadedBytes += bytesRead;
-                        // 回调进度
-                        if (callback != null) {
-                            float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
-                            callback.onProgress(downloadedBytes, totalBytes, progress);
-                        }
-                    }
-                    LoginMusic.LOGGER.info("Downloading completed, total {} bytes", downloadedBytes);
-                }
-            } else {
-                LoginMusic.LOGGER.warn("Download failed, error code: {}", responseCode);
-            }
-        } catch (Exception e) {
-            LoginMusic.LOGGER.warn("Downloading error!", e);
         }
     }
 

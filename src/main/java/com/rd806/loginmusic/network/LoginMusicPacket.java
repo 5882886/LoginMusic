@@ -44,8 +44,9 @@ public class LoginMusicPacket {
                     buf.writeUtf(entry.getKey());
                     MusicEntry music = entry.getValue();
                     buf.writeUtf(music.getName());
-                    buf.writeUtf(music.getUrl());
+                    buf.writeUtf(music.getMusicUrl());
                     buf.writeUtf(music.getLyrics());
+                    buf.writeUtf(music.getLyricsUrl());
                 }
             }
         } else {
@@ -66,13 +67,16 @@ public class LoginMusicPacket {
             for (int i = 0; i < size; i++) {
                 String id = buf.readUtf();
                 String name = buf.readUtf();
-                String url = buf.readUtf();
+                String musicUrl = buf.readUtf();
                 String lyrics = buf.readUtf();
+                String lyricsUrl = buf.readUtf();
+                // 写入数据
                 MusicEntry musicEntry = new MusicEntry();
                 musicEntry.setId(id);
                 musicEntry.setName(name);
-                musicEntry.setUrl(url);
+                musicEntry.setMusicUrl(musicUrl);
                 musicEntry.setLyrics(lyrics);
+                musicEntry.setLyricsUrl(lyricsUrl);
                 config.put(id, musicEntry);
             }
             return new LoginMusicPacket(config);

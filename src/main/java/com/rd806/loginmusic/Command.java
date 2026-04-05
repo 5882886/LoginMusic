@@ -83,9 +83,9 @@ public class Command {
                                         context.getSource().sendSuccess(() -> Component.translatable(LoginMusic.MODID + ".commands.show.success"), false);
                                         context.getSource().sendSuccess(() -> Component.literal("id: " + entry.getId()), false);
                                         context.getSource().sendSuccess(() -> Component.literal("name: " + entry.getName()), false);
-                                        context.getSource().sendSuccess(() -> Component.literal("musicUrl: " + entry.getUrl()), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("musicUrl: " + entry.getMusicUrl()), false);
                                         context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyrics()), false);
-
+                                        context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyricsUrl()), false);
                                         return 1;
                                     })
                                 )

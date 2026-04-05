@@ -2,8 +2,9 @@ package com.rd806.loginmusic.event;
 
 import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.LoginMusic;
+import com.rd806.loginmusic.media.download.DownloadMethod;
 import com.rd806.loginmusic.media.music.MusicConfig;
-import com.rd806.loginmusic.media.DownloadScreen;
+import com.rd806.loginmusic.media.download.DownloadScreen;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import com.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
@@ -87,7 +88,7 @@ public class ClientEvent {
                 });
 
                 mc.setScreen(screen);
-                SimpleMusicPlayer.startDownload(entry.getUrl(), entry.getName(), screen);
+                DownloadMethod.startDownload(entry.getMusicUrl(), entry.getName(), screen);
             });
         } else {
             // 不启用下载，直接读取音频流
