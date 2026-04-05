@@ -1,7 +1,7 @@
 package com.rd806.loginmusic.network;
 
 import com.rd806.loginmusic.LoginMusic;
-import com.rd806.loginmusic.event.ClientLoginEvent;
+import com.rd806.loginmusic.event.ClientEvent;
 import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -121,7 +121,7 @@ public class LoginMusicPacket implements CustomPacketPayload {
                 LoginMusic.LOGGER.info("Prepare music: {}", packet.musicID);
                 // 只在客户端执行
                 if (FMLEnvironment.dist == Dist.CLIENT) {
-                    ClientLoginEvent.playLoginMusic(packet.musicID);
+                    ClientEvent.playLoginMusic(packet.musicID);
                 }
             }
         });

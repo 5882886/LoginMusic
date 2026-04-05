@@ -33,10 +33,9 @@ public class ServerJoinEvent {
     // 选择音乐
     private static String chooseMusic(ServerPlayer player) {
         String result = "Default";
-        if (ServerConfig.getType().equalsIgnoreCase("name")) {
-            result = chooseMusicByName(player);
-        } else if (ServerConfig.getType().equalsIgnoreCase("uuid")) {
-            result = chooseMusicByUuid(player);
+        switch (ServerConfig.getType()) {
+            case NAME -> result = chooseMusicByName(player);
+            case UUID -> result = chooseMusicByUuid(player);
         }
         return result;
     }

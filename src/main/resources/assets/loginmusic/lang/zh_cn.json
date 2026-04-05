@@ -1,6 +1,7 @@
 {
-    "login_music.configuration.Basic": "客户端基础设置",
+    "login_music.configuration.Music": "音乐设置",
     "login_music.configuration.Lyrics": "歌词设置",
+    "login_music.configuration.Selection": "音乐选择规则",
 
     "login_music.configui.allow_download": "是否允许先从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "如果为否，则直接读取网络音频流而不下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
@@ -8,8 +9,8 @@
     "login_music.configui.music_play_range": "音乐播放的范围（非负整数）",
     "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n非负整数",
 
-    "login_music.configui.music_config": "配置服务器上的音乐（自动同步）",
-    "login_music.configui.music_config.tooltip": "配置服务器上的音乐（自动同步）",
+    "login_music.configui.allow_others_music": "是否允许播放来自其他玩家的音乐",
+    "login_music.configui.allow_others_music.tooltip": "如果为是，则当其他玩家加入世界时也需要执行播放音乐操作",
 
     "login_music.configui.music_id_type": "音乐选择的关键字（可选：name/uuid）",
     "login_music.configui.music_id_type.tooltip": "音乐选择的关键字\n可选 name/uuid）",
@@ -37,6 +38,10 @@
     "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
 
     "login_music.message.download_forbidden": "已设置不允许从网络下载音乐，直接播放网络流",
+    "login_music.message.loading_music": "加载音乐：%s",
+    "login_music.message.not_allow_others_music": "跳过其他玩家的音乐",
+    "login_music.message.play_others_music": "播放来自 %s 的音乐",
+    "login_music.message.load_failed": "加载音乐失败！",
     "login_music.message.out_of_range": "移动超出范围，已停止音乐播放！",
     "login_music.message.music_not_found": "未找到音乐！",
     "login_music.message.play_music": "正在播放音乐：%s",

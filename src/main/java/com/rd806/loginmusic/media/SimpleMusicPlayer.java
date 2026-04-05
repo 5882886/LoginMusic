@@ -5,7 +5,6 @@ import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.media.lyric.LyricEntry;
 import com.rd806.loginmusic.media.lyric.LyricParser;
 import com.rd806.loginmusic.media.lyric.LyricPlayer;
-import com.rd806.loginmusic.media.music.MusicDownloadScreen;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -25,20 +24,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @OnlyIn(Dist.CLIENT)
 public class SimpleMusicPlayer {
     private static final Minecraft mc = Minecraft.getInstance();
 
     private static Clip currentClip;
-    private static String currentMusicId;
+    private static MusicEntry currentMusicEntry;
     private static boolean isPlaying = false;
     private static long startTimeMillis;
 
     private static List<LyricEntry> currentLyrics;
     private static boolean lyricStarted = false;
 
-    private SimpleMusicPlayer() {}
+    // 音频加载线程
+    private static final ExecutorService AUDIO_LOADER = Executors.newFixedThreadPool(2, r -> {
+        Thread t = new Thread(r, "AudioLoader");
+        t.setDaemon(true);
+        return t;
+    });
+
+    private record PreparedAudio(byte[] data, AudioFormat format, DataLine.Info info) { }
 
     static {
         AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes();
@@ -56,38 +64,62 @@ public class SimpleMusicPlayer {
         }
     }
 
-    // 播放音乐
+    /* ----- 加载音频逻辑 ----- */
+    // 播放音乐，加载和播放音乐分为两个线程
     public static void playMusic(MusicEntry entry) {
+        stopCurrentMusic();
+        currentMusicEntry = entry;
+
+        // 显示加载提示
+        if (mc.player != null) {
+            mc.player.displayClientMessage(
+                    Component.translatable(LoginMusic.MODID + ".message.loading_music", currentMusicEntry.getName()),
+                    false
+            );
+        }
+
+        // 在音频线程池中加载
+        AUDIO_LOADER.submit(() -> {
+            try {
+                // 加载音频数据
+                PreparedAudio prepared = prepareAudio(currentMusicEntry);
+                if (prepared == null) return;
+                // 切换到渲染线程播放
+                mc.execute(() -> startCurrentMusic(currentMusicEntry, prepared));
+            } catch (Exception e) {
+                LoginMusic.LOGGER.error("Failed to load audio", e);
+                mc.execute(() -> {
+                    if (mc.player != null) {
+                        mc.player.displayClientMessage(
+                                Component.translatable(LoginMusic.MODID + ".message.load_failed", currentMusicEntry.getName()),
+                                false
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+    // 准备音频，在后台执行
+    private static PreparedAudio prepareAudio(MusicEntry entry) {
+        File localFile = LoginMusic.CACHE_DIR.resolve(entry.getName()).toFile();
+        AudioInputStream audioStream;
+
         try {
-            LoginMusic.LOGGER.info("Playing: {}", entry.getId());
-            stopCurrentMusic();
-
-            currentMusicId = entry.getId();
-            isPlaying = true;
-
-            File localFile = LoginMusic.CACHE_DIR.resolve(entry.getName()).toFile();
-
-            AudioInputStream audioStream;
-
             if (localFile.exists()) {
-                // 获取音频输入流
                 audioStream = AudioSystem.getAudioInputStream(localFile);
             } else {
-                // 获取在线音频输入流
                 URI uri = new URI(entry.getUrl());
                 URL url = uri.toURL();
-
                 URLConnection connection = url.openConnection();
                 connection.setConnectTimeout(5000);
                 connection.setReadTimeout(5000);
-
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
                 audioStream = AudioSystem.getAudioInputStream(bufferedInputStream);
             }
 
+            // 转换格式
             AudioFormat sourceFormat = audioStream.getFormat();
-
-            // 转换为PCM格式（如果需要）
             AudioFormat targetFormat = new AudioFormat(
                     AudioFormat.Encoding.PCM_SIGNED,
                     sourceFormat.getSampleRate(),
@@ -98,68 +130,70 @@ public class SimpleMusicPlayer {
                     false
             );
 
-            // 如果格式不匹配，进行转换
             if (!sourceFormat.matches(targetFormat)) {
-                LoginMusic.LOGGER.info("Changing format...");
                 audioStream = AudioSystem.getAudioInputStream(targetFormat, audioStream);
             }
 
             DataLine.Info info = new DataLine.Info(Clip.class, targetFormat);
-
             if (!AudioSystem.isLineSupported(info)) {
-                LoginMusic.LOGGER.error("Unsupported music file: {}", entry.getName());
-                return;
+                throw new UnsupportedAudioFileException("Audio format not supported");
             }
 
-            Clip clip = (Clip) AudioSystem.getLine(info);
+            // 可选：预加载音频数据到字节数组，减少Clip.open()时间
+            byte[] audioData = audioStream.readAllBytes();
 
-            // 添加播放完成监听
+            return new PreparedAudio(audioData, targetFormat, info);
+        } catch (UnsupportedAudioFileException e) {
+            LoginMusic.LOGGER.error("Unsupported type: {}", e.getMessage());
+            return null;
+        } catch (Exception e) {
+            LoginMusic.LOGGER.error("Fail to play music: {} ", entry.getName());
+            return null;
+        }
+    }
+
+    // 播放音频，在渲染进程进行
+    private static void startCurrentMusic(MusicEntry entry, PreparedAudio prepared) {
+        try {
+            Clip clip = (Clip) AudioSystem.getLine(prepared.info);
+            // 音频结束操作
             clip.addLineListener(event -> {
                 if (event.getType() == LineEvent.Type.STOP) {
                     clip.close();
                     if (currentClip == clip) {
-                        currentClip = null;
-                        currentMusicId = null;
-                        isPlaying = false;
-                        // 播放结束通知
-                        mc.execute(() -> {
-                            if (Minecraft.getInstance().player != null) {
-                                Minecraft.getInstance().player.displayClientMessage(
-                                        Component.translatable( LoginMusic.MODID + ".message.play_ended", entry.getName()),
-                                        false
-                                );
-                            }
-                        });
+                        stopCurrentMusic();
+                        if (mc.player != null) {
+                            mc.player.displayClientMessage(
+                                    Component.translatable(LoginMusic.MODID + ".message.play_ended", entry.getName()),
+                                    false
+                            );
+                        }
                     }
                 }
             });
+            // 使用预加载的数据
+            AudioInputStream stream = new AudioInputStream(
+                    new java.io.ByteArrayInputStream(prepared.data),
+                    prepared.format,
+                    prepared.data.length / prepared.format.getFrameSize()
+            );
 
-            clip.open(audioStream);
+            clip.open(stream);
+            currentClip = clip;
+            clip.start();
+            startTimeMillis = System.currentTimeMillis();
+            isPlaying = true;
+            // 播放歌词
+            playLyric(entry);
 
-            // 在MC线程中执行
-            mc.execute(() -> {
-                currentClip = clip;
-                clip.start();
-                startTimeMillis = System.currentTimeMillis();
-                playLyric(entry);
-                isPlaying = true;
-                // 通知玩家
-                if (Minecraft.getInstance().player != null) {
-                    Minecraft.getInstance().player.displayClientMessage(
-                            Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getName()),
-                            false
-                    );
-                }
-            });
-
-            LoginMusic.LOGGER.info("Playing music: {}", entry.getName());
-
-        } catch (UnsupportedAudioFileException e) {
-            LoginMusic.LOGGER.error("Unsupported type: {}", e.getMessage());
-        } catch (LineUnavailableException e) {
-            LoginMusic.LOGGER.error("Not available: {}", e.getMessage());
+            if (mc.player != null) {
+                mc.player.displayClientMessage(
+                        Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getName()),
+                        false
+                );
+            }
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Fail to play music: {} ", entry.getName());
+            LoginMusic.LOGGER.error("Failed to play music: {} ", entry.getName());
         }
     }
 
@@ -169,7 +203,7 @@ public class SimpleMusicPlayer {
             LoginMusic.LOGGER.info("Lyrics prepared!");
             // 异步播放歌词
             LyricParser.loadLyricAsync(entry).thenAccept(lyricContent  -> {
-                if (lyricContent != null && !lyricContent.isEmpty()) {
+                if (lyricContent != null && !lyricContent.isEmpty() && !lyricStarted) {
                     currentLyrics = LyricParser.parseLRC(lyricContent);
                     lyricStarted = true;
 
@@ -198,15 +232,16 @@ public class SimpleMusicPlayer {
             currentClip.stop();
             currentClip.close();
             currentClip = null;
-            currentMusicId = null;
+            currentMusicEntry = null;
             isPlaying = false;
             LyricPlayer.stopLyricDisplay();
+            lyricStarted = false;
         }
     }
 
     /* ----- 下载逻辑 ----- */
 
-    public static void startDownload(String url, String name, MusicDownloadScreen screen) {
+    public static void startDownload(String url, String name, DownloadScreen screen) {
         // 加载下载界面
         CompletableFuture.runAsync(() -> {
             try {
@@ -317,7 +352,4 @@ public class SimpleMusicPlayer {
 
     // 获取播放状态
     public static boolean isStopped() { return !isPlaying; }
-
-    // 获取播放的音乐id
-    public static String getCurrentMusicId() { return currentMusicId; }
 }

@@ -11,17 +11,21 @@ public class ServerConfig {
     private static final ModConfigSpec SPEC;
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
+    public enum Selection {
+        NAME,
+        UUID,
+    }
     // 音乐选择的关键字
-    private static final ModConfigSpec.ConfigValue<String> MUSIC_ID_TYPE;
+    private static final ModConfigSpec.EnumValue<Selection> MUSIC_ID_TYPE;
 
-    private static String type = "name";
+    private static Selection type;
 
     static {
         BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
                 .comment("Keywords for music selection (name/uuid)")
                 .translation(LoginMusic.MODID + ".configui.music_id_type")
-                .define("type", "name");
+                .defineEnum("type", Selection.NAME);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -32,15 +36,12 @@ public class ServerConfig {
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == SPEC) {
-            String value = MUSIC_ID_TYPE.get();
-            if (!value.isEmpty()) {
-                type = value;
-            }
+            type = MUSIC_ID_TYPE.get();
+            LoginMusic.LOGGER.info("Loading server config");
         }
-        LoginMusic.LOGGER.info("Loading server config");
     }
 
     public static ModConfigSpec getSpec() { return SPEC; }
 
-    public static String getType() { return type; }
+    public static Selection getType() { return type; }
 }

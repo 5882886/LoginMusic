@@ -3,6 +3,7 @@ package com.rd806.loginmusic;
 import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.config.ServerConfig;
 import com.rd806.loginmusic.media.lyric.LyricLayer;
+import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.network.NetworkConfig;
 import org.slf4j.Logger;
 
@@ -31,7 +32,7 @@ public class LoginMusic {
     // 日志文件
     public static final Logger LOGGER = LogUtils.getLogger();
     // 音乐缓存目录
-    public static final Path CACHE_DIR = Paths.get("LoginMusic");
+    public static final Path CACHE_DIR = Paths.get("LoginMusic/MusicCache");
     // 歌词缓存目录
     public static final Path LYRICS_DIR = Paths.get("LoginMusic/Lyrics");
 
@@ -41,14 +42,6 @@ public class LoginMusic {
         modEventBus.addListener(this::commonSetup);
         // 注册网络
         modEventBus.addListener(NetworkConfig::register);
-
-        // 创建缓存目录
-        try {
-            Files.createDirectories(CACHE_DIR);
-            Files.createDirectories(LYRICS_DIR);
-        } catch (IOException e) {
-            LOGGER.warn("Failed to create cache directory!", e);
-        }
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (LoginMusic) to respond directly to events.
@@ -70,7 +63,7 @@ public class LoginMusic {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
-        LyricLayer.getInstance();
+        MusicConfig.loadFromConfig();
         LOGGER.info("Start LoginMusic on server!");
     }
 }

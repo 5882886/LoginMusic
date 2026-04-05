@@ -3,7 +3,7 @@ package com.rd806.loginmusic.event;
 import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.LoginMusic;
 import com.rd806.loginmusic.media.music.MusicConfig;
-import com.rd806.loginmusic.media.music.MusicDownloadScreen;
+import com.rd806.loginmusic.media.DownloadScreen;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import com.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 @OnlyIn(Dist.CLIENT)
-public class ClientLoginEvent {
+public class ClientEvent {
 
     private static final Minecraft mc = Minecraft.getInstance();
 
@@ -48,11 +48,11 @@ public class ClientLoginEvent {
         if (ClientConfig.getAllowDownload()) {
             mc.execute(() -> {
                 // 创建并显示下载界面
-                MusicDownloadScreen screen = new MusicDownloadScreen(musicId, () -> {
+                DownloadScreen screen = new DownloadScreen(musicId, () -> {
                     // 下载完成后播放音乐
                     mc.execute(() -> {
-                        mc.setScreen(null);
                         // 关闭自定义界面，回到游戏
+                        mc.setScreen(null);
                         // 启动播放事件
                         SimpleMusicPlayer.playMusic(entry);
                     });
@@ -80,7 +80,7 @@ public class ClientLoginEvent {
     // 注册监听器
     private static void registerListener() {
         if (!listenerRegistered) {
-            NeoForge.EVENT_BUS.register(ClientLoginEvent.class);
+            NeoForge.EVENT_BUS.register(ClientEvent.class);
             listenerRegistered = true;
         }
     }
