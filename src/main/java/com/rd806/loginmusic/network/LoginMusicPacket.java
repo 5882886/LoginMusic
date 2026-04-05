@@ -100,9 +100,7 @@ public class LoginMusicPacket implements CustomPacketPayload {
     };
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+    public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
 
     // 处理数据包
     public static void handle(final LoginMusicPacket packet, final IPayloadContext context) {
@@ -125,9 +123,5 @@ public class LoginMusicPacket implements CustomPacketPayload {
                 }
             }
         });
-    }
-
-    public boolean isConfig() {
-        return isConfig;
     }
 }

@@ -5,7 +5,9 @@ import com.rd806.loginmusic.config.ServerConfig;
 import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.media.music.MusicEntry;
 import com.rd806.loginmusic.network.NetworkConfig;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -20,13 +22,20 @@ public class ServerJoinEvent {
             // 根据玩家名称获取音乐
             String musicId = chooseMusic(serverPlayer);
             // 玩家登录时发送音乐配置
-            if (MusicConfig.isConfigLoaded()) {
+            if (!MusicConfig.isConfigLoaded()) {
                 MusicConfig.loadFromConfig();
             }
-
             LoginMusic.LOGGER.info("Player {} is logging in, sending music config", serverPlayer.getName().getString());
-            NetworkConfig.sendConfigToPlayer(MusicConfig.getMusicConfig(), serverPlayer);
-            NetworkConfig.sendLoginMusic(serverPlayer, musicId);
+
+            // 将音乐发送给全体玩家
+            MinecraftServer server = serverPlayer.getServer();
+            if (server != null) {
+                PlayerList playerList = server.getPlayerList();
+                for (ServerPlayer player : playerList.getPlayers()) {
+                    NetworkConfig.sendConfigToPlayer(MusicConfig.getMusicConfig(), player);
+                    NetworkConfig.sendLoginMusic(player, musicId);
+                }
+            }
         }
     }
 

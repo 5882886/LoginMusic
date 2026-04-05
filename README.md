@@ -9,6 +9,7 @@ A simple Minecraft mod that can play music when players join in the world.
 | 1.1.0     | javafx has given place to `com.googlecode.soundlibs:mp3spi`, which provides MP3 support now. |
 | 1.2.0     | the music config has changed to JSON type.                                                   |
 | 1.2.1     | Music can be played directly through the Internet without downloading; lyrics support!       |
+| 1.2.2     | Audio backend loading, Players can receive audio from other players on the server.           |                                                                                          |
 
 The logo comes from [here](https://www.flaticon.com/free-icon/music_9325026?term=music&page=1&position=87&origin=search&related_id=9325026), designed by juicy_fish.
 
@@ -34,10 +35,14 @@ All music files are stored in the `/LoginMusic` folder.
     │       └── music.json              # Configure specific music
     │
     ├── LoginMusic                      # Store music files
-    │   ├── music_1.mp3
-    │   ├── music_2.wav
-    │   └── ...
-    │
+    │   ├── Lyrics
+    │   │   ├── music_1.lrc
+    │   │   ├── music_2.lrc
+    │   │   └── ...
+    │   └── MusicCache
+    │       ├── music_1.mp3
+    │       ├── music_2.wav
+    │       └── ...
     └── ...
 ```
 
@@ -48,22 +53,25 @@ All music files are stored in the `/LoginMusic` folder.
 `login_music-client.toml` is effective only for the client:
 
 ```toml
-[Basic]
-    #Range of music play (a non negative integer)
-    #Range: 0 ~ 100
-    range = 3
-    #Whether to allow downloading music first from the internet
-    InternetAccess = true
 [Lyrics]
     #Whether to show lyrics while playing music
     ShowLyrics = true
-    #Defines the color of the lyrics you want to use
-    LyricsColor = "#FFFFFF"
     #Defines the position of the lyrics
     #Allowed Values: UP, MIDDLE, DOWN
     LyricsPosition = "DOWN"
-```
+    #Defines the color of the lyrics you want to use
+    LyricsColor = "#FFFFFF"
 
+[Music]
+    #Range of music play (a non negative integer)
+    # Default: 3
+    # Range: 0 ~ 100
+    range = 3
+    #Whether to allow downloading music from the internet
+    InternetAccess = false
+    #Whether to play musics from other players
+    AllowOthersMusic = true
+```
 
 ### Server Side
 
@@ -72,7 +80,8 @@ All music files are stored in the `/LoginMusic` folder.
 ```toml
 [Selection]
     #Keywords for music selection (name/uuid)
-    type = "name"
+    #Allowed Values: NAME, UUID
+    type = "NAME"
 ```
 
 **Since mod version 1.2.0, the music config has changed to JSON type, just as shown below.**
@@ -85,11 +94,13 @@ If you enter a server with this mod, the config file on the server has higher pr
         {
             "id": "Default",
             "name": "Default.mp3",
-            "url": "https://www.example.com/example1.mp3"
+            "url": "https://www.example.com/example1.mp3",
+            "lyrics": "Default.lrc"
         }, {
             "id": "Steve",
             "name": "login_music.mp3",
-            "url": "https://www.example.com/example2.mp3"
+            "url": "https://www.example.com/example2.mp3",
+            "lyrics": "login_music.lrc"
         }
     ]
 }
@@ -112,3 +123,5 @@ All the commands need permission level 2.
 Use `/loginmusic reload` to reload config.
 
 Use `/loginmusic list` to show music config available currently.
+
+Use `/loginmusic show <targetPlayer>` to show targetPlayer's music config
