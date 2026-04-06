@@ -33,8 +33,9 @@ public class ServerConfig {
 
     // NeoForge更改了加载方式
     // 服务端配置只能在进入世界后获取
+    // 仅在加载时执行
     @SubscribeEvent
-    static void onLoad(final ModConfigEvent event) {
+    static void onLoad(final ModConfigEvent.Loading event) {
         if (event.getConfig().getSpec() == SPEC) {
             type = MUSIC_ID_TYPE.get();
             LoginMusic.LOGGER.info("Loading server config");
