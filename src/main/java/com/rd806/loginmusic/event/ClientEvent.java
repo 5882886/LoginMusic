@@ -44,7 +44,7 @@ public class ClientEvent {
             // 设置为不允许则跳过
             if (!ClientConfig.getAllowOthersMusic()) {
                 mc.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId),
+                        Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId),
                         false
                 );
                 return;
@@ -55,7 +55,7 @@ public class ClientEvent {
             }
             // 播放来自其他玩家的音乐
             mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId),
+                    Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId),
                     false
             );
         }
@@ -66,7 +66,7 @@ public class ClientEvent {
             LoginMusic.LOGGER.warn("Music not found {}", musicId);
             if (mc.player != null) {
                 mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId),
+                    Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId),
                     false
                 );
             }
@@ -88,7 +88,7 @@ public class ClientEvent {
                 });
 
                 mc.setScreen(screen);
-                DownloadMethod.startDownload(entry.getMusicUrl(), entry.getName(), screen);
+                DownloadMethod.startDownload(entry, screen);
             });
         } else {
             // 不启用下载，直接读取音频流
@@ -100,7 +100,6 @@ public class ClientEvent {
             }
             mc.execute(() -> SimpleMusicPlayer.playMusic(entry));
         }
-
         // 注册监听方法
         registerListener();
     }
@@ -131,15 +130,19 @@ public class ClientEvent {
             return;
         }
 
-        boolean outOfRange = (Math.abs(player.getX() - lastX) > ClientConfig.getRange())
-                || Math.abs(player.getY() - lastY) > ClientConfig.getRange()
-                || Math.abs(player.getZ() - lastZ) > ClientConfig.getRange();
+        int range = ClientConfig.getRange();
+        // range小于零则返回
+        if (range < 0) {
+            return;
+        }
 
         // 检测移动范围
+        boolean outOfRange = Math.abs(player.getX() - lastX) > range ||
+                             Math.abs(player.getY() - lastY) > range || Math.abs(player.getZ() - lastZ) > range;
         if (outOfRange) {
             SimpleMusicPlayer.stopCurrentMusic();
             mc.player.displayClientMessage(
-                net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
+                Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
                 false
             );
         }

@@ -5,8 +5,8 @@
     "login_music.configui.allow_download": "Whether to allow downloading music from the internet first",
     "login_music.configui.allow_download.tooltip": "If false, then directly read network audio streams without downloading them locally\nPrevent malicious links but no cache support\nPlease only enable this feature on servers that you trust",
 
-    "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
-    "login_music.configui.music_play_range.tooltip": "Range of music play\na non negative integer",
+    "login_music.configui.music_play_range": "Range of music play",
+    "login_music.configui.music_play_range.tooltip": "Range of music play\nIf set to -1, the range checking will be disabled",
 
     "login_music.configui.allow_others_music": "Whether to allow playing music from other players",
     "login_music.configui.allow_others_music.tooltip": "If true, you will have to do music playing logic when other players join in the world",

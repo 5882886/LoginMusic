@@ -5,8 +5,8 @@
     "login_music.configui.allow_download": "是否允许先从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "如果为否，则直接读取网络音频流而不下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
 
-    "login_music.configui.music_play_range": "音乐播放的范围（非负整数）",
-    "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n非负整数",
+    "login_music.configui.music_play_range": "音乐播放的范围",
+    "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n设置为-1则范围不会生效",
 
     "login_music.configui.allow_others_music": "是否允许播放来自其他玩家的音乐",
     "login_music.configui.allow_others_music.tooltip": "如果为是，则当其他玩家加入世界时也需要执行播放音乐操作",

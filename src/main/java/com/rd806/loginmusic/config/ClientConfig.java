@@ -43,7 +43,7 @@ public class ClientConfig {
         MUSIC_PLAY_RANGE = BUILDER
                 .comment("Range of music play (a non negative integer)")
                 .translation(LoginMusic.MODID + ".configui.music_play_range")
-                .defineInRange("range", 3, 0, 100);
+                .defineInRange("range", 3, -1, 100);
         ALLOW_DOWNLOAD = BUILDER
                 .comment("Whether to allow downloading music from the internet")
                 .translation(LoginMusic.MODID + ".configui.allow_download")

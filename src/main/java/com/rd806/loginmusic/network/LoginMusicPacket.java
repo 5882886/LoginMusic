@@ -99,7 +99,7 @@ public class LoginMusicPacket {
                 // 播放音乐
                 LoginMusic.LOGGER.info("Prepare music: {}", packet.musicID);
                 DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
-                        ClientEvent. playLoginMusic(packet.musicID));
+                        ClientEvent.playLoginMusic(packet.musicID));
             }
         });
         context.setPacketHandled(true);

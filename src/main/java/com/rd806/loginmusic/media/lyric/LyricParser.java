@@ -112,9 +112,6 @@ public class LyricParser {
         if (entry == null || entry.getLyrics() == null || entry.getLyrics().isEmpty() || entry.getLyricsUrl() == null) {
             return null;
         }
-        if (ClientConfig.getAllowDownload()) {
-            DownloadMethod.downloadLyrics(entry.getLyricsUrl(), entry.getLyrics());
-        }
 
         String lyrics = loadFromFile(entry.getLyrics());
         if (lyrics == null) {
@@ -137,7 +134,7 @@ public class LyricParser {
             }
 
             if (!Files.exists(path)) {
-                LoginMusic.LOGGER.error("No lyrics file found: {}", path);
+                LoginMusic.LOGGER.info("No lyrics file found: {}, try url.", path);
                 return null;
             }
 
@@ -180,6 +177,7 @@ public class LyricParser {
             byte[] allBytes = baos.toByteArray();
             // 检测编码
             String charset = detectCharset(allBytes);
+            LoginMusic.LOGGER.info("Lyric file loaded from {}, using charset {}", urlStr,  charset);
             // 转换为字符串
             return new String(allBytes, charset);
         } catch (Exception e) {
