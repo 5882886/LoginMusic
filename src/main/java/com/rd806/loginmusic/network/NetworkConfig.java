@@ -10,21 +10,24 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 // 网络包类
 public class NetworkConfig {
-    private static final String PROTOCOL_VERSION = "1";
 
-    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            ResourceLocation.tryParse(LoginMusic.MODID + ":main"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
-    );
+    private static final String PROTOCOL_VERSION = "1";
+    private static SimpleChannel channel;
 
     private static int packetID = 0;
     private static int id() { return packetID ++; }
 
     // 注册网络音乐数据包
     public static void register() {
-        INSTANCE.messageBuilder(LoginMusicPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+
+        channel = NetworkRegistry.newSimpleChannel(
+                ResourceLocation.tryParse(LoginMusic.MODID + ":main"),
+                () -> PROTOCOL_VERSION,
+                clientVersion -> true,
+                PROTOCOL_VERSION::equals
+        );
+
+        channel.messageBuilder(LoginMusicPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(LoginMusicPacket::encode)
                 .decoder(LoginMusicPacket::decode)
                 .consumerMainThread(LoginMusicPacket::handle)
@@ -37,7 +40,7 @@ public class NetworkConfig {
     public static void sendLoginMusic(ServerPlayer player, String musicId) {
         if (player == null) return;
 
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player),
+        channel.send(PacketDistributor.PLAYER.with(() -> player),
                 new LoginMusicPacket(musicId));
 
         LoginMusic.LOGGER.info("Send music {} to {}", musicId, player.getName().getString());
@@ -45,6 +48,8 @@ public class NetworkConfig {
 
     // 同步数据给特定玩家
     public static void sendConfigToPlayer(Object packet, ServerPlayer player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
+        channel.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
+
+    public static SimpleChannel getChannel() { return channel; }
 }

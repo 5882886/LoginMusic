@@ -55,6 +55,7 @@ public class LoginMusic {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
+        MusicConfig.loadFromConfig();
         LOGGER.info("[LoginMusic] If you have any issues with LoginMusic, please report it at https://github.com/rd806/LoginMusic!");
     }
 
@@ -63,7 +64,6 @@ public class LoginMusic {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
-        MusicConfig.loadFromConfig();
         LOGGER.info("Start LoginMusic on server!");
     }
 
