@@ -5,18 +5,18 @@ import java.util.Objects;
 public class MusicEntry {
     private String id;
     private String musicUrl;
-    private String name;
-    private String lyrics;
-    private String lyricsUrl;
+    private String music;
+    private String lyric;
+    private String lyricUrl;
 
     // 默认构造函数
     // 防止因配置文件缺少部分字段而无法进入游戏
     public MusicEntry() {
         this.id = "Default";
+        this.music = "Default.mp3";
         this.musicUrl = "Default";
-        this.name = "Default.mp3";
-        this.lyrics = "Default.lrc";
-        this.lyricsUrl = "Default";
+        this.lyric = "Default.lrc";
+        this.lyricUrl = "Default";
     }
 
     public String getId() { return id; }
@@ -25,14 +25,14 @@ public class MusicEntry {
     public String getMusicUrl() { return musicUrl; }
     public void setMusicUrl(String musicUrl) { this.musicUrl = musicUrl; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getMusic() { return music; }
+    public void setMusic(String music) { this.music = music; }
 
-    public String getLyrics() { return lyrics; }
-    public void setLyrics(String lyrics) { this.lyrics = lyrics; }
+    public String getLyric() { return lyric; }
+    public void setLyric(String lyrics) { this.lyric = lyrics; }
 
-    public String getLyricsUrl() { return lyricsUrl; }
-    public void setLyricsUrl(String lyricsUrl) {  this.lyricsUrl = lyricsUrl; }
+    public String getLyricUrl() { return lyricUrl; }
+    public void setLyricUrl(String lyricsUrl) {  this.lyricUrl = lyricsUrl; }
 
     @Override
     public boolean equals(Object object) {

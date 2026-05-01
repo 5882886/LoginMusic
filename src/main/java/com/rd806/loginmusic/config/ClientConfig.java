@@ -54,7 +54,7 @@ public class ClientConfig {
                 .define("AllowOthersMusic", false);
         BUILDER.pop();
 
-        BUILDER.push("Lyrics").translation(LoginMusic.MODID + ".configui.lyrics");
+        BUILDER.push("Lyric").translation(LoginMusic.MODID + ".configui.lyrics");
         ALLOW_LYRICS = BUILDER
                 .comment("Whether to show lyrics while playing music")
                 .translation(LoginMusic.MODID + ".configui.allow_lyrics")

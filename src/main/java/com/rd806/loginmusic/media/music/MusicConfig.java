@@ -47,7 +47,7 @@ public class MusicConfig {
                     MUSIC_ENTRY_MAP.clear();
                     for (MusicEntry music : config.get("musics")) {
                         MUSIC_ENTRY_MAP.put(music.getId(), music);
-                        LoginMusic.LOGGER.info("Loading music: {} -> {}", music.getName(), music.getId());
+                        LoginMusic.LOGGER.info("Loading music: {} -> {}", music.getMusic(), music.getId());
                     }
                 }
             }

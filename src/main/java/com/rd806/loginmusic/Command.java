@@ -1,8 +1,10 @@
 package com.rd806.loginmusic;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.rd806.loginmusic.event.ClientEvent;
 import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.media.music.MusicEntry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -11,6 +13,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.Map;
 
 public class Command {
+
+    private static final Minecraft mc = Minecraft.getInstance();
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
@@ -36,6 +40,18 @@ public class Command {
                                 })
                         )
 
+                        //  /loginmusic play
+                        .then(Commands.literal("play")
+                                .executes(context -> {
+                                    String musicId = "Default";
+                                    if (mc.player != null) {
+                                        musicId = mc.player.getName().getString();
+                                    }
+                                    ClientEvent.playLoginMusic(musicId);
+                                    return 1;
+                                })
+                        )
+
                         // /loginmusic list
                         .then(Commands.literal("list")
                                 .requires(source -> source.hasPermission(2))
@@ -56,7 +72,7 @@ public class Command {
                                     // 显示音乐配置信息
                                     for (Map.Entry<String, MusicEntry> entry : tmpMap.entrySet()) {
                                         context.getSource().sendSuccess(
-                                                () -> Component.literal(entry.getKey() + ": " + entry.getValue().getName()),
+                                                () -> Component.literal(entry.getKey() + ": " + entry.getValue().getMusic()),
                                                 false
                                         );
                                     }
@@ -82,10 +98,10 @@ public class Command {
 
                                         context.getSource().sendSuccess(() -> Component.translatable(LoginMusic.MODID + ".commands.show.success"), false);
                                         context.getSource().sendSuccess(() -> Component.literal("id: " + entry.getId()), false);
-                                        context.getSource().sendSuccess(() -> Component.literal("name: " + entry.getName()), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("name: " + entry.getMusic()), false);
                                         context.getSource().sendSuccess(() -> Component.literal("musicUrl: " + entry.getMusicUrl()), false);
-                                        context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyrics()), false);
-                                        context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyricsUrl()), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyric()), false);
+                                        context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyricUrl()), false);
                                         return 1;
                                     })
                                 )
