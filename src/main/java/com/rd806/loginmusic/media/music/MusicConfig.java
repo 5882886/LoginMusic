@@ -76,10 +76,10 @@ public class MusicConfig {
                         "musics": [
                             {
                                 "id": "Default",
-                                "name": "Default.mp3",
-                                "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                                "lyrics": "example.lrc",
-                                "lyricsUrl": "Default"
+                                "music": "Default.mp3",
+                                "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                                "lyric": "example.lrc",
+                                "lyricUrl": "Default"
                             }
                         ]
                     }
