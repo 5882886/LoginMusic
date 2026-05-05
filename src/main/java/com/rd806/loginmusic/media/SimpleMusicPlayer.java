@@ -67,7 +67,7 @@ public class SimpleMusicPlayer {
         // 显示加载提示
         if (mc.player != null) {
             mc.player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.loading_music", currentMusicEntry.getName()),
+                    Component.translatable(LoginMusic.MODID + ".message.loading_music", currentMusicEntry.getMusic()),
                     false
             );
         }
@@ -85,7 +85,7 @@ public class SimpleMusicPlayer {
                 mc.execute(() -> {
                     if (mc.player != null) {
                         mc.player.displayClientMessage(
-                                Component.translatable(LoginMusic.MODID + ".message.load_failed", currentMusicEntry.getName()),
+                                Component.translatable(LoginMusic.MODID + ".message.load_failed", currentMusicEntry.getMusic()),
                                 false
                         );
                     }
@@ -96,7 +96,7 @@ public class SimpleMusicPlayer {
 
     // 准备音频，在后台执行
     private static PreparedAudio prepareAudio(MusicEntry entry) {
-        File localFile = LoginMusic.CACHE_DIR.resolve(entry.getName()).toFile();
+        File localFile = LoginMusic.CACHE_DIR.resolve(entry.getMusic()).toFile();
         AudioInputStream audioStream;
 
         try {
@@ -141,7 +141,7 @@ public class SimpleMusicPlayer {
             LoginMusic.LOGGER.error("Unsupported type: {}", e.getMessage());
             return null;
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Fail to play music: {} ", entry.getName());
+            LoginMusic.LOGGER.error("Fail to play music: {} ", entry.getMusic(), e);
             return null;
         }
     }
@@ -158,7 +158,7 @@ public class SimpleMusicPlayer {
                         stopCurrentMusic();
                         if (mc.player != null) {
                             mc.player.displayClientMessage(
-                                    Component.translatable(LoginMusic.MODID + ".message.play_ended", entry.getName()),
+                                    Component.translatable(LoginMusic.MODID + ".message.play_ended", entry.getMusic()),
                                     false
                             );
                         }
@@ -182,18 +182,18 @@ public class SimpleMusicPlayer {
 
             if (mc.player != null) {
                 mc.player.displayClientMessage(
-                        Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getName()),
+                        Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getMusic()),
                         false
                 );
             }
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Failed to play music: {} ", entry.getName());
+            LoginMusic.LOGGER.error("Failed to play music: {} ", entry.getMusic());
         }
     }
 
     // 播放歌词
     private static void playLyric(MusicEntry entry) {
-        if (entry.getLyrics() != null && ClientConfig.getAllowLyrics()) {
+        if (entry.getLyric() != null && ClientConfig.getAllowLyrics()) {
             LoginMusic.LOGGER.info("Lyrics prepared!");
             // 异步播放歌词
             LyricParser.loadLyricAsync(entry).thenAccept(lyricContent  -> {

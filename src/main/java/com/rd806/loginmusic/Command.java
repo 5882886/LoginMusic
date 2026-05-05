@@ -56,7 +56,7 @@ public class Command {
                                     // 显示音乐配置信息
                                     for (Map.Entry<String, MusicEntry> entry : tmpMap.entrySet()) {
                                         context.getSource().sendSuccess(
-                                                () -> Component.literal(entry.getKey() + ": " + entry.getValue().getName()),
+                                                () -> Component.literal(entry.getKey() + ": " + entry.getValue().getMusic()),
                                                 false
                                         );
                                     }
@@ -82,10 +82,10 @@ public class Command {
 
                                             context.getSource().sendSuccess(() -> Component.translatable(LoginMusic.MODID + ".commands.show.success"), false);
                                             context.getSource().sendSuccess(() -> Component.literal("id: " + entry.getId()), false);
-                                            context.getSource().sendSuccess(() -> Component.literal("name: " + entry.getName()), false);
+                                            context.getSource().sendSuccess(() -> Component.literal("name: " + entry.getMusic()), false);
                                             context.getSource().sendSuccess(() -> Component.literal("musicUrl: " + entry.getMusicUrl()), false);
-                                            context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyrics()), false);
-                                            context.getSource().sendSuccess(() -> Component.literal("lyricsUrl: " + entry.getLyricsUrl()), false);
+                                            context.getSource().sendSuccess(() -> Component.literal("lyrics: " + entry.getLyric()), false);
+                                            context.getSource().sendSuccess(() -> Component.literal("lyricsUrl: " + entry.getLyricUrl()), false);
 
                                             return 1;
                                         })

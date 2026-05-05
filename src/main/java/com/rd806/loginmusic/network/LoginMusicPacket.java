@@ -56,10 +56,10 @@ public class LoginMusicPacket implements CustomPacketPayload {
                     for (Map.Entry<String, MusicEntry> entry : packet.musicConfig.entrySet()) {
                         buf.writeUtf(entry.getKey());
                         MusicEntry music = entry.getValue();
-                        buf.writeUtf(music.getName());
+                        buf.writeUtf(music.getMusic());
                         buf.writeUtf(music.getMusicUrl());
-                        buf.writeUtf(music.getLyrics());
-                        buf.writeUtf(music.getLyricsUrl());
+                        buf.writeUtf(music.getLyric());
+                        buf.writeUtf(music.getLyricUrl());
                     }
                 } else {
                     buf.writeInt(0);
@@ -88,10 +88,10 @@ public class LoginMusicPacket implements CustomPacketPayload {
                     // 写入信息
                     MusicEntry musicEntry = new MusicEntry();
                     musicEntry.setId(id);
-                    musicEntry.setName(name);
+                    musicEntry.setMusic(name);
                     musicEntry.setMusicUrl(musicUrl);
-                    musicEntry.setLyrics(lyrics);
-                    musicEntry.setLyricsUrl(lyricsUrl);
+                    musicEntry.setLyric(lyrics);
+                    musicEntry.setLyricUrl(lyricsUrl);
                     config.put(id, musicEntry);
                 }
                 return new LoginMusicPacket(config);

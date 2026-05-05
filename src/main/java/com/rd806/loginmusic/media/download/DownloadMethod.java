@@ -27,7 +27,7 @@ public class DownloadMethod {
                 String[] mismatch = {""};
 
                 // 下载音乐
-                downloadMusic(entry.getMusicUrl(), entry.getName(), typeMismatch, mismatch, (downloaded, total, progress) -> {
+                downloadMusic(entry.getMusicUrl(), entry.getMusic(), typeMismatch, mismatch, (downloaded, total, progress) -> {
                     Component status;
                     // 设置不同的提示信息
                     if (typeMismatch[0]) {
@@ -44,7 +44,7 @@ public class DownloadMethod {
                     }
                 });
                 // 下载歌词
-                downloadLyrics(entry.getLyricsUrl(), entry.getLyrics(), (downloaded, total, progress) -> {
+                downloadLyrics(entry.getLyricUrl(), entry.getLyric(), (downloaded, total, progress) -> {
                     Component status;
                     // 设置不同的提示信息
                     status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",

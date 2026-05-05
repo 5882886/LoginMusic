@@ -54,23 +54,23 @@ All music files are stored in the `/LoginMusic` folder.
 
 ```toml
 [Lyrics]
-    #Whether to show lyrics while playing music
-    ShowLyrics = true
-    #Defines the position of the lyrics
-    #Allowed Values: UP, MIDDLE, DOWN
-    LyricsPosition = "DOWN"
-    #Defines the color of the lyrics you want to use
-    LyricsColor = "#FFFFFF"
+#Whether to show lyrics while playing music
+ShowLyrics = true
+#Defines the position of the lyrics
+#Allowed Values: UP, MIDDLE, DOWN
+LyricsPosition = "DOWN"
+#Defines the color of the lyrics you want to use
+LyricsColor = "#FFFFFF"
 
 [Music]
-    #Range of music play (a non negative integer)
-    # Default: 3
-    # Range: 0 ~ 100
-    range = 3
-    #Whether to allow downloading music from the internet
-    InternetAccess = false
-    #Whether to play musics from other players
-    AllowOthersMusic = true
+#Range of music play (a non negative integer)
+# Default: 3
+# Range: 0 ~ 100
+range = 3
+#Whether to allow downloading music from the internet
+InternetAccess = false
+#Whether to play musics from other players
+AllowOthersMusic = true
 ```
 
 ### Server Side
@@ -79,9 +79,9 @@ All music files are stored in the `/LoginMusic` folder.
 
 ```toml
 [Selection]
-    #Keywords for music selection (name/uuid)
-    #Allowed Values: NAME, UUID
-    type = "NAME"
+#Keywords for music selection (name/uuid)
+#Allowed Values: NAME, UUID
+type = "NAME"
 ```
 
 **Since mod version 1.2.0, the music config has changed to JSON type, just as shown below.**
@@ -93,14 +93,16 @@ If you enter a server with this mod, the config file on the server has higher pr
     "musics": [
         {
             "id": "Default",
-            "name": "Default.mp3",
-            "url": "https://www.example.com/example1.mp3",
-            "lyrics": "Default.lrc"
+            "music": "Default.mp3",
+            "musicUrl": "https://www.example.com/example.mp3",
+            "lyric": "Default.lrc",
+            "lyricUrl": "https://www.example.com/example.lrc" 
         }, {
             "id": "Steve",
-            "name": "login_music.mp3",
-            "url": "https://www.example.com/example2.mp3",
-            "lyrics": "login_music.lrc"
+            "music": "login_music.mp3",
+            "musicUrl": "https://www.example.com/login_music.mp3",
+            "lyric": "login_music.lrc",
+            "lyricUrl": "https://www.example.com/login_music.lrc"
         }
     ]
 }
@@ -120,8 +122,9 @@ If more entries need to be configured, please follow the JSON's rule.
 
 All the commands need permission level 2.
 
-Use `/loginmusic reload` to reload config.
-
-Use `/loginmusic list` to show music config available currently.
-
-Use `/loginmusic show <targetPlayer>` to show targetPlayer's music config
+| Command                           | Function                              |
+|-----------------------------------|---------------------------------------|
+| `/loginmusic reload`              | reload config                         |
+| `/loginmusic list`                | show music config available currently |
+| `/loginmusic show <targetPlayer>` | show targetPlayer's music config      |
+| `/loginmusic play`                | replay your login music               |

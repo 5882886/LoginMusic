@@ -110,13 +110,13 @@ public class LyricParser {
 
     // 从音乐条目加载歌词
     public static String loadLyrics(MusicEntry entry) {
-        if (entry == null || entry.getLyrics() == null || entry.getLyrics().isEmpty()) {
+        if (entry == null || entry.getLyric() == null || entry.getLyric().isEmpty()) {
             return null;
         }
 
-        String lyrics = loadFromFile(entry.getLyrics());
+        String lyrics = loadFromFile(entry.getLyric());
         if (lyrics == null) {
-            lyrics = loadFromUrl(entry.getLyricsUrl());
+            lyrics = loadFromUrl(entry.getLyricUrl());
         }
         return lyrics;
     }

@@ -2,7 +2,6 @@ package com.rd806.loginmusic;
 
 import com.rd806.loginmusic.config.ClientConfig;
 import com.rd806.loginmusic.config.ServerConfig;
-import com.rd806.loginmusic.media.lyric.LyricLayer;
 import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.network.NetworkConfig;
 import org.slf4j.Logger;
@@ -18,8 +17,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
