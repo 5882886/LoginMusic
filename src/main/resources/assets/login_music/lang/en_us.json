@@ -2,6 +2,14 @@
     "login_music.configuration.Music": "Music config",
     "login_music.configuration.Lyrics": "Lyrics Config",
 
+    "login_music.config.title": "Music Settings",
+    "login_music.config.addEnable": "Enable adding music",
+    "login_music.config.musicfile": "Music file",
+    "login_music.config.musicUrl": "Music url",
+    "login_music.config.lyric": "Lyric file",
+    "login_music.config.lyricUrl": "Lyric url",
+    "login_music.config.delete": "Delete Music",
+
     "login_music.configui.allow_download": "Whether to allow downloading music from the internet first",
     "login_music.configui.allow_download.tooltip": "If false, then directly read network audio streams without downloading them locally\nPrevent malicious links but no cache support\nPlease only enable this feature on servers that you trust",
 

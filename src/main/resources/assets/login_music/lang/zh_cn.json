@@ -2,6 +2,14 @@
     "login_music.configuration.Music": "音乐设置",
     "login_music.configuration.Lyrics": "歌词设置",
 
+    "login_music.config.title": "音乐配置",
+    "login_music.config.addEnable": "增加音乐",
+    "login_music.config.musicfile": "音乐文件",
+    "login_music.config.musicUrl": "音乐Url",
+    "login_music.config.lyric": "歌词文件",
+    "login_music.config.lyricUrl": "歌词Url",
+    "login_music.config.delete": "删除音乐",
+
     "login_music.configui.allow_download": "是否允许先从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "如果为否，则直接读取网络音频流而不下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
 
