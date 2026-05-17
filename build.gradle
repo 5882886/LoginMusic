@@ -25,6 +25,11 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+
+    maven {
+        name = "Cloth Config api"
+        url = "https://maven.shedaniel.me/"
+    }
 }
 
 base {
@@ -122,6 +127,8 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     // 添加 MP3 支持
     implementation 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
+    // Cloth Config api
+    implementation 'me.shedaniel.cloth:cloth-config-neoforge:15.0.140'
 
     // mp3 播放库，需要 jarInJar 进去
     jarJar "com.googlecode.soundlibs:mp3spi:1.9.5.4"

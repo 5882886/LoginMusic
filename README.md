@@ -48,41 +48,7 @@ All music files are stored in the `/LoginMusic` folder.
 
 ## Configuration
 
-### Client Side
-
-`login_music-client.toml` is effective only for the client:
-
-```toml
-[Lyrics]
-#Whether to show lyrics while playing music
-ShowLyrics = true
-#Defines the position of the lyrics
-#Allowed Values: UP, MIDDLE, DOWN
-LyricsPosition = "DOWN"
-#Defines the color of the lyrics you want to use
-LyricsColor = "#FFFFFF"
-
-[Music]
-#Range of music play (a non negative integer)
-# Default: 3
-# Range: 0 ~ 100
-range = 3
-#Whether to allow downloading music from the internet
-InternetAccess = false
-#Whether to play musics from other players
-AllowOthersMusic = true
-```
-
-### Server Side
-
-`login_music-server.toml`:
-
-```toml
-[Selection]
-#Keywords for music selection (name/uuid)
-#Allowed Values: NAME, UUID
-type = "NAME"
-```
+### Music Config
 
 **Since mod version 1.2.0, the music config has changed to JSON type, just as shown below.**
 
@@ -108,7 +74,7 @@ If you enter a server with this mod, the config file on the server has higher pr
 }
 ```
 
-> The music will be downloaded if `InternetAccess` is set "true" (the default setting is "false"), otherwise, the music is played through network audio streams, which may cause a short pause when entering a world.
+> The music will be downloaded if `InternetAccess` is set `true` (the default setting is `false`), otherwise, the music is played through network audio streams, which may cause a short pause when entering a world.
 
 For example, When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music.mp3` ) in the folder `/LoginMusic` first.
 Then try to download it from its related url if it has failed before.
@@ -117,6 +83,43 @@ Then try to download it from its related url if it has failed before.
 
 If more entries need to be configured, please follow the JSON's rule.
 
+Since mod version 1.2.4, you can open Login Music Config from the main menu if `Cloth Config API` has been installed.
+
+### Client Side
+
+`login_music-client.toml` is effective only for the client:
+
+```toml
+[Lyrics]
+    #Whether to show lyrics while playing music
+    ShowLyrics = true
+    #Defines the position of the lyrics
+    #Allowed Values: UP, MIDDLE, DOWN
+    LyricsPosition = "DOWN"
+    #Defines the color of the lyrics you want to use
+    LyricsColor = "#FFFFFF"
+
+[Music]
+    #Range of music play (a non negative integer)
+    # Default: 3
+    # Range: 0 ~ 100
+    range = 3
+    #Whether to allow downloading music from the internet
+    InternetAccess = false
+    #Whether to play musics from other players
+    AllowOthersMusic = true
+```
+
+### Server Side
+
+`login_music-server.toml`:
+
+```toml
+[Selection]
+    #Keywords for music selection (name/uuid)
+    #Allowed Values: NAME, UUID
+    type = "NAME"
+```
 
 ## Command
 

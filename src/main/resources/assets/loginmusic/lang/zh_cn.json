@@ -1,13 +1,32 @@
 {
     "login_music.configuration.Music": "音乐设置",
     "login_music.configuration.Lyrics": "歌词设置",
-    "login_music.configuration.Selection": "音乐选择规则",
+
+    "login_music.gui.config.title": "Login Music音乐配置",
+    "login_music.gui.config.addEnable": "增加音乐",
+    "login_music.gui.config.addEnable.tooltip": "增加新的音乐配置，关闭界面后生效",
+    "login_music.gui.config.id.tooltip": "选择音乐的主键，通常为玩家名称",
+    "login_music.gui.config.music": "音乐文件",
+    "login_music.gui.config.music.tooltip": "设置音乐文件",
+    "login_music.gui.config.musicUrl": "音乐文件链接",
+    "login_music.gui.config.musicUrl.tooltip": "设置音乐文件链接",
+    "login_music.gui.config.lyric": "歌词文件",
+    "login_music.gui.config.lyric.tooltip": "设置歌词文件",
+    "login_music.gui.config.lyricUrl": "歌词文件链接",
+    "login_music.gui.config.lyricUrl.tooltip": "设置歌词文件链接",
+    "login_music.gui.config.delete": "删除音乐",
+
+    "login_music.gui.logindownload.start": "准备下载 ...",
+    "login_music.gui.logindownload.downloading": "正在下载登录音乐",
+    "login_music.gui.logindownload.title": "下载登录音乐",
+    "login_music.gui.logindownload.progress": "下载中 ... %.1f MB / %.1f MB",
+    "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
 
     "login_music.configui.allow_download": "是否允许先从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "如果为否，则直接读取网络音频流而不下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
 
-    "login_music.configui.music_play_range": "音乐播放的范围（非负整数）",
-    "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n非负整数",
+    "login_music.configui.music_play_range": "音乐播放的范围",
+    "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n设置为-1则范围不会生效",
 
     "login_music.configui.allow_others_music": "是否允许播放来自其他玩家的音乐",
     "login_music.configui.allow_others_music.tooltip": "如果为是，则当其他玩家加入世界时也需要执行播放音乐操作",
@@ -30,12 +49,6 @@
     "login_music.commands.list.success": "音乐配置如下：",
     "login_music.commands.show.fail": "显示音乐配置失败",
     "login_music.commands.show.success": "音乐配置如下：",
-
-    "login_music.gui.logindownload.start": "准备下载 ...",
-    "login_music.gui.logindownload.downloading": "正在下载登录音乐",
-    "login_music.gui.logindownload.title": "下载登录音乐",
-    "login_music.gui.logindownload.progress": "下载中 ... %.1f MB / %.1f MB",
-    "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
 
     "login_music.message.download_forbidden": "已设置不允许从网络下载音乐，直接播放网络流",
     "login_music.message.loading_music": "加载音乐：%s",

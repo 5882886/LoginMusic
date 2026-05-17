@@ -1,13 +1,32 @@
 {
   "login_music.configuration.Music": "Music config",
   "login_music.configuration.Lyrics": "Lyrics Config",
-  "login_music.configuration.Selection": "Selection Rule of musics",
+
+  "login_music.gui.config.title": "Login Music Settings",
+  "login_music.gui.config.addEnable": "Enable adding music",
+  "login_music.gui.config.addEnable.tooltip": "Add a new music config, available after closing the menu",
+  "login_music.gui.config.id.tooltip": "The primary key for choosing music, typically the player's name",
+  "login_music.gui.config.music": "Music file",
+  "login_music.gui.config.music.tooltip": "Set the music file",
+  "login_music.gui.config.musicUrl": "Music url",
+  "login_music.gui.config.musicUrl.tooltip": "Set the music file's url",
+  "login_music.gui.config.lyric": "Lyric file",
+  "login_music.gui.config.lyric.tooltip": "Set the lyric file",
+  "login_music.gui.config.lyricUrl": "Lyric url",
+  "login_music.gui.config.lyricUrl.tooltip": "Set the lyric file's url",
+  "login_music.gui.config.delete": "Delete Music",
+
+  "login_music.gui.logindownload.start": "Start downloading...",
+  "login_music.gui.logindownload.downloading": "Downloading login music",
+  "login_music.gui.logindownload.title": "Login Music download",
+  "login_music.gui.logindownload.progress": "Downloading... %.1f MB / %.1f MB",
+  "login_music.gui.logindownload.warn": "Warning, the downloaded file may not be an audio file",
 
   "login_music.configui.allow_download": "Whether to allow downloading music from the internet first",
   "login_music.configui.allow_download.tooltip": "If false, then directly read network audio streams without downloading them locally\nPrevent malicious links but no cache support\nPlease only enable this feature on servers that you trust",
 
-  "login_music.configui.music_play_range": "Range of music play (a non negative integer)",
-  "login_music.configui.music_play_range.tooltip": "Range of music play\na non negative integer",
+  "login_music.configui.music_play_range": "Range of music play",
+  "login_music.configui.music_play_range.tooltip": "Range of music play\nIf set to -1, the range checking will be disabled",
 
   "login_music.configui.allow_others_music": "Whether to allow playing music from other players",
   "login_music.configui.allow_others_music.tooltip": "If true, you will have to do music playing logic when other players join in the world",
@@ -30,12 +49,6 @@
   "login_music.commands.list.success": "The following is the music config:",
   "login_music.commands.show.fail": "Fail to show player's music config!",
   "login_music.commands.show.success": "The player's music config:",
-
-  "login_music.gui.logindownload.start": "Start downloading...",
-  "login_music.gui.logindownload.downloading": "Downloading login music",
-  "login_music.gui.logindownload.title": "Login Music download",
-  "login_music.gui.logindownload.progress": "Downloading... %.1f MB / %.1f MB",
-  "login_music.gui.logindownload.warn": "Warning, the downloaded file may not be an audio file",
 
   "login_music.message.download_forbidden": "Already set to not allow downloading music from the network, playing audio streams now",
   "login_music.message.loading_music": "Loading music: %s",

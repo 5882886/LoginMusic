@@ -1,8 +1,10 @@
 package com.rd806.loginmusic;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.rd806.loginmusic.event.ClientEvent;
 import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.media.music.MusicEntry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -11,6 +13,8 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import java.util.Map;
 
 public class Command {
+
+    private static final Minecraft mc = Minecraft.getInstance();
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
@@ -60,6 +64,18 @@ public class Command {
                                                 false
                                         );
                                     }
+                                    return 1;
+                                })
+                        )
+
+                        //  /loginmusic play
+                        .then(Commands.literal("play")
+                                .executes(context -> {
+                                    String musicId = "Default";
+                                    if (mc.player != null) {
+                                        musicId = mc.player.getName().getString();
+                                    }
+                                    ClientEvent.playLoginMusic(musicId);
                                     return 1;
                                 })
                         )
