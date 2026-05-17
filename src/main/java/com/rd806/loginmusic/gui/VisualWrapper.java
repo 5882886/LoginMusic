@@ -1,4 +1,4 @@
-package com.rd806.loginmusic.media.gui;
+package com.rd806.loginmusic.gui;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -54,10 +54,8 @@ public class VisualWrapper {
                 wrapper.musics = this.musicList;
                 gson.toJson(wrapper, writer);
             }
-
             // 关键：保存后通知现有的 MusicConfig 重新加载
             MusicConfig.loadFromConfig();
-
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Failed to save config from GUI", e);
         }

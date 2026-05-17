@@ -53,6 +53,43 @@ All music files are stored in the `/LoginMusic` folder.
 
 ## Configuration
 
+### Music Config
+
+**Since mod version 1.2.0, the music config has changed to JSON type, just as shown below.**
+
+If you enter a server with this mod, the config file on the server has higher priority, which will cover your custom settings.
+
+```json
+{
+    "musics": [
+        {
+            "id": "Default",
+            "music": "Default.mp3",
+            "musicUrl": "https://www.example.com/example.mp3",
+            "lyric": "Default.lrc",
+            "lyricUrl": "https://www.example.com/example.lrc" 
+        }, {
+            "id": "Steve",
+            "music": "login_music.mp3",
+            "musicUrl": "https://www.example.com/login_music.mp3",
+            "lyric": "login_music.lrc",
+            "lyricUrl": "https://www.example.com/login_music.lrc"
+        }
+    ]
+}
+```
+
+> The music will be downloaded if `InternetAccess` is set `true` (the default setting is `false`), otherwise, the music is played through network audio streams, which may cause a short pause when entering a world.
+
+For example, When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music.mp3` ) in the folder `/LoginMusic` first.
+Then try to download it from its related url if it has failed before.
+
+> Tips: If there is a file with the same name in the folder, it will skip the download even if the file does not match the URL.
+
+If more entries need to be configured, please follow the JSON's rule.
+
+Since mod version 1.2.4, you can open Login Music Config from the main menu if `Cloth Config API` has been installed.
+
 ### Client Side
 
 `login_music-client.toml` is effective only for the client:
@@ -88,40 +125,6 @@ All music files are stored in the `/LoginMusic` folder.
     #Allowed Values: NAME, UUID
     type = "NAME"
 ```
-
-**Since mod version 1.2.0, the music config has changed to JSON type, just as shown below.**
-
-If you enter a server with this mod, the config file on the server has higher priority, which will cover your custom settings.
-
-```json
-{
-    "musics": [
-        {
-            "id": "Default",
-            "music": "Default.mp3",
-            "musicUrl": "https://www.example.com/example.mp3",
-            "lyric": "Default.lrc",
-            "lyricUrl": "https://www.example.com/example.lrc" 
-        }, {
-            "id": "Steve",
-            "music": "login_music.mp3",
-            "musicUrl": "https://www.example.com/login_music.mp3",
-            "lyric": "login_music.lrc",
-            "lyricUrl": "https://www.example.com/login_music.lrc"
-        }
-    ]
-}
-```
-
-> The music will be downloaded if `InternetAccess` is set "true" (the default setting is "false"), otherwise, the music is played through network audio streams, which may cause a short pause when entering a world.
-
-For example, When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music.mp3` ) in the folder `/LoginMusic` first.
-Then try to download it from its related url if it has failed before.
-
-> Tips: If there is a file with the same name in the folder, it will skip the download even if the file does not match the URL.
-
-If more entries need to be configured, please follow the JSON's rule.
-
 
 ## Command
 
