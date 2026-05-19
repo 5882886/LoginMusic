@@ -2,6 +2,9 @@
     "login_music.configuration.Music": "音乐设置",
     "login_music.configuration.Lyrics": "歌词设置",
 
+    "login_music.gui.config.entries": "音乐条目",
+    "login_music.gui.config.settings": "播放设置",
+
     "login_music.gui.config.title": "Login Music音乐配置",
     "login_music.gui.config.addEnable": "增加音乐",
     "login_music.gui.config.addEnable.tooltip": "增加新的音乐配置，关闭界面后生效",

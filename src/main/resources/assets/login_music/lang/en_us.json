@@ -2,6 +2,9 @@
     "login_music.configuration.Music": "Music config",
     "login_music.configuration.Lyrics": "Lyrics Config",
 
+    "login_music.gui.config.entries": "Music Entries",
+    "login_music.gui.config.settings": "Music Settings",
+
     "login_music.gui.config.title": "Login Music Settings",
     "login_music.gui.config.addEnable": "Enable adding music",
     "login_music.gui.config.addEnable.tooltip": "Add a new music config, available after closing the menu",

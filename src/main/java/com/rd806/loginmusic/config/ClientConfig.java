@@ -92,7 +92,20 @@ public class ClientConfig {
     public static ForgeConfigSpec getSpec() { return SPEC; }
 
     public static Integer getRange() { return range; }
+    public static void setRange(Integer value) { range = value; }
+
     public static boolean getAllowDownload() { return allowDownload; }
+    public static void  setAllowDownload(boolean value) { allowDownload = value; }
+
     public static boolean getAllowLyrics() { return allowLyrics; }
+    public static void setAllowLyrics(boolean value) { allowLyrics = value; }
+
+    public static Position getPosition() { return LYRIC_POS.get(); }
+    public static void setPosition(Position value) {
+        LYRIC_POS.set(value);
+        LyricLayer.getInstance().setLyricLayer(value, LYRICS_COLOR.get());
+    }
+
     public static boolean getAllowOthersMusic() { return allowOthersMusic; }
+    public static void setAllowOthersMusic(boolean value) { allowOthersMusic = value; }
 }

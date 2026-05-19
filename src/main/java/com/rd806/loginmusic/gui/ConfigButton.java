@@ -43,23 +43,17 @@ public class ConfigButton {
         }
     }
 
+    // 查找"多人游戏"按钮的方法
     private static Button findMultiplayerButton(ScreenEvent.Init event) {
-        TitleScreen screen = (TitleScreen) event.getScreen();
-
-        // 原版主菜单按钮的标准位置和顺序
-        // "单人游戏": (宽度/2 - 100, 高度/4 + 48)
-        // "多人游戏": (宽度/2 - 100, 高度/4 + 72)
-        // "设置": (宽度/2 - 100, 高度/4 + 96)
-
-        int screenWidth = screen.width;
-        int screenHeight = screen.height;
-        int expectedY = screenHeight / 4 + 72;  // 多人游戏的Y坐标
-        int expectedX = screenWidth / 2 - 100;  // 多人游戏的X坐标
-
         return event.getScreen().children().stream()
                 .filter(widget -> widget instanceof Button)
                 .map(widget -> (Button) widget)
-                .filter(button -> button.getX() == expectedX && button.getY() == expectedY)
+                .filter(button -> {
+                    // 通过按钮文本匹配（支持中英文）
+                    Component message = button.getMessage();
+                    String text = message.getString();
+                    return text.contains("Multiplayer") || text.contains("多人游戏");
+                })
                 .findFirst()
                 .orElse(null);
     }
