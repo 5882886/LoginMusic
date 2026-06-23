@@ -31,10 +31,12 @@ public class LoginMusic {
     public static final String MODID = "login_music";
     // 日志文件
     public static final Logger LOGGER = LogUtils.getLogger();
+    // 配置文件目录
+    public static final Path CONFIG_PATH = Paths.get("data/login_music");
     // 音乐缓存目录
-    public static final Path CACHE_DIR = Paths.get("LoginMusic/MusicCache");
+    public static final Path MUSICS_DIR = Paths.get("data/login_music/MusicCache");
     // 歌词缓存目录
-    public static final Path LYRICS_DIR = Paths.get("LoginMusic/Lyrics");
+    public static final Path LYRICS_DIR = Paths.get("data/login_music/LyricCache");
 
     public LoginMusic(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
@@ -74,7 +76,7 @@ public class LoginMusic {
         public static void onClientSetup(FMLClientSetupEvent event) {
             // 创建缓存目录
             try {
-                Files.createDirectories(CACHE_DIR);
+                Files.createDirectories(MUSICS_DIR);
                 Files.createDirectories(LYRICS_DIR);
             } catch (IOException e) {
                 LOGGER.error("Failed to create cache directory!", e);

@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ConfigButton {
 
     @SubscribeEvent
-    public static void onGuiInit(ScreenEvent.Init event) {
+    public static void onGuiInit(ScreenEvent.Init.Post event) {
         Screen screen = event.getScreen();
         // 仅在主菜单（TitleScreen）添加按钮
         if (screen instanceof TitleScreen && ModList.get().isLoaded("cloth_config")) {
@@ -39,12 +39,20 @@ public class ConfigButton {
                                 ConfigGUI.createConfigScreen(screen)
                         )
                 ).bounds(configButtonX, multiY, configButtonWidth, multiHeight).build());
+            } else {
+                // 若找不到锚点按钮，使用绝对位置
+                event.addListener(Button.builder(
+                        Component.literal("♫"),
+                        button -> Minecraft.getInstance().setScreen(
+                                ConfigGUI.createConfigScreen(screen)
+                        )
+                ).bounds(5, 5, 20, 20).build());
             }
         }
     }
 
     // 查找"多人游戏"按钮的方法
-    private static Button findMultiplayerButton(ScreenEvent.Init event) {
+    private static Button findMultiplayerButton(ScreenEvent.Init.Post event) {
         return event.getScreen().children().stream()
                 .filter(widget -> widget instanceof Button)
                 .map(widget -> (Button) widget)

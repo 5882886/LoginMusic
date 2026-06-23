@@ -95,7 +95,7 @@ public class ConfigGUI {
 
         // 是否允许下载
         musicSettings.addEntry(
-                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".configui.allow_download"), ClientConfig.getAllowLyrics())
+                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".configui.allow_download"), ClientConfig.getAllowDownload())
                         .setDefaultValue(false)
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.allow_download.tooltip"))
                         .setSaveConsumer(ClientConfig::setAllowDownload)
@@ -103,7 +103,7 @@ public class ConfigGUI {
 
         // 是否允许播放其他玩家的音乐
         musicSettings.addEntry(
-                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".configui.allow_others_music"), ClientConfig.getAllowLyrics())
+                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".configui.allow_others_music"), ClientConfig.getAllowOthersMusic())
                         .setDefaultValue(false)
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.allow_others_music.tooltip"))
                         .setSaveConsumer(ClientConfig::setAllowOthersMusic)

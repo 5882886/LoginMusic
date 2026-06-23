@@ -14,8 +14,6 @@ import java.util.Map;
 
 public class Command {
 
-    private static final Minecraft mc = Minecraft.getInstance();
-
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         event.getDispatcher().register(
@@ -44,8 +42,8 @@ public class Command {
                         .then(Commands.literal("play")
                                 .executes(context -> {
                                     String musicId = "Default";
-                                    if (mc.player != null) {
-                                        musicId = mc.player.getName().getString();
+                                    if (Minecraft.getInstance().player != null) {
+                                        musicId = Minecraft.getInstance().player.getName().getString();
                                     }
                                     ClientEvent.playLoginMusic(musicId);
                                     return 1;

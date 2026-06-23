@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import com.rd806.loginmusic.LoginMusic;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -23,7 +22,7 @@ public class MusicConfig {
     // 创建配置文件
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG = "music.json";
-    private static final Path configPath = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
+    private static final Path configPath = LoginMusic.CONFIG_PATH.resolve(CONFIG);
 
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
     private static boolean configLoaded = false;
@@ -105,5 +104,7 @@ public class MusicConfig {
     public static Map<String, MusicEntry> getMusicEntryMap() { return MUSIC_ENTRY_MAP; }
 
     public static boolean isConfigLoaded() { return configLoaded; }
+    // 获取配置文件
+    public static Path getConfigPath() { return configPath; }
 }
 

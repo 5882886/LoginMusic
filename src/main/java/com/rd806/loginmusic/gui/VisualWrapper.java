@@ -16,7 +16,7 @@ import java.util.List;
 
 public class VisualWrapper {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve("music.json");
+    private static final Path CONFIG_PATH = MusicConfig.getConfigPath();
 
     private List<MusicEntry> musicList = new ArrayList<>();
 
