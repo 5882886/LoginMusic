@@ -1,4 +1,4 @@
-package com.rd806.loginmusic.gui;
+package com.rd806.loginmusic.config.gui;
 
 import com.rd806.loginmusic.LoginMusic;
 import com.rd806.loginmusic.config.ClientConfig;
@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public class ConfigGUI {
+public class ClothConfigGUI {
     private static VisualWrapper visualWrapper;
     private static Screen parentScreen;
 
@@ -32,6 +32,7 @@ public class ConfigGUI {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parentScreen)
                 .setTitle(Component.translatable(LoginMusic.MODID + ".gui.config.title"));
+        builder.setGlobalized(true);
 
         // 音乐条目
         ConfigCategory musicEntries = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.entries"));

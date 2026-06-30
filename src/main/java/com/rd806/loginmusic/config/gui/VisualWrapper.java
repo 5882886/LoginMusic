@@ -1,11 +1,10 @@
-package com.rd806.loginmusic.gui;
+package com.rd806.loginmusic.config.gui;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rd806.loginmusic.LoginMusic;
 import com.rd806.loginmusic.media.music.MusicConfig;
 import com.rd806.loginmusic.media.music.MusicEntry;
-import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.Reader;
 import java.io.Writer;
