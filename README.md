@@ -33,10 +33,10 @@ All music files are stored in the `/data/login_music` folder.
 ```
 {version folder}
 ├── config
+│   ├── login_music-music.json      # Specific musics
 │   └── login_music-client.toml     # Client config    
 │
 ├── data/login_music        # Store music files
-│   ├── music.json          # Configure specific music
 │   ├── MusicsCache
 │   │   ├── music_1.mp3
 │   │   ├── music_2.wav

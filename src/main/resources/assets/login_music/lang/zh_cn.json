@@ -3,7 +3,8 @@
     "login_music.configuration.Lyrics": "歌词设置",
 
     "login_music.gui.config.entries": "音乐条目",
-    "login_music.gui.config.settings": "播放设置",
+    "login_music.gui.config.client": "客户端设置",
+    "login_music.gui.config.server": "服务端设置",
 
     "login_music.gui.config.title": "Login Music音乐配置",
     "login_music.gui.config.addEnable": "增加音乐",

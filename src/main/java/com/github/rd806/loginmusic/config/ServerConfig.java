@@ -1,0 +1,28 @@
+package com.github.rd806.loginmusic.config;
+
+import com.github.rd806.loginmusic.LoginMusic;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class ServerConfig {
+    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+
+    public enum Selection {
+        NAME,
+        UUID,
+    }
+
+    // 音乐选择的关键字
+    public static ForgeConfigSpec.EnumValue<Selection> MUSIC_ID_TYPE;
+
+    public static ForgeConfigSpec init() {
+        BUILDER.push("Selection");
+        MUSIC_ID_TYPE = BUILDER
+                .comment("Keywords for music selection (name/uuid)")
+                .translation(LoginMusic.MODID + ".configui.music_id_type")
+                .defineEnum("type", Selection.NAME);
+        BUILDER.pop();
+        return BUILDER.build();
+    }
+}

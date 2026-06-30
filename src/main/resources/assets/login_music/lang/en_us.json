@@ -3,7 +3,8 @@
     "login_music.configuration.Lyrics": "Lyrics Config",
 
     "login_music.gui.config.entries": "Music Entries",
-    "login_music.gui.config.settings": "Music Settings",
+    "login_music.gui.config.client": "Client Settings",
+    "login_music.gui.config.server": "Server Settings",
 
     "login_music.gui.config.title": "Login Music Settings",
     "login_music.gui.config.addEnable": "Enable adding music",
