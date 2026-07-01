@@ -2,6 +2,7 @@ package com.github.rd806.loginmusic.config.gui;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
+import com.github.rd806.loginmusic.media.lyric.LyricLayer;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -37,6 +38,7 @@ public class ClothConfigGUI {
         builder.setSavingRunnable(() -> {
             // 保存并触发 MusicConfig 重载
             visualWrapper.saveToFile();
+            LyricLayer.getInstance().setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
         });
 
         return builder;
@@ -160,6 +162,13 @@ public class ClothConfigGUI {
                         .setDefaultValue(ClientConfig.Position.DOWN)
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.lyrics_pos.tooltip"))
                         .setSaveConsumer(lyricPos -> ClientConfig.LYRIC_POS.set(lyricPos))
+                        .build());
+        // 歌词颜色设置
+        clientSettings.addEntry(
+                entryBuilder.startColorField(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color"), ClientConfig.LYRIC_COLOR.get())
+                        .setDefaultValue(ClientConfig.LYRIC_COLOR.get())
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color.tooltip"))
+                        .setSaveConsumer(lyricColor -> ClientConfig.LYRIC_COLOR.set(lyricColor))
                         .build());
     }
 }

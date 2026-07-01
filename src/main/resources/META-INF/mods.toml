@@ -68,9 +68,8 @@ description='''A simple mod that can play music when players join in the world''
 [[dependencies."login_music"]]
     modId="cloth_config"
     mandatory=false
-    optional=true               # 标记为可选依赖
     versionRange="[11.1.136,)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
 
 # 配置界面的支持

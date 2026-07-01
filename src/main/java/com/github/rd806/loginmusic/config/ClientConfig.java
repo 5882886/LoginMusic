@@ -4,6 +4,8 @@ import com.github.rd806.loginmusic.LoginMusic;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 
+import java.awt.*;
+
 // 通用配置文件
 @Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientConfig {
@@ -25,7 +27,7 @@ public class ClientConfig {
     // 歌词文本位置
     public static ForgeConfigSpec.EnumValue<Position> LYRIC_POS;
     // 歌词颜色
-    public static ForgeConfigSpec.ConfigValue<String> LYRICS_COLOR;
+    public static ForgeConfigSpec.ConfigValue<Integer> LYRIC_COLOR;
     // 是否播放来自其他玩家的音频
     public static ForgeConfigSpec.BooleanValue ALLOW_OTHERS_MUSIC;
 
@@ -54,10 +56,10 @@ public class ClientConfig {
                 .comment("Defines the position of the lyrics")
                 .translation(LoginMusic.MODID + ".configui.lyrics_pos")
                 .defineEnum("LyricsPosition", Position.DOWN);
-        LYRICS_COLOR = BUILDER
+        LYRIC_COLOR = BUILDER
                 .comment("Defines the color of the lyrics you want to use")
                 .translation(LoginMusic.MODID + ".configui.lyrics_color")
-                .define("LyricsColor", "#FFFFFF");
+                .define("LyricsColor", 0xFFFFFF);
         BUILDER.pop();
         return BUILDER.build();
     }

@@ -73,15 +73,15 @@ public class MusicConfig {
         try (Writer writer = Files.newBufferedWriter(configPath)) {
             String defaultConfig = """
                     {
-                        "musics": [
-                            {
-                                "id": "Default",
-                                "music": "Default.mp3",
-                                "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                                "lyric": "example.lrc",
-                                "lyricUrl": "Default"
-                            }
-                        ]
+                      "musics": [
+                        {
+                          "id": "Default",
+                          "music": "Default.mp3",
+                          "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                          "lyric": "example.lrc",
+                          "lyricUrl": "Default"
+                        }
+                      ]
                     }
                     """;
             writer.write(defaultConfig);

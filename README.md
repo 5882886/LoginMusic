@@ -99,7 +99,7 @@ Since mod version 1.2.4, you can open Login Music Config from the main menu if `
     #Allowed Values: UP, MIDDLE, DOWN
     LyricsPosition = "DOWN"
     #Defines the color of the lyrics you want to use
-    LyricsColor = "#FFFFFF"
+    LyricsColor = 16777215
 
 [Music]
     #Range of music play (a non negative integer)

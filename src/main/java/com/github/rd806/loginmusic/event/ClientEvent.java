@@ -59,7 +59,7 @@ public class ClientEvent {
         }
 
         // 启用下载模式
-        if (ClientConfig.ALLOW_OTHERS_MUSIC.get()) {
+        if (ClientConfig.ALLOW_DOWNLOAD.get()) {
             mc.execute(() -> {
                 // 创建并显示下载界面
                 DownloadScreen screen = new DownloadScreen(musicId, () -> {
@@ -94,9 +94,8 @@ public class ClientEvent {
     // 检测玩家移动
     @SubscribeEvent
     public static void checkMove(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
         // 已经停止则不再检测
-        if (SimpleMusicPlayer.isStopped()) return;
+        if (SimpleMusicPlayer.isStopped() || ClientConfig.MUSIC_PLAY_RANGE.get() < 0) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;
@@ -108,14 +107,11 @@ public class ClientEvent {
             isInitialPos = true;
             return;
         }
-
-        int range = ClientConfig.MUSIC_PLAY_RANGE.get();
-        // range小于零则返回
-        if (range < 0) { return; }
-
         // 检测移动范围
-        boolean outOfRange = Math.abs(player.getX() - lastX) > range ||
-                            Math.abs(player.getY() - lastY) > range || Math.abs(player.getZ() - lastZ) > range;
+        boolean outOfRange = Math.abs(player.getX() - lastX) >  ClientConfig.MUSIC_PLAY_RANGE.get() ||
+                            Math.abs(player.getY() - lastY) >  ClientConfig.MUSIC_PLAY_RANGE.get() ||
+                            Math.abs(player.getZ() - lastZ) >  ClientConfig.MUSIC_PLAY_RANGE.get();
+
         if (outOfRange) {
             SimpleMusicPlayer.stopCurrentMusic();
             mc.player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".message.out_of_range"), false);
