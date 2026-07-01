@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MusicConfig {
     // 使用JSON配置文件
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final String CONFIG = "music.json";
-    private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve(CONFIG);
+    private static final String CONFIG = LoginMusic.MODID + "-music.json";
+    private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(CONFIG);
 
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
 

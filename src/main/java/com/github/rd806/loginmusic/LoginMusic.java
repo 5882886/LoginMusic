@@ -25,10 +25,12 @@ public class LoginMusic {
     public static final String MODID = "login_music";
     // 日志文件
     public static final Logger LOGGER = LogUtils.getLogger();
+    // 配置文件目录
+    public static final Path DATA_PATH = Paths.get("data/login_music");
     // 音乐缓存目录
-    public static final Path CACHE_DIR = Paths.get("LoginMusic/MusicCache");
+    public static final Path MUSICS_DIR = DATA_PATH.resolve("MusicsCache");
     // 歌词缓存目录
-    public static final Path LYRICS_DIR = Paths.get("LoginMusic/Lyrics");
+    public static final Path LYRICS_DIR = DATA_PATH.resolve("LyricsCache");
 
 
     public LoginMusic(IEventBus modEventBus, ModContainer modContainer) {

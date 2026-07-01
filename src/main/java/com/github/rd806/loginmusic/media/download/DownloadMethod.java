@@ -75,7 +75,7 @@ public class DownloadMethod {
     // 音乐下载方法
     private static void downloadMusic(String urlStr, String name, boolean[] typeMismatch, String[] mismatchType, DownloadCallback callback) {
         try {
-            Path cacheFile = LoginMusic.CACHE_DIR.resolve(name);
+            Path cacheFile = LoginMusic.MUSICS_DIR.resolve(name);
             // 检查缓存，命中直接返回
             if (Files.exists(cacheFile)) {
                 LoginMusic.LOGGER.info("Music has been downloaded!");

@@ -14,22 +14,14 @@ import net.neoforged.api.distmarker.OnlyIn;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public class ConfigGUI {
+public class ClothConfigGUI {
     private static VisualWrapper visualWrapper;
-    private static Screen parentScreen;
-
-    public static Screen createConfigScreen(Screen parent) {
-        parentScreen = parent;
-        visualWrapper = new VisualWrapper();
-        return buildScreen();
-    }
 
     public static Screen buildScreen() {
         visualWrapper = new VisualWrapper();
-
-        ConfigBuilder builder = ConfigBuilder.create()
-                .setParentScreen(parentScreen)
-                .setTitle(Component.translatable(LoginMusic.MODID + ".gui.config.title"));
+        ConfigBuilder builder = ConfigBuilder.create().setTitle(Component.translatable(LoginMusic.MODID + ".gui.config.title"));
+        builder.setGlobalized(true);
+        builder.setGlobalizedExpanded(false);
 
         ConfigCategory musicCategory = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.category"));
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();

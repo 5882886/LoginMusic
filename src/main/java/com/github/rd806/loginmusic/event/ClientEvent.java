@@ -21,9 +21,6 @@ import net.neoforged.neoforge.common.NeoForge;
 public class ClientEvent {
 
     private static final Minecraft mc = Minecraft.getInstance();
-    // 记录自己的musicId
-    private static boolean initial = false;
-    private static String ownId = null;
     // 是否初始化位置
     private static boolean isInitialPos = false;
     // 是否已注册活动
@@ -34,44 +31,30 @@ public class ClientEvent {
     // 登录事件
     public static void playLoginMusic(String musicId) {
         if (mc.player == null) return;
-        // 获取自己的musicId
-        if (!initial) {
-            ownId = musicId;
-            initial = true;
-        }
-
+        // 判断是否为来自其他玩家的音乐
+        boolean isOwnMusic = musicId.equalsIgnoreCase(mc.player.getGameProfile().getName())
+                            || musicId.equalsIgnoreCase(mc.player.getStringUUID());
         // 是否为来自其他玩家的音乐
-        if (!musicId.equals(ownId)) {
+        if (!isOwnMusic) {
             // 设置为不允许则跳过
             if (!ClientConfig.getAllowOthersMusic()) {
                 mc.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId),
-                        false
-                );
+                        Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId), false);
                 return;
             }
             // 当前有正在播放的音乐也跳过
-            if (!SimpleMusicPlayer.isStopped()) {
-                return;
-            }
+            if (!SimpleMusicPlayer.isStopped()) { return; }
             // 播放来自其他玩家的音乐
             mc.player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId),
-                    false
-            );
+                    Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId), false);
         }
-
         isInitialPos = false;
         MusicEntry entry = MusicConfig.getMusic(musicId);
 
         if (entry == null) {
             LoginMusic.LOGGER.warn("Music not found {}", musicId);
-            if (mc.player != null) {
-                mc.player.displayClientMessage(
-                        Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId),
-                        false
-                );
-            }
+            mc.player.displayClientMessage(
+                    Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId), false);
             return;
         }
 
@@ -88,22 +71,15 @@ public class ClientEvent {
                         SimpleMusicPlayer.playMusic(entry);
                     });
                 });
-
                 mc.setScreen(screen);
                 DownloadMethod.startDownload(entry, screen);
             });
         }
         // 不启用下载，直接读取音频流
         else {
-            if (mc.player != null) {
-                mc.player.displayClientMessage(
-                        Component.translatable(LoginMusic.MODID + ".message.download_forbidden"),
-                        false
-                );
-            }
+            mc.player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".message.download_forbidden"), false);
             mc.execute(() -> SimpleMusicPlayer.playMusic(entry));
         }
-
         // 注册监听方法
         registerListener();
     }

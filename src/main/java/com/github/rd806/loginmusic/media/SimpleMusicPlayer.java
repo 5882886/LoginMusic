@@ -96,7 +96,7 @@ public class SimpleMusicPlayer {
 
     // 准备音频，在后台执行
     private static PreparedAudio prepareAudio(MusicEntry entry) {
-        File localFile = LoginMusic.CACHE_DIR.resolve(entry.getMusic()).toFile();
+        File localFile = LoginMusic.MUSICS_DIR.resolve(entry.getMusic()).toFile();
         AudioInputStream audioStream;
 
         try {

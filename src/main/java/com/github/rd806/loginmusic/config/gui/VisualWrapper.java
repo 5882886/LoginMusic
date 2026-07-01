@@ -26,18 +26,11 @@ public class VisualWrapper {
 
     // 从 JSON 文件加载
     private void loadFromFile() {
-        try {
-            if (!Files.exists(CONFIG_PATH)) {
-                createDefault();
-                return;
-            }
-
-            try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
-                // 解析现有格式：{"musics": [...]}
-                var json = gson.fromJson(reader, JsonWrapper.class);
-                if (json != null && json.musics != null) {
-                    this.musicList = json.musics;
-                }
+        try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
+            // 解析现有格式：{"musics": [...]}
+            var json = gson.fromJson(reader, JsonWrapper.class);
+            if (json != null && json.musics != null) {
+                this.musicList = json.musics;
             }
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Failed to load config for GUI", e);
