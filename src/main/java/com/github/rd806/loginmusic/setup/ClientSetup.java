@@ -1,13 +1,15 @@
 package com.github.rd806.loginmusic.setup;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.config.ClientConfig;
+import com.github.rd806.loginmusic.config.gui.ClothConfigGUI;
+import com.github.rd806.loginmusic.media.lyric.LyricLayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import java.io.IOException;
@@ -21,13 +23,13 @@ public class ClientSetup {
     public ClientSetup(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
-        // Do not forget to add translations for your config options to the en_us.json file.
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        // 注册 Cloth Config API
+        container.registerExtensionPoint(IConfigScreenFactory.class, (container1, parent) ->
+                ClothConfigGUI.buildScreen().setParentScreen(parent).build());
     }
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        // Some client setup code
         // 创建缓存目录
         try {
             Files.createDirectories(LoginMusic.MUSICS_DIR);
@@ -35,6 +37,7 @@ public class ClientSetup {
         } catch (IOException e) {
             LoginMusic.LOGGER.warn("Failed to create cache directory!", e);
         }
+        LyricLayer.getInstance().setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
         LoginMusic.LOGGER.info("Start LoginMusic on client!");
     }
 }

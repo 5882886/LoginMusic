@@ -2,6 +2,7 @@ package com.github.rd806.loginmusic;
 
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.config.ServerConfig;
+import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.network.NetworkConfig;
 import org.slf4j.Logger;
 
@@ -42,16 +43,16 @@ public class LoginMusic {
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (LoginMusic) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(new Command());
 
         // 生成配置文件
-        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.getSpec());
-        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.getSpec());
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
+        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.init());
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
         // Some common setup code
+        MusicConfig.loadFromConfig();
         LOGGER.info("[LoginMusic] If you have any issues with LoginMusic, please report it at https://github.com/rd806/LoginMusic!");
     }
 }

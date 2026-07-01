@@ -193,7 +193,7 @@ public class SimpleMusicPlayer {
 
     // 播放歌词
     private static void playLyric(MusicEntry entry) {
-        if (entry.getLyric() != null && ClientConfig.getAllowLyrics()) {
+        if (entry.getLyric() != null && ClientConfig.ALLOW_LYRICS.get()) {
             LoginMusic.LOGGER.info("Lyrics prepared!");
             // 异步播放歌词
             LyricParser.loadLyricAsync(entry).thenAccept(lyricContent  -> {
@@ -215,7 +215,7 @@ public class SimpleMusicPlayer {
                 LoginMusic.LOGGER.warn("Error loading lyrics!", throwable);
                 return null;
             });
-        } else if (!ClientConfig.getAllowLyrics()) {
+        } else if (!ClientConfig.ALLOW_LYRICS.get()) {
             LoginMusic.LOGGER.warn("Lyrics are disabled!");
         }
     }

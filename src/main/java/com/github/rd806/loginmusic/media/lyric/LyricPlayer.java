@@ -44,14 +44,12 @@ public class LyricPlayer {
                 currentPlayTime = System.currentTimeMillis() - startTime;
                 currentPosition.set(currentPlayTime);
                 LyricEntry currentLyric = LyricParser.getCurrentLyric(currentLyrics, currentPlayTime);
-
                 if (currentLyric != null && (lastLyricEntry == null || !lastLyricEntry.getText().equals(currentLyric.getText()))) {
                     lastLyricEntry = currentLyric;
-
                     mc.execute(() -> {
                         if (mc.player != null) {
                             String lyricMessage = "♪ " + currentLyric.getText() + " ♪";
-                            // 在屏幕底部显示歌词
+                            // 显示歌词
                             LyricLayer.getInstance().showLyric(lyricMessage);
                         }
                     });

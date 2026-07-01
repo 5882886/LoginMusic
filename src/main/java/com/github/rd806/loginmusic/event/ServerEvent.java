@@ -42,7 +42,7 @@ public class ServerEvent {
     // 选择音乐
     private static String chooseMusic(ServerPlayer player) {
         String result = "Default";
-        switch (ServerConfig.getType()) {
+        switch (ServerConfig.MUSIC_ID_TYPE.get()) {
             case NAME -> result = chooseMusicByName(player);
             case UUID -> result = chooseMusicByUuid(player);
         }

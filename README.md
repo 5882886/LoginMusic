@@ -24,31 +24,33 @@ The logo comes from [here](https://www.flaticon.com/free-icon/music_9325026?term
 
 ## File Structure
 
-All music files are stored in the `/LoginMusic` folder.
+> **Destructive changes**:
+>
+> Since mod version 1.2.5, the config file's storage has been changed! If you upgrade from previous version, please move them to the new place!
+
+All music files are stored in the `/data/login_music` folder.
 
 ```
-├── {your minecraft version}
-    ├── config
-    │   ├── login_music-client.toml     # Client config
-    │   ├── login_music-server.toml 
-    │   └── login_music
-    │       └── music.json              # Configure specific music
-    │
-    ├── LoginMusic                      # Store music files
-    │   ├── Lyrics
-    │   │   ├── music_1.lrc
-    │   │   ├── music_2.lrc
-    │   │   └── ...
-    │   └── MusicCache
-    │       ├── music_1.mp3
-    │       ├── music_2.wav
-    │       └── ...
-    └── ...
+{version folder}
+├── config
+│   ├── login_music-music.json      # Specific musics
+│   └── login_music-client.toml     # Client config    
+│
+├── data/login_music        # Store music files
+│   ├── MusicsCache
+│   │   ├── music_1.mp3
+│   │   ├── music_2.wav
+│   │   └── ...
+│   └── LyricsCache   
+│       ├── music_1.lrc
+│       ├── music_2.lrc
+│       └── ...
+└── ...
 ```
 
 ## Configuration
 
-### Music Config
+### Music Config JSON
 
 **Since mod version 1.2.0, the music config has changed to JSON type, just as shown below.**
 
@@ -62,7 +64,7 @@ If you enter a server with this mod, the config file on the server has higher pr
             "music": "Default.mp3",
             "musicUrl": "https://www.example.com/example.mp3",
             "lyric": "Default.lrc",
-            "lyricUrl": "https://www.example.com/example.lrc" 
+            "lyricUrl": "https://www.example.com/example.lrc"
         }, {
             "id": "Steve",
             "music": "login_music.mp3",
@@ -97,12 +99,12 @@ Since mod version 1.2.4, you can open Login Music Config from the main menu if `
     #Allowed Values: UP, MIDDLE, DOWN
     LyricsPosition = "DOWN"
     #Defines the color of the lyrics you want to use
-    LyricsColor = "#FFFFFF"
+    LyricsColor = 16777215
 
 [Music]
     #Range of music play (a non negative integer)
     # Default: 3
-    # Range: 0 ~ 100
+    # Range: -1 ~ 100
     range = 3
     #Whether to allow downloading music from the internet
     InternetAccess = false

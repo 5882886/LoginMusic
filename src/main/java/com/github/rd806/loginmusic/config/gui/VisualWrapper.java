@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
-import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class VisualWrapper {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(LoginMusic.MODID).resolve("music.json");
+    private static final Path CONFIG_PATH = MusicConfig.getConfigPath();
 
     private List<MusicEntry> musicList = new ArrayList<>();
 

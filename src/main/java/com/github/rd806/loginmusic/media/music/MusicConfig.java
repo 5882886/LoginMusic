@@ -37,11 +37,9 @@ public class MusicConfig {
             if (!Files.exists(CONFIG_PATH)) {
                 createDefaultConfig();
             }
-
             // 读取JSON文件
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
                 Type listType = new TypeToken<Map<String, List<MusicEntry>>>(){}.getType();
-
                 Map<String, List<MusicEntry>> config = GSON.fromJson(reader, listType);
 
                 if (config != null && config.containsKey("musics")) {
@@ -52,10 +50,8 @@ public class MusicConfig {
                     }
                 }
             }
-
             configLoaded = true;
             LoginMusic.LOGGER.info("Loading completed，total {} musics", MUSIC_ENTRY_MAP.size());
-
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Loading musics failed!", e);
         }
@@ -65,15 +61,15 @@ public class MusicConfig {
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             String defaultConfig = """
                     {
-                        "musics": [
-                            {
-                                "id": "Default",
-                                "music": "Default.mp3",
-                                "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                                "lyric": "example.lrc",
-                                "lyricUrl": "Default.lrc"
-                            }
-                        ]
+                      "musics": [
+                        {
+                          "id": "Default",
+                          "music": "Default.mp3",
+                          "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                          "lyric": "example.lrc",
+                          "lyricUrl": "Default.lrc"
+                         }
+                      ]
                     }
                     """;
             writer.write(defaultConfig);
@@ -106,4 +102,6 @@ public class MusicConfig {
     public static Map<String, MusicEntry> getMusicEntryMap() { return MUSIC_ENTRY_MAP; }
 
     public static boolean isConfigLoaded() { return configLoaded; }
+    // 获取配置文件
+    public static Path getConfigPath() { return CONFIG_PATH; }
 }

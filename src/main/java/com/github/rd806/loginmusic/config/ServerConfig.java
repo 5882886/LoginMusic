@@ -1,14 +1,10 @@
 package com.github.rd806.loginmusic.config;
 
 import com.github.rd806.loginmusic.LoginMusic;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-@EventBusSubscriber(modid = LoginMusic.MODID)
+
 public class ServerConfig {
-    private static final ModConfigSpec SPEC;
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     public enum Selection {
@@ -16,11 +12,9 @@ public class ServerConfig {
         UUID,
     }
     // 音乐选择的关键字
-    private static final ModConfigSpec.EnumValue<Selection> MUSIC_ID_TYPE;
+    public static ModConfigSpec.EnumValue<Selection> MUSIC_ID_TYPE;
 
-    private static Selection type;
-
-    static {
+    public static ModConfigSpec init() {
         BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
                 .comment("Keywords for music selection (name/uuid)")
@@ -28,21 +22,6 @@ public class ServerConfig {
                 .defineEnum("type", Selection.NAME);
         BUILDER.pop();
 
-        SPEC = BUILDER.build();
+        return BUILDER.build();
     }
-
-    // NeoForge更改了加载方式
-    // 服务端配置只能在进入世界后获取
-    // 仅在加载时执行
-    @SubscribeEvent
-    static void onLoad(final ModConfigEvent.Loading event) {
-        if (event.getConfig().getSpec() == SPEC) {
-            type = MUSIC_ID_TYPE.get();
-            LoginMusic.LOGGER.info("Loading server config");
-        }
-    }
-
-    public static ModConfigSpec getSpec() { return SPEC; }
-
-    public static Selection getType() { return type; }
 }

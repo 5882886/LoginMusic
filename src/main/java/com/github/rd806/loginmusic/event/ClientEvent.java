@@ -37,7 +37,7 @@ public class ClientEvent {
         // 是否为来自其他玩家的音乐
         if (!isOwnMusic) {
             // 设置为不允许则跳过
-            if (!ClientConfig.getAllowOthersMusic()) {
+            if (!ClientConfig.ALLOW_OTHERS_MUSIC.get()) {
                 mc.player.displayClientMessage(
                         Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId), false);
                 return;
@@ -59,7 +59,7 @@ public class ClientEvent {
         }
 
         // 启用下载模式
-        if (ClientConfig.getAllowDownload()) {
+        if (ClientConfig.ALLOW_DOWNLOAD.get()) {
             mc.execute(() -> {
                 // 创建并显示下载界面
                 DownloadScreen screen = new DownloadScreen(musicId, () -> {
@@ -96,7 +96,7 @@ public class ClientEvent {
     @SubscribeEvent
     public static void checkMove(ClientTickEvent.Post event) {
         // 已经停止则不再检测
-        if (SimpleMusicPlayer.isStopped()) return;
+        if (SimpleMusicPlayer.isStopped() || ClientConfig.MUSIC_PLAY_RANGE.get() < 0) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;
@@ -109,9 +109,9 @@ public class ClientEvent {
             return;
         }
 
-        boolean outOfRange = (Math.abs(player.getX() - lastX) > ClientConfig.getRange())
-                || Math.abs(player.getY() - lastY) > ClientConfig.getRange()
-                || Math.abs(player.getZ() - lastZ) > ClientConfig.getRange();
+        boolean outOfRange = (Math.abs(player.getX() - lastX) > ClientConfig.MUSIC_PLAY_RANGE.get())
+                            || Math.abs(player.getY() - lastY) > ClientConfig.MUSIC_PLAY_RANGE.get()
+                            || Math.abs(player.getZ() - lastZ) > ClientConfig.MUSIC_PLAY_RANGE.get();
 
         // 检测移动范围
         if (outOfRange) {

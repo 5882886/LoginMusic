@@ -31,8 +31,8 @@ public class LyricLayer {
     }
 
     // 设置歌词样式
-    public void setLyricLayer(Position pos, String text) {
-        this.textColor = parseColor(text);
+    public void setLyricLayer(Position pos, int hexColor) {
+        this.textColor = hexColor;
         switch (pos) {
             case UP:
                 // 屏幕上四分之一
@@ -68,26 +68,4 @@ public class LyricLayer {
         // 绘制文本
         guiGraphics.drawString(mc.font, text, x, y, textColor);
     }
-
-    // 解析文本颜色
-    private static int parseColor(String hex) {
-        // 去除可能的前缀
-        String clean = hex.replace("0x", "").replace("#", "").trim();
-        int rgb;
-
-        if (clean.length() == 8) {
-            // ARGB 格式，需要转换为 RGB（忽略 Alpha）
-            int argb = (int) Long.parseLong(clean, 16);
-            rgb = argb & 0x00FFFFFF;  // 移除 Alpha 通道
-        } else if (clean.length() == 6) {
-            // RGB 格式
-            rgb = (int) Long.parseLong(clean, 16);
-        } else {
-            // 无效格式，返回白色
-            return 0xFFFFFF;
-        }
-
-        return rgb;
-    }
-
 }
