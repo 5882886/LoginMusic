@@ -58,10 +58,10 @@ public class ClothConfigGUI {
                             if (shouldAdd) {
                                 MusicEntry newEntry = new MusicEntry();
                                 newEntry.setId("NewMusic" + (MusicConfig.getMusicList().size() + 1));
-                                newEntry.setMusic("");
-                                newEntry.setMusicUrl("");
-                                newEntry.setLyric("");
-                                newEntry.setLyricUrl("");
+                                newEntry.setMusicName("");
+                                newEntry.setMusicPath("");
+                                newEntry.setLyricName("");
+                                newEntry.setLyricPath("");
                                 currentList.add(newEntry);
                                 MusicConfig.setMusicList(currentList);
                             }
@@ -81,31 +81,31 @@ public class ClothConfigGUI {
                         .build());
         // 添加音乐文件字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.music"), entry.getMusic())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.music"), entry.getMusicName())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.music.tooltip"))
-                        .setSaveConsumer(entry::setMusic)
+                        .setSaveConsumer(entry::setMusicName)
                         .build());
         // 添加音乐 URL 字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.musicUrl"), entry.getMusicUrl())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.musicUrl"), entry.getMusicPath())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.musicUrl.tooltip"))
-                        .setSaveConsumer(entry::setMusicUrl)
+                        .setSaveConsumer(entry::setMusicPath)
                         .build());
         // 本地歌词文件字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyric"), entry.getLyric())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyric"), entry.getLyricName())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.lyric.tooltip"))
-                        .setSaveConsumer(entry::setLyric)
+                        .setSaveConsumer(entry::setLyricName)
                         .build());
         // 歌词 URL 字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyricUrl"), entry.getLyricUrl())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyricUrl"), entry.getLyricPath())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.lyricUrl.tooltip"))
-                        .setSaveConsumer(entry::setLyricUrl)
+                        .setSaveConsumer(entry::setLyricPath)
                         .build()
         );
         // 删除按钮

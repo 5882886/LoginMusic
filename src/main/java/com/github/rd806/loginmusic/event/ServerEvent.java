@@ -4,7 +4,6 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ServerConfig;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
-import com.github.rd806.loginmusic.network.MusicMapPacket;
 import com.github.rd806.loginmusic.network.NetworkConfig;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,19 +17,16 @@ public class ServerEvent {
     // 玩家登录事件
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        // 服务端
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 根据玩家名称获取音乐
             String musicId = chooseMusic(serverPlayer);
-            // 玩家登录时发送音乐配置
-            LoginMusic.LOGGER.info("Player {} is logging in, sending music config", serverPlayer.getName().getString());
-            NetworkConfig.sendConfigToPlayer(new MusicMapPacket(MusicConfig.newMusicEntryMap()), serverPlayer);
+            MusicEntry entry = MusicConfig.getMusic(musicId);
             // 将音乐发送给全体玩家
             MinecraftServer server = serverPlayer.getServer();
             if (server != null) {
                 PlayerList playerList = server.getPlayerList();
                 for (ServerPlayer player : playerList.getPlayers()) {
-                    NetworkConfig.sendMusicToPlayer(player, musicId);
+                    NetworkConfig.sendMusicToPlayer(player, entry);
                 }
             }
         } else {
@@ -39,7 +35,7 @@ public class ServerEvent {
     }
 
     // 选择音乐
-    private static String chooseMusic(ServerPlayer player) {
+    public static String chooseMusic(ServerPlayer player) {
         String result = "Default";
         switch (ServerConfig.MUSIC_ID_TYPE.get()) {
             case NAME ->  result = chooseMusicByName(player);

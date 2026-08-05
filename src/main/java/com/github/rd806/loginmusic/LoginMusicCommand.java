@@ -1,20 +1,16 @@
 package com.github.rd806.loginmusic;
 
-import com.github.rd806.loginmusic.network.MusicMapPacket;
-import com.github.rd806.loginmusic.network.NetworkConfig;
+import com.github.rd806.loginmusic.event.ServerEvent;
 import com.mojang.brigadier.Command;
 import com.github.rd806.loginmusic.event.ClientEvent;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -43,11 +39,12 @@ public class LoginMusicCommand {
     // 播放音乐
     private static int playMusic(CommandContext<CommandSourceStack> context) {
         try {
-            String musicId = "Default";
-            if (Minecraft.getInstance().player != null) {
-                musicId = Minecraft.getInstance().player.getName().getString();
+            MusicEntry music = new MusicEntry();
+            ServerPlayer serverPlayer = context.getSource().getPlayer();
+            if (serverPlayer != null) {
+                music = MusicConfig.getMusic(ServerEvent.chooseMusic(serverPlayer));
             }
-            ClientEvent.playLoginMusic(musicId);
+            ClientEvent.playLoginMusic(music);
         } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
         }
@@ -64,14 +61,12 @@ public class LoginMusicCommand {
             }
             context.getSource().sendSuccess(
                     () -> Component.translatable(LoginMusic.MODID + ".commands.list.success", tempMap.size()),
-                    false
-            );
+                    false);
             // 显示音乐配置信息
             for (Map.Entry<String, MusicEntry> entry : tempMap.entrySet()) {
                 context.getSource().sendSuccess(
-                        () -> Component.literal(entry.getKey() + ": " + entry.getValue().getMusic()),
-                        false
-                );
+                        () -> Component.literal("§a▍ §r" + entry.getKey() + ": " + entry.getValue().getMusicName()),
+                        false);
             }
         } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
@@ -85,20 +80,7 @@ public class LoginMusicCommand {
             MusicConfig.loadFromConfig();
             context.getSource().sendSuccess(
                     () -> Component.translatable(LoginMusic.MODID + ".commands.reload.success"),
-                    true
-            );
-            ServerPlayer serverPlayer = context.getSource().getPlayer();
-            MinecraftServer server = null;
-            if (serverPlayer != null) {
-                server = serverPlayer.getServer();
-            }
-            // 同步完整配置
-            if (server != null) {
-                PlayerList playerList = server.getPlayerList();
-                for (ServerPlayer player : playerList.getPlayers()) {
-                    NetworkConfig.sendConfigToPlayer(new MusicMapPacket(MusicConfig.newMusicEntryMap()), player);
-                }
-            }
+                    true);
         } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
         }

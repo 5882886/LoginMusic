@@ -4,35 +4,44 @@ import java.util.Objects;
 
 public class MusicEntry {
     private String id;
-    private String musicUrl;
-    private String music;
-    private String lyric;
-    private String lyricUrl;
+    private String musicName;
+    private String musicPath;
+    private String lyricName;
+    private String lyricPath;
 
     // 默认构造函数
     // 防止因配置文件缺少部分字段而无法进入游戏
     public MusicEntry() {
         this.id = "Default";
-        this.music = "Default.mp3";
-        this.musicUrl = "Default";
-        this.lyric = "Default.lrc";
-        this.lyricUrl = "Default";
+        this.musicName = "Default.mp3";
+        this.musicPath = "Default.mp3";
+        this.lyricName = "Default.lrc";
+        this.lyricPath = "Default.lrc";
     }
+
+    public MusicEntry(String id, String musicName, String musicPath, String lyricName, String lyricPath) {
+        this.id = id;
+        this.musicName = musicName;
+        this.musicPath = musicPath;
+        this.lyricName = lyricName;
+        this.lyricPath = lyricPath;
+    }
+
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getMusicUrl() { return musicUrl; }
-    public void setMusicUrl(String musicUrl) { this.musicUrl = musicUrl; }
+    public String getMusicName() { return musicName; }
+    public void setMusicName(String music) { this.musicName = music; }
 
-    public String getMusic() { return music; }
-    public void setMusic(String music) { this.music = music; }
+    public String getMusicPath() { return musicPath; }
+    public void setMusicPath(String musicPath) { this.musicPath = musicPath; }
 
-    public String getLyric() { return lyric; }
-    public void setLyric(String lyrics) { this.lyric = lyrics; }
+    public String getLyricName() { return lyricName; }
+    public void setLyricName(String lyrics) { this.lyricName = lyrics; }
 
-    public String getLyricUrl() { return lyricUrl; }
-    public void setLyricUrl(String lyricsUrl) {  this.lyricUrl = lyricsUrl; }
+    public String getLyricPath() { return lyricPath; }
+    public void setLyricPath(String lyricsUrl) {  this.lyricPath = lyricsUrl; }
 
     @Override
     public boolean equals(Object object) {

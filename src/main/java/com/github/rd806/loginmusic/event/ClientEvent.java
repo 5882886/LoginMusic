@@ -3,7 +3,6 @@ package com.github.rd806.loginmusic.event;
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.download.DownloadMethod;
-import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.download.DownloadScreen;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
@@ -30,10 +29,11 @@ public class ClientEvent {
     private static double lastX, lastY, lastZ;
 
     // 登录事件
-    public static void playLoginMusic(String musicId) {
+    public static void playLoginMusic(MusicEntry music) {
         Player player = mc.player;
         if (player == null) return;
         // 判断是否为来自其他玩家的音乐
+        String musicId = music.getId();
         boolean isOwnMusic = musicId.equalsIgnoreCase(player.getName().getString()) || musicId.equalsIgnoreCase(player.getStringUUID());
         // 不是则进入判断
         if (!isOwnMusic) {
@@ -51,13 +51,6 @@ public class ClientEvent {
         }
 
         isInitialPos = false;
-        MusicEntry entry = MusicConfig.getMusic(musicId);
-        if (entry == null) {
-            LoginMusic.LOGGER.warn("Music not found {}", musicId);
-            player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId), false);
-            return;
-        }
 
         // 启用下载模式
         if (ClientConfig.ALLOW_DOWNLOAD.get()) {
@@ -68,16 +61,16 @@ public class ClientEvent {
                     mc.execute(() -> {
                         // 关闭自定义界面，回到游戏并启动播放事件
                         mc.setScreen(null);
-                        SimpleMusicPlayer.playMusic(entry);
+                        SimpleMusicPlayer.playMusic(music);
                     });
                 });
                 mc.setScreen(screen);
-                DownloadMethod.startDownload(entry, screen);
+                DownloadMethod.startDownload(music, screen);
             });
         } else {
             // 不启用下载，直接读取音频流
             player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".message.download_forbidden"), false);
-            mc.execute(() -> SimpleMusicPlayer.playMusic(entry));
+            mc.execute(() -> SimpleMusicPlayer.playMusic(music));
         }
         // 注册监听方法
         registerListener();

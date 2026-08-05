@@ -20,15 +20,14 @@ public class DownloadMethod {
 
     /* ----- 音乐下载方法 ----- */
     // 开始下载
-    public static void startDownload(MusicEntry entry, DownloadScreen screen) {
+    public static void startDownload(MusicEntry music, DownloadScreen screen) {
         // 加载下载界面
         CompletableFuture.runAsync(() -> {
             try {
                 boolean[] typeMismatch = {false};
                 String[] mismatch = {""};
-
                 // 下载音乐
-                downloadMusic(entry.getMusicUrl(), entry.getMusic(), typeMismatch, mismatch, (downloaded, total, progress) -> {
+                downloadMusic(music, typeMismatch, mismatch, (downloaded, total, progress) -> {
                     Component status;
                     // 设置不同的提示信息
                     if (typeMismatch[0]) {
@@ -36,8 +35,7 @@ public class DownloadMethod {
                     } else {
                         status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
                                 String.format("%.1f", downloaded / 1024.0 / 1024.0),
-                                String.format("%.1f", total / 1024.0 / 1024.0)
-                        );
+                                String.format("%.1f", total / 1024.0 / 1024.0));
                     }
                     // 在主进程中更新进度
                     if (screen != null) {
@@ -45,19 +43,17 @@ public class DownloadMethod {
                     }
                 });
                 // 下载歌词
-                downloadLyrics(entry.getLyricUrl(), entry.getLyric(), (downloaded, total, progress) -> {
+                downloadLyrics(music, (downloaded, total, progress) -> {
                     Component status;
                     // 设置不同的提示信息
                     status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.progress",
                             String.format("%.1f", downloaded / 1024.0 / 1024.0),
-                            String.format("%.1f", total / 1024.0 / 1024.0)
-                    );
+                            String.format("%.1f", total / 1024.0 / 1024.0));
                     // 在主进程中更新进度
                     if (screen != null) {
                         mc.execute(() -> screen.updateProgress(progress, status));
                     }
                 });
-
                 // 设置界面关闭状态
                 mc.execute(screen::setCompleted);
             } catch (Exception e) {
@@ -74,18 +70,13 @@ public class DownloadMethod {
     }
 
     // 音乐下载方法
-    private static void downloadMusic(String urlStr, String name, boolean[] typeMismatch, String[] mismatchType, DownloadCallback callback) {
+    private static void downloadMusic(MusicEntry music, boolean[] typeMismatch, String[] mismatchType, DownloadCallback callback) {
+        String name = music.getMusicName();
+        String urlStr = music.getMusicPath();
         try {
             Path cacheFile = LoginMusic.MUSICS_DIR.resolve(name);
             // 检查缓存，命中直接返回
-            if (Files.exists(cacheFile)) {
-                LoginMusic.LOGGER.info("Music has been downloaded!");
-                if (callback != null) {
-                    long size = Files.size(cacheFile);
-                    callback.onProgress(size, size, 1.0f);
-                }
-                return;
-            }
+            if (isDownloaded(cacheFile, callback)) { return; }
             LoginMusic.LOGGER.info("Start downloading music from {}", urlStr);
             // Java20 之后不再使用 URL() 方法
             // - URL url = new URL(urlStr);
@@ -102,9 +93,7 @@ public class DownloadMethod {
                 // 获取文件大小和类型
                 long totalBytes = connection.getContentLengthLong();
                 String mimeType = connection.getContentType();
-
                 LoginMusic.LOGGER.info("Music size: {}; Music type: {}", totalBytes, mimeType);
-
                 // 检查文件类型
                 if (mimeType != null && !mimeType.equals("audio/mpeg")) {
                     LoginMusic.LOGGER.warn("The downloading file {} may not be an audio file!", mimeType);
@@ -142,21 +131,14 @@ public class DownloadMethod {
     }
 
     // 歌词下载方法
-    private static void downloadLyrics(String urlStr, String name, DownloadCallback callback) {
+    private static void downloadLyrics(MusicEntry music, DownloadCallback callback) {
+        String name = music.getLyricName();
+        String urlStr = music.getLyricPath();
         try {
             Path cacheFile = LoginMusic.LYRICS_DIR.resolve(name);
             // 检查缓存，命中直接返回
-            if (Files.exists(cacheFile)) {
-                LoginMusic.LOGGER.info("Lyrics has been downloaded!");
-                if (callback != null) {
-                    long size = Files.size(cacheFile);
-                    callback.onProgress(size, size, 1.0f);
-                }
-                return;
-            }
+            if (isDownloaded(cacheFile, callback)) { return; }
             LoginMusic.LOGGER.info("Start downloading lyrics from {}", urlStr);
-            // Java20 之后不再使用 URL() 方法
-            // - URL url = new URL(urlStr);
             URI uri = new URI(urlStr);
             URL url = uri.toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -170,9 +152,7 @@ public class DownloadMethod {
                 // 获取文件大小和类型
                 long totalBytes = connection.getContentLengthLong();
                 String mimeType = connection.getContentType();
-
                 LoginMusic.LOGGER.info("Lyrics size: {}; File type: {}", totalBytes, mimeType);
-
                 // 下载文件
                 try (InputStream in = connection.getInputStream();
                      OutputStream out = Files.newOutputStream(cacheFile)) {
@@ -196,5 +176,23 @@ public class DownloadMethod {
         } catch (Exception e) {
             LoginMusic.LOGGER.warn("Downloading lyrics error!", e);
         }
+    }
+
+    // 检查是否有本地缓存
+    private static boolean isDownloaded(Path cacheFile, DownloadCallback callback) {
+        try {
+            if (Files.exists(cacheFile)) {
+                LoginMusic.LOGGER.info("The file has been downloaded!");
+                if (callback != null) {
+                    long size = Files.size(cacheFile);
+                    callback.onProgress(size, size, 1.0f);
+                }
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            LoginMusic.LOGGER.warn("Downloading method failed!", e);
+        }
+        return false;
     }
 }

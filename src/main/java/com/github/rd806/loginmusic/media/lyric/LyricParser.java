@@ -36,7 +36,6 @@ public class LyricParser {
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Error while parsing LRC content: ", e);
         }
-
         // 歌词按照时间升序排列
         Collections.sort(lyrics);
         return lyrics;
@@ -46,7 +45,6 @@ public class LyricParser {
     private static void parseLine(String line, List<LyricEntry> lyrics) {
         Matcher matcher = TIME_TAG_PATTERN.matcher(line);
         boolean hasTimeTag = false;
-
         while (matcher.find()) {
             hasTimeTag = true;
             try {
@@ -57,7 +55,6 @@ public class LyricParser {
                 if (!text.isEmpty()) {
                     lyrics.add(new LyricEntry(time, text));
                 }
-
             } catch (NumberFormatException e) {
                 LoginMusic.LOGGER.error("Error while parsing LRC content: {}", line);
             }
@@ -75,7 +72,6 @@ public class LyricParser {
         int minutes = Integer.parseInt(matcher.group(1));
         int seconds = Integer.parseInt(matcher.group(2));
         String msStr = matcher.group(3);
-
         // 处理毫秒（可能是2位或3位）
         long milliseconds;
         if (msStr.length() == 2) {
@@ -83,7 +79,6 @@ public class LyricParser {
         } else {
             milliseconds = Long.parseLong(msStr);
         }
-
         return (minutes * 60L + seconds) * 1000 + milliseconds;
     }
 
@@ -92,7 +87,6 @@ public class LyricParser {
         if (lyrics == null || lyrics.isEmpty()) {
             return new LyricEntry(0, "Lyrics unavailable");
         }
-
         LyricEntry current = null;
         for (LyricEntry lyric : lyrics) {
             if (lyric.getTime() <= currentTime) {
@@ -101,19 +95,17 @@ public class LyricParser {
                 break;
             }
         }
-
         return current;
     }
 
     // 从音乐条目加载歌词
     public static String loadLyrics(MusicEntry entry) {
-        if (entry == null || entry.getLyric() == null || entry.getLyric().isEmpty() || entry.getLyricUrl() == null) {
+        if (entry == null || entry.getLyricName() == null || entry.getLyricName().isEmpty() || entry.getLyricPath() == null) {
             return null;
         }
-
-        String lyrics = loadFromFile(entry.getLyric());
+        String lyrics = loadFromFile(entry.getLyricName());
         if (lyrics == null) {
-            lyrics = loadFromUrl(entry.getLyricUrl());
+            lyrics = loadFromUrl(entry.getLyricPath());
         }
         return lyrics;
     }
@@ -130,12 +122,10 @@ public class LyricParser {
                     path = configPath;
                 }
             }
-
             if (!Files.exists(path)) {
                 LoginMusic.LOGGER.info("No lyrics file found: {}, try url.", path);
                 return null;
             }
-
             String lyricContent = Files.readString(path);
             LoginMusic.LOGGER.info("Lyric file loaded");
             return lyricContent;
@@ -149,7 +139,6 @@ public class LyricParser {
     private static String loadFromUrl(String urlStr) {
         try {
             HttpURLConnection connection;
-
             URI uri = new URI(urlStr);
             URL url = uri.toURL();
             connection = (HttpURLConnection) url.openConnection();
@@ -160,9 +149,9 @@ public class LyricParser {
 
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
+                LoginMusic.LOGGER.warn("HTTP respond code: {}", responseCode);
                 return null;
             }
-
             InputStream inputStream = connection.getInputStream();
             // 使用 ByteArrayOutputStream 一次性读取所有数据
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -171,7 +160,6 @@ public class LyricParser {
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 baos.write(buffer, 0, bytesRead);
             }
-
             byte[] allBytes = baos.toByteArray();
             // 检测编码
             String charset = detectCharset(allBytes);
@@ -206,7 +194,6 @@ public class LyricParser {
                 if ((b & 0xFF) >= 0x81 && (b & 0xFF) <= 0xFE) { hasChineseByte = true; }
             }
         }
-
         if (isAscii) { return "US-ASCII"; }
         // 尝试 UTF-8 解码，检查是否有无效序列
         if (isValidUtf8(data)) { return "UTF-8"; }

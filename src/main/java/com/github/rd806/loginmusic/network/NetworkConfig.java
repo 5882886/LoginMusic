@@ -1,6 +1,7 @@
 package com.github.rd806.loginmusic.network;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkRegistry;
@@ -25,23 +26,14 @@ public class NetworkConfig {
 
         CHANNEL.registerMessage(
                 packetID++,
-                MusicMapPacket.class, MusicMapPacket::encode, MusicMapPacket::decode, MusicMapPacket::handle);
-
-        CHANNEL.registerMessage(
-                packetID++,
                 MusicEntryPacket.class, MusicEntryPacket::encode, MusicEntryPacket::decode, MusicEntryPacket::handle);
 
         LoginMusic.LOGGER.info("Network config registered!");
     }
 
     // 发送音乐给特定玩家
-    public static void sendMusicToPlayer(ServerPlayer player, String musicId) {
-        LoginMusic.LOGGER.info("Send music {} to {}", musicId, player.getName().getString());
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicEntryPacket(musicId));
-    }
-
-    // 同步配置给特定玩家
-    public static void sendConfigToPlayer(Object packet, ServerPlayer player) {
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
+    public static void sendMusicToPlayer(ServerPlayer player, MusicEntry music) {
+        LoginMusic.LOGGER.info("Send music {} to {}", music.getMusicName(), player.getName().getString());
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicEntryPacket(music));
     }
 }

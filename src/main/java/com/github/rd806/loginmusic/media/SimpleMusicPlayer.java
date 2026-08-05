@@ -9,25 +9,20 @@ import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.sound.sampled.*;
-import java.io.*;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @OnlyIn(Dist.CLIENT)
 public class SimpleMusicPlayer {
-    private static final Minecraft mc = Minecraft.getInstance();
-    private static MusicEntry currentMusicEntry;
+
+    private static final Minecraft minecraft = Minecraft.getInstance();
+    private static MusicEntry currentMusic;
 
     private static PreparedAudio preparedAudio;
     private static SoundEvent soundEvent;
@@ -45,8 +40,6 @@ public class SimpleMusicPlayer {
         t.setDaemon(true);
         return t;
     });
-
-    private record PreparedAudio(byte[] data, AudioFormat format, DataLine.Info info) { }
 
     static {
         // 获取原生支持的音频格式
@@ -66,161 +59,105 @@ public class SimpleMusicPlayer {
 
     /* ----- 加载音频逻辑 ----- */
     // 播放音乐，加载和播放音乐分为两个线程
-    public static void playMusic(MusicEntry entry) {
-        stopCurrentMusic();
-        currentMusicEntry = entry;
-
+    public static void playMusic(MusicEntry music) {
+        currentMusic = music;
+        if (minecraft.player == null) { return; }
         // 显示加载提示
-        if (mc.player != null) {
-            mc.player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.loading_music", currentMusicEntry.getMusic()),
-                    false
-            );
-        }
-
+        minecraft.player.displayClientMessage(
+                Component.translatable(LoginMusic.MODID + ".message.loading_music", currentMusic.getMusicName()),
+                false
+        );
         // 在音频线程池中加载
         AUDIO_LOADER.submit(() -> {
             try {
                 // 加载音频数据
                 try {
-                    soundEvent = findMusic(currentMusicEntry);
+                    soundEvent = PrepareMusic.findMusic(currentMusic);
                 } catch (Exception e) {
-                    preparedAudio = prepareAudio(currentMusicEntry);
+                    preparedAudio = PrepareMusic.prepareAudio(currentMusic);
                 }
                 // 切换到渲染线程播放
-                mc.execute(() -> startCurrentMusic(currentMusicEntry));
+                minecraft.execute(() -> startCurrentMusic(currentMusic));
             } catch (Exception e) {
                 LoginMusic.LOGGER.error("Failed to load audio", e);
-                mc.execute(() -> {
-                    if (mc.player != null) {
-                        mc.player.displayClientMessage(
-                                Component.translatable(LoginMusic.MODID + ".message.load_failed", currentMusicEntry.getMusic()),
-                                false
-                        );
-                    }
-                });
+                minecraft.execute(() -> minecraft.player.displayClientMessage(
+                        Component.translatable(LoginMusic.MODID + ".message.load_failed", currentMusic.getMusicName()),
+                        false
+                ));
             }
         });
-    }
-
-    // 准备已注册到游戏内的音乐
-    private static SoundEvent findMusic(MusicEntry entry) {
-        ResourceLocation music = ResourceLocation.parse(entry.getMusic());
-        SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(music);
-        if (soundEvent != null) {
-            LoginMusic.LOGGER.info("Found audio music for {}: {}", entry.getMusic(), soundEvent);
-            return soundEvent;
-        }
-        return null;
-    }
-
-    // 准备外部音乐
-    private static PreparedAudio prepareAudio(MusicEntry entry) {
-        File localFile = LoginMusic.MUSICS_DIR.resolve(entry.getMusic()).toFile();
-        AudioInputStream audioStream;
-
-        try {
-            if (localFile.exists()) {
-                audioStream = AudioSystem.getAudioInputStream(localFile);
-            } else {
-                URI uri = new URI(entry.getMusicUrl());
-                URL url = uri.toURL();
-                URLConnection connection = url.openConnection();
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
-                audioStream = AudioSystem.getAudioInputStream(bufferedInputStream);
-            }
-
-            // 转换格式
-            AudioFormat sourceFormat = audioStream.getFormat();
-            AudioFormat targetFormat = new AudioFormat(
-                    AudioFormat.Encoding.PCM_SIGNED,
-                    sourceFormat.getSampleRate(),
-                    16,
-                    sourceFormat.getChannels(),
-                    sourceFormat.getChannels() * 2,
-                    sourceFormat.getSampleRate(),
-                    false
-            );
-            if (!sourceFormat.matches(targetFormat)) {
-                audioStream = AudioSystem.getAudioInputStream(targetFormat, audioStream);
-            }
-            DataLine.Info info = new DataLine.Info(Clip.class, targetFormat);
-            if (!AudioSystem.isLineSupported(info)) {
-                throw new UnsupportedAudioFileException("Audio format not supported");
-            }
-            // 可选：预加载音频数据到字节数组，减少Clip.open()时间
-            byte[] audioData = audioStream.readAllBytes();
-
-            return new PreparedAudio(audioData, targetFormat, info);
-        } catch (UnsupportedAudioFileException e) {
-            LoginMusic.LOGGER.error("Unsupported type: {}", e.getMessage());
-            return null;
-        } catch (Exception e) {
-            LoginMusic.LOGGER.error("Fail to play music: {} ", entry.getMusic());
-            return null;
-        }
     }
 
     // 播放音频，在渲染进程进行
     private static void startCurrentMusic(MusicEntry entry) {
         try {
-            if (mc.player == null) { return; }
-
-            if (soundEvent != null) {
-                SimpleSoundInstance currentMusic = SimpleSoundInstance.forUI(soundEvent, 1.0f, 1.0f);
-                Minecraft.getInstance().getSoundManager().play(currentMusic);
-            } else {
-                Clip clip = (Clip) AudioSystem.getLine(preparedAudio.info);
-                // 音频结束操作
-                clip.addLineListener(event -> {
-                    if (event.getType() == LineEvent.Type.STOP) {
-                        clip.close();
-                        if (currentClip == clip) {
-                            stopCurrentMusic();
-                            mc.player.displayClientMessage(
-                                    Component.translatable(LoginMusic.MODID + ".message.play_ended", entry.getMusic()),
-                                    false
-                            );
-                        }
-                    }
-                });
-                // 使用预加载的数据
-                AudioInputStream stream = new AudioInputStream(
-                        new java.io.ByteArrayInputStream(preparedAudio.data),
-                        preparedAudio.format,
-                        preparedAudio.data.length / preparedAudio.format.getFrameSize()
-                );
-                clip.open(stream);
-                currentClip = clip;
-                clip.start();
-                startTimeMillis = System.currentTimeMillis();
-                // 播放歌词
-                playLyric(entry);
-                isPlaying = true;
+            if (minecraft.player == null) { return; }
+            // 尝试播放
+            switch (PrepareMusic.type) {
+                case SOUND_EVENT -> playMusicFromResources(soundEvent);
+                case PREPARED_AUDIO -> playMusicFromFiles(preparedAudio);
+                case DEFAULT -> {
+                    LoginMusic.LOGGER.error("No audio file found");
+                    return;
+                }
             }
             // 显示播放信息
-            mc.player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getMusic()),
-                    false
-            );
+            minecraft.player.displayClientMessage(
+                    Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getMusicName()),
+                    false);
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Failed to play music: {} ", entry.getMusic());
+            LoginMusic.LOGGER.error("Failed to play music: {} ", entry.getMusicName());
+            LoginMusic.LOGGER.error(e.getMessage());
+        }
+    }
+
+    // 播放资源包中的音乐
+    private static void playMusicFromResources(SoundEvent soundEvent) {
+        SimpleSoundInstance currentMusic = SimpleSoundInstance.forUI(soundEvent, 1.0f, 1.0f);
+        Minecraft.getInstance().getSoundManager().play(currentMusic);
+    }
+
+    // 播放外部音乐
+    private static void playMusicFromFiles(PreparedAudio preparedAudio) {
+        try {
+            if (minecraft.player == null) { return; }
+
+            Clip clip = (Clip) AudioSystem.getLine(preparedAudio.info());
+            // 音频结束操作
+            clip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    clip.close();
+                    if (currentClip == clip) {
+                        stopCurrentMusic();
+                    }
+                }
+            });
+            // 使用预加载的数据
+            AudioInputStream stream = new AudioInputStream(
+                    new java.io.ByteArrayInputStream(preparedAudio.data()),
+                    preparedAudio.format(),
+                    preparedAudio.data().length / preparedAudio.format().getFrameSize());
+            clip.open(stream);
+            currentClip = clip;
+            clip.start();
+            startTimeMillis = System.currentTimeMillis();
+            // 播放歌词
+            startLyrics(currentMusic);
+            isPlaying = true;
+        } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
         }
     }
 
     // 播放歌词
-    private static void playLyric(MusicEntry entry) {
-        if (entry.getLyric() != null && ClientConfig.ALLOW_LYRICS.get()) {
+    private static void startLyrics(MusicEntry entry) {
+        if (entry.getLyricName() != null && ClientConfig.ALLOW_LYRICS.get()) {
             LoginMusic.LOGGER.info("Lyrics prepared!");
             // 异步播放歌词
             LyricParser.loadLyricAsync(entry).thenAccept(lyricContent  -> {
                 if (lyricContent != null && !lyricContent.isEmpty() && !lyricStarted) {
                     currentLyrics = LyricParser.parseLRC(lyricContent);
                     lyricStarted = true;
-
                     if (isPlaying && startTimeMillis > 0) {
                         LoginMusic.LOGGER.info("Lyrics playing!");
                         // 计算展示歌词与播放开始的间隔时间，即已播放的时间
@@ -241,19 +178,28 @@ public class SimpleMusicPlayer {
 
     // 停止播放
     public static void stopCurrentMusic() {
-        if (currentClip != null) {
-            currentClip.stop();
-            currentClip.close();
-            currentClip = null;
-            currentMusicEntry = null;
-            preparedAudio = null;
-            isPlaying = false;
-            LyricPlayer.stopLyricDisplay();
-            lyricStarted = false;
-        } else if (soundEvent != null) {
-            soundEvent = null;
-            Minecraft.getInstance().getSoundManager().stop();
+        switch (PrepareMusic.type) {
+            case SOUND_EVENT -> {
+                soundEvent = null;
+                Minecraft.getInstance().getSoundManager().stop();
+            }
+            case PREPARED_AUDIO -> {
+                // 停止信息
+                LoginMusic.LOGGER.info("Music {} stopped!", currentMusic.getMusicName());
+                if (minecraft.player != null) {
+                    minecraft.player.displayClientMessage(
+                            Component.translatable(LoginMusic.MODID + ".message.play_ended", currentMusic.getMusicName()),
+                            false);
+                }
+                currentClip.stop();
+                currentClip.close();
+            }
+            case DEFAULT -> {}
         }
+        // 停止歌词
+        LyricPlayer.stopLyricDisplay();
+        lyricStarted = false;
+        isPlaying = false;
     }
 
     // 获取播放状态

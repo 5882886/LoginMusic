@@ -47,7 +47,7 @@ public class LoginMusic {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
+        // 加载音乐配置
         MusicConfig.loadFromConfig();
         LOGGER.info("[LoginMusic] If you have any issues with LoginMusic, please report it at https://github.com/rd806/LoginMusic!");
     }

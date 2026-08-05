@@ -29,8 +29,6 @@ public class MusicConfig {
     // 本地文件列表（跟随客户端）
     private static List<MusicEntry> MUSIC_ENTRY_LIST = new ArrayList<>();
 
-    private static boolean isLoaded = false;
-
     // 从配置文件加载音乐
     public static void loadFromConfig() {
         try {
@@ -45,15 +43,14 @@ public class MusicConfig {
                 if (json != null && json.musics != null) {
                     MUSIC_ENTRY_LIST = json.musics;
                     MUSIC_ENTRY_MAP.clear();
-                    for (MusicEntry entry : json.musics) {
-                        MUSIC_ENTRY_MAP.put(entry.getId(), entry);
-                        LoginMusic.LOGGER.info("Loading music: {} -> {}", entry.getMusic(), entry.getId());
+                    for (MusicEntry music : json.musics) {
+                        MUSIC_ENTRY_MAP.put(music.getId(), music);
+                        LoginMusic.LOGGER.info("Loading music: {} -> {}", music.getId(), music.getMusicName());
                     }
                 }
             } catch (IOException e) {
                 LoginMusic.LOGGER.error("Failed to load music from json!", e);
             }
-            isLoaded = true;
             LoginMusic.LOGGER.info("Loading completed，total {} musics", MUSIC_ENTRY_MAP.size());
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Loading musics failed!", e);
@@ -62,10 +59,6 @@ public class MusicConfig {
 
     // 根据id获取音乐
     public static MusicEntry getMusic(String id) {
-        if (!isLoaded) {
-            // 如果配置还没加载，尝试直接读取
-            loadFromConfig();
-        }
         return MUSIC_ENTRY_MAP.get(id);
     }
 
@@ -78,9 +71,9 @@ public class MusicConfig {
                         {
                           "id": "Default",
                           "music": "Default.mp3",
-                          "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                          "musicPath": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
                           "lyric": "example.lrc",
-                          "lyricUrl": "Default"
+                          "lyricPath": "Default"
                         }
                       ]
                     }
@@ -96,7 +89,6 @@ public class MusicConfig {
     public static void receiveConfig(Map<String, MusicEntry> config) {
         MUSIC_ENTRY_MAP.clear();
         MUSIC_ENTRY_MAP.putAll(config);
-        isLoaded = true;
         LoginMusic.LOGGER.info("Client music config updated, total {} musics", MUSIC_ENTRY_MAP.size());
     }
 
