@@ -19,9 +19,8 @@ import java.nio.file.Paths;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(LoginMusic.MODID)
 public class LoginMusic {
-    // MODID
+
     public static final String MODID = "login_music";
-    // 日志文件
     public static final Logger LOGGER = LogUtils.getLogger();
     // 配置文件目录
     public static final Path DATA_PATH = Paths.get("data/login_music");
@@ -37,15 +36,14 @@ public class LoginMusic {
         IEventBus modEventBus = context.getModEventBus();
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
         // 注册网络
         NetworkConfig.register();
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new Command());
+        MinecraftForge.EVENT_BUS.register(new LoginMusicCommand());
         // 生成配置文件
         context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
-        context.registerConfig(ModConfig.Type.SERVER, ServerConfig.init());
+        context.registerConfig(ModConfig.Type.COMMON, ServerConfig.init());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

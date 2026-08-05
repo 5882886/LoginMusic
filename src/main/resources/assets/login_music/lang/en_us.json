@@ -11,13 +11,13 @@
     "login_music.gui.config.addEnable.tooltip": "Add a new music config, available after closing the menu",
     "login_music.gui.config.id.tooltip": "The primary key for choosing music, typically the player's name",
     "login_music.gui.config.music": "Music file",
-    "login_music.gui.config.music.tooltip": "Set the music file",
+    "login_music.gui.config.music.tooltip": "Usually the file name",
     "login_music.gui.config.musicUrl": "Music url",
-    "login_music.gui.config.musicUrl.tooltip": "Set the music file's url",
+    "login_music.gui.config.musicUrl.tooltip": "The music file's local path or url",
     "login_music.gui.config.lyric": "Lyric file",
-    "login_music.gui.config.lyric.tooltip": "Set the lyric file",
+    "login_music.gui.config.lyric.tooltip": "Usually the file name",
     "login_music.gui.config.lyricUrl": "Lyric url",
-    "login_music.gui.config.lyricUrl.tooltip": "Set the lyric file's url",
+    "login_music.gui.config.lyricUrl.tooltip": "The the lyric file's local path or url",
     "login_music.gui.config.delete": "Delete Music",
 
     "login_music.gui.logindownload.start": "Start downloading...",
@@ -26,25 +26,25 @@
     "login_music.gui.logindownload.progress": "Downloading... %.1f MB / %.1f MB",
     "login_music.gui.logindownload.warn": "Warning, the downloaded file may not be an audio file",
 
-    "login_music.configui.allow_download": "Whether to allow downloading music from the internet first",
+    "login_music.configui.allow_download": "Allow downloading music from the internet",
     "login_music.configui.allow_download.tooltip": "If false, then directly read network audio streams without downloading them locally\nPrevent malicious links but no cache support\nPlease only enable this feature on servers that you trust",
 
-    "login_music.configui.music_play_range": "Range of music play",
-    "login_music.configui.music_play_range.tooltip": "Range of music play\nIf set to -1, the range checking will be disabled",
+    "login_music.configui.music_play_range": "Music play range",
+    "login_music.configui.music_play_range.tooltip": "Music will stop if you are out of this range, set to -1 to disable range checking",
 
-    "login_music.configui.allow_others_music": "Whether to allow playing music from other players",
+    "login_music.configui.allow_others_music": "Play music from other players",
     "login_music.configui.allow_others_music.tooltip": "If true, you will have to do music playing logic when other players join in the world",
 
-    "login_music.configui.music_id_type": "Keywords for music selection (name/uuid)",
-    "login_music.configui.music_id_type.tooltip": "Keywords for music selection\nOptional: name/uid",
+    "login_music.configui.music_id_type": "Keywords for music selection",
+    "login_music.configui.music_id_type.tooltip": "Available: NAME, UUID",
 
-    "login_music.configui.allow_lyrics": "Whether to show lyrics when playing music",
-    "login_music.configui.allow_lyrics.tooltip": "Whether to show lyrics when playing music",
+    "login_music.configui.allow_lyrics": "Show lyrics",
+    "login_music.configui.allow_lyrics.tooltip": "Show lyrics on the screen when playing musics",
 
-    "login_music.configui.lyrics_pos": "Defines the position of the lyrics",
-    "login_music.configui.lyrics_pos.tooltip": "Defines the position of the lyrics",
+    "login_music.configui.lyrics_pos": "Lyrics position",
+    "login_music.configui.lyrics_pos.tooltip": "Available: UP, MIDDLE, DOWN",
 
-    "login_music.configui.lyrics_color": "Defines the color of the lyrics you want to use",
+    "login_music.configui.lyrics_color": "Lyrics color",
     "login_music.configui.lyrics_color.tooltip": "Currently it only supports the RGB form",
 
     "login_music.commands.reload.success": "Reload successfully!",
@@ -54,7 +54,7 @@
     "login_music.commands.show.fail": "Fail to show player's music config!",
     "login_music.commands.show.success": "The player's music config:",
 
-    "login_music.message.download_forbidden": "Already set to not allow downloading music from the network, playing audio streams now",
+    "login_music.message.download_forbidden": "Playing audio streams.",
     "login_music.message.loading_music": "Loading music: %s",
     "login_music.message.not_allow_others_music": "Skip playing other players' music",
     "login_music.message.play_others_music": "Playing music from %s",

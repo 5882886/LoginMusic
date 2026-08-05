@@ -1,8 +1,8 @@
-package com.github.rd806.loginmusic.config.gui;
+package com.github.rd806.loginmusic.config;
 
 import com.github.rd806.loginmusic.LoginMusic;
-import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.media.lyric.LyricLayer;
+import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -16,15 +16,12 @@ import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class ClothConfigGUI {
-    private static VisualWrapper visualWrapper;
 
     public static ConfigBuilder buildScreen() {
-        visualWrapper = new VisualWrapper();
 
         ConfigBuilder builder = ConfigBuilder.create().setTitle(Component.translatable(LoginMusic.MODID + ".gui.config.title"));
         builder.setGlobalized(true);
         builder.setGlobalizedExpanded(false);
-
         // 音乐条目
         ConfigCategory musicEntries = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.entries"));
         // 音乐播放设置
@@ -33,11 +30,10 @@ public class ClothConfigGUI {
 
         buildMusicEntries(entryBuilder, musicEntries);
         buildClientSettings(entryBuilder, clientSettings);
-
         // 保存回调
         builder.setSavingRunnable(() -> {
             // 保存并触发 MusicConfig 重载
-            visualWrapper.saveToFile();
+            MusicConfig.saveToFile();
             LyricLayer.getInstance().setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
         });
 
@@ -47,7 +43,7 @@ public class ClothConfigGUI {
     // 音乐条目配置
     private static void buildMusicEntries(ConfigEntryBuilder entryBuilder, ConfigCategory musicEntries) {
         // 使用临时列表来存储 GUI 中的顺序
-        List<MusicEntry> currentList = visualWrapper.getMusicList();
+        List<MusicEntry> currentList = MusicConfig.getMusicList();
         // 为每个音乐条目创建编辑界面
         for (int index = 0; index < currentList.size(); index++) {
             MusicEntry entry = currentList.get(index);
@@ -61,13 +57,13 @@ public class ClothConfigGUI {
                         .setSaveConsumer(shouldAdd -> {
                             if (shouldAdd) {
                                 MusicEntry newEntry = new MusicEntry();
-                                newEntry.setId("NewMusic" + (visualWrapper.getMusicList().size() + 1));
+                                newEntry.setId("NewMusic" + (MusicConfig.getMusicList().size() + 1));
                                 newEntry.setMusic("");
                                 newEntry.setMusicUrl("");
                                 newEntry.setLyric("");
                                 newEntry.setLyricUrl("");
                                 currentList.add(newEntry);
-                                visualWrapper.setMusicList(currentList);
+                                MusicConfig.setMusicList(currentList);
                             }
                         })
                         .build());
@@ -117,7 +113,7 @@ public class ClothConfigGUI {
                 entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".gui.config.delete"), false)
                         .setSaveConsumer(shouldDelete -> {
                             if (shouldDelete) {
-                                visualWrapper.getMusicList().remove(index);
+                                MusicConfig.getMusicList().remove(index);
                             }
                         })
                         .build()

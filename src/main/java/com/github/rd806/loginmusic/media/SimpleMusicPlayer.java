@@ -107,7 +107,6 @@ public class SimpleMusicPlayer {
     private static SoundEvent findMusic(MusicEntry entry) {
         ResourceLocation music = ResourceLocation.parse(entry.getMusic());
         SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(music);
-
         if (soundEvent != null) {
             LoginMusic.LOGGER.info("Found audio music for {}: {}", entry.getMusic(), soundEvent);
             return soundEvent;
@@ -144,16 +143,13 @@ public class SimpleMusicPlayer {
                     sourceFormat.getSampleRate(),
                     false
             );
-
             if (!sourceFormat.matches(targetFormat)) {
                 audioStream = AudioSystem.getAudioInputStream(targetFormat, audioStream);
             }
-
             DataLine.Info info = new DataLine.Info(Clip.class, targetFormat);
             if (!AudioSystem.isLineSupported(info)) {
                 throw new UnsupportedAudioFileException("Audio format not supported");
             }
-
             // 可选：预加载音频数据到字节数组，减少Clip.open()时间
             byte[] audioData = audioStream.readAllBytes();
 

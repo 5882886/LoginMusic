@@ -11,13 +11,13 @@
     "login_music.gui.config.addEnable.tooltip": "增加新的音乐配置，关闭界面后生效",
     "login_music.gui.config.id.tooltip": "选择音乐的主键，通常为玩家名称",
     "login_music.gui.config.music": "音乐文件",
-    "login_music.gui.config.music.tooltip": "设置音乐文件",
+    "login_music.gui.config.music.tooltip": "通常为文件名称",
     "login_music.gui.config.musicUrl": "音乐文件链接",
-    "login_music.gui.config.musicUrl.tooltip": "设置音乐文件链接",
+    "login_music.gui.config.musicUrl.tooltip": "本地文件地址或url",
     "login_music.gui.config.lyric": "歌词文件",
-    "login_music.gui.config.lyric.tooltip": "设置歌词文件",
+    "login_music.gui.config.lyric.tooltip": "通常为文件名称",
     "login_music.gui.config.lyricUrl": "歌词文件链接",
-    "login_music.gui.config.lyricUrl.tooltip": "设置歌词文件链接",
+    "login_music.gui.config.lyricUrl.tooltip": "歌词文件地址或url",
     "login_music.gui.config.delete": "删除音乐",
 
     "login_music.gui.logindownload.start": "准备下载 ...",
@@ -26,25 +26,25 @@
     "login_music.gui.logindownload.progress": "下载中 ... %.1f MB / %.1f MB",
     "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
 
-    "login_music.configui.allow_download": "是否允许先从互联网下载音乐",
-    "login_music.configui.allow_download.tooltip": "如果为否，则直接读取网络音频流而不下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
+    "login_music.configui.allow_download": "允许从互联网下载音乐",
+    "login_music.configui.allow_download.tooltip": "如果为否，则不会下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
 
-    "login_music.configui.music_play_range": "音乐播放的范围",
-    "login_music.configui.music_play_range.tooltip": "音乐播放的范围\n设置为-1则范围不会生效",
+    "login_music.configui.music_play_range": "音乐播放范围",
+    "login_music.configui.music_play_range.tooltip": "超出该范围则停止播放，设置为-1则禁用",
 
-    "login_music.configui.allow_others_music": "是否允许播放来自其他玩家的音乐",
+    "login_music.configui.allow_others_music": "播放来自其他玩家的音乐",
     "login_music.configui.allow_others_music.tooltip": "如果为是，则当其他玩家加入世界时也需要执行播放音乐操作",
 
-    "login_music.configui.music_id_type": "音乐选择的关键字（可选：name/uuid）",
+    "login_music.configui.music_id_type": "音乐选择的关键字",
     "login_music.configui.music_id_type.tooltip": "音乐选择的关键字\n可选 name/uuid）",
 
-    "login_music.configui.allow_lyrics": "播放音乐时是否展示歌词",
+    "login_music.configui.allow_lyrics": "展示歌词",
     "login_music.configui.allow_lyrics.tooltip": "播放音乐时是否展示歌词",
 
-    "login_music.configui.lyrics_pos": "歌词的显示位置",
+    "login_music.configui.lyrics_pos": "歌词位置",
     "login_music.configui.lyrics_pos.tooltip": "歌词的显示位置",
 
-    "login_music.configui.lyrics_color": "歌词的显示颜色",
+    "login_music.configui.lyrics_color": "歌词颜色",
     "login_music.configui.lyrics_color.tooltip": "目前仅支持RGB颜色格式",
 
     "login_music.commands.reload.success": "配置重载成功！",
@@ -54,7 +54,7 @@
     "login_music.commands.show.fail": "显示音乐配置失败",
     "login_music.commands.show.success": "音乐配置如下：",
 
-    "login_music.message.download_forbidden": "已设置不允许从网络下载音乐，直接播放网络流",
+    "login_music.message.download_forbidden": "直接播放网络流",
     "login_music.message.loading_music": "加载音乐：%s",
     "login_music.message.not_allow_others_music": "跳过其他玩家的音乐",
     "login_music.message.play_others_music": "播放来自 %s 的音乐",

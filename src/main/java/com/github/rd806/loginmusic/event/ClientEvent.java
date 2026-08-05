@@ -10,6 +10,7 @@ import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -30,22 +31,22 @@ public class ClientEvent {
 
     // 登录事件
     public static void playLoginMusic(String musicId) {
-        if (mc.player == null) return;
+        Player player = mc.player;
+        if (player == null) return;
         // 判断是否为来自其他玩家的音乐
-        boolean isOwnMusic = musicId.equalsIgnoreCase(mc.player.getGameProfile().getName())
-                            || musicId.equalsIgnoreCase(mc.player.getStringUUID());
+        boolean isOwnMusic = musicId.equalsIgnoreCase(player.getName().getString()) || musicId.equalsIgnoreCase(player.getStringUUID());
         // 不是则进入判断
         if (!isOwnMusic) {
             // 设置为不允许则跳过
             if (!ClientConfig.ALLOW_OTHERS_MUSIC.get()) {
-                mc.player.displayClientMessage(
+                player.displayClientMessage(
                         Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId), false);
                 return;
             }
             // 当前有正在播放的音乐也跳过
             if (!SimpleMusicPlayer.isStopped()) { return; }
             // 播放来自其他玩家的音乐
-            mc.player.displayClientMessage(
+            player.displayClientMessage(
                     Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId), false);
         }
 
@@ -53,7 +54,7 @@ public class ClientEvent {
         MusicEntry entry = MusicConfig.getMusic(musicId);
         if (entry == null) {
             LoginMusic.LOGGER.warn("Music not found {}", musicId);
-            mc.player.displayClientMessage(
+            player.displayClientMessage(
                     Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId), false);
             return;
         }
@@ -65,9 +66,8 @@ public class ClientEvent {
                 DownloadScreen screen = new DownloadScreen(musicId, () -> {
                     // 下载完成后播放音乐
                     mc.execute(() -> {
+                        // 关闭自定义界面，回到游戏并启动播放事件
                         mc.setScreen(null);
-                        // 关闭自定义界面，回到游戏
-                        // 启动播放事件
                         SimpleMusicPlayer.playMusic(entry);
                     });
                 });
@@ -76,7 +76,7 @@ public class ClientEvent {
             });
         } else {
             // 不启用下载，直接读取音频流
-            mc.player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".message.download_forbidden"), false);
+            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".message.download_forbidden"), false);
             mc.execute(() -> SimpleMusicPlayer.playMusic(entry));
         }
         // 注册监听方法
