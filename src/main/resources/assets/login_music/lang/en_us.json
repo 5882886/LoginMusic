@@ -28,28 +28,23 @@
 
     "login_music.configui.allow_download": "Allow downloading music from the internet",
     "login_music.configui.allow_download.tooltip": "If false, then directly read network audio streams without downloading them locally\nPrevent malicious links but no cache support\nPlease only enable this feature on servers that you trust",
-
     "login_music.configui.music_play_range": "Music play range",
     "login_music.configui.music_play_range.tooltip": "Music will stop if you are out of this range, set to -1 to disable range checking",
-
     "login_music.configui.allow_others_music": "Play music from other players",
     "login_music.configui.allow_others_music.tooltip": "If true, you will have to do music playing logic when other players join in the world",
-
     "login_music.configui.music_id_type": "Keywords for music selection",
     "login_music.configui.music_id_type.tooltip": "Available: NAME, UUID",
-
     "login_music.configui.allow_lyrics": "Show lyrics",
     "login_music.configui.allow_lyrics.tooltip": "Show lyrics on the screen when playing musics",
-
     "login_music.configui.lyrics_pos": "Lyrics position",
     "login_music.configui.lyrics_pos.tooltip": "Available: UP, MIDDLE, DOWN",
-
     "login_music.configui.lyrics_color": "Lyrics color",
     "login_music.configui.lyrics_color.tooltip": "Currently it only supports the RGB form",
 
     "login_music.commands.reload.success": "Reload successfully!",
     "login_music.commands.reload.fail": "Reload fail!, %s",
     "login_music.commands.list.empty": "The music config is empty!",
+    "login_music.commands.list.key": "The music key is %s",
     "login_music.commands.list.success": "The following is the music config:",
     "login_music.commands.show.fail": "Fail to show player's music config!",
     "login_music.commands.show.success": "The player's music config:",

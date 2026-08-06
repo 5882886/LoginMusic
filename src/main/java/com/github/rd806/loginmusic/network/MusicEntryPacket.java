@@ -1,5 +1,6 @@
 package com.github.rd806.loginmusic.network;
 
+import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.event.ClientEvent;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,9 +13,11 @@ import java.util.function.Supplier;
 public class MusicEntryPacket {
 
     private final MusicEntry music;
+    private final SelectionKey key;
 
-    public MusicEntryPacket(MusicEntry music) {
+    public MusicEntryPacket(MusicEntry music, SelectionKey key) {
         this.music = music;
+        this.key = key;
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -23,6 +26,7 @@ public class MusicEntryPacket {
         buf.writeUtf(music.getMusicPath());
         buf.writeUtf(music.getLyricName());
         buf.writeUtf(music.getLyricPath());
+        buf.writeEnum(key);
     }
 
     public static MusicEntryPacket decode(FriendlyByteBuf buf) {
@@ -31,13 +35,16 @@ public class MusicEntryPacket {
         String musicPath = buf.readUtf();
         String lyricName = buf.readUtf();
         String lyricPath = buf.readUtf();
+        SelectionKey type = buf.readEnum(SelectionKey.class);
         MusicEntry music = new MusicEntry(id, musicName, musicPath, lyricName, lyricPath);
-        return new MusicEntryPacket(music);
+        return new MusicEntryPacket(music, type);
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
-        context.enqueueWork(() -> DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> ClientEvent.playLoginMusic(music)));
+        context.enqueueWork(() -> DistExecutor.safeRunWhenOn(
+                Dist.CLIENT,
+                () -> () -> ClientEvent.playLoginMusic(music, key)));
         context.setPacketHandled(true);
     }
 

@@ -27,29 +27,24 @@
     "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
 
     "login_music.configui.allow_download": "允许从互联网下载音乐",
-    "login_music.configui.allow_download.tooltip": "如果为否，则不会下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
-
+    "login_music.configui.allow_download.tooltip": "如果为否，则音乐文件不会下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",
     "login_music.configui.music_play_range": "音乐播放范围",
     "login_music.configui.music_play_range.tooltip": "超出该范围则停止播放，设置为-1则禁用",
-
     "login_music.configui.allow_others_music": "播放来自其他玩家的音乐",
     "login_music.configui.allow_others_music.tooltip": "如果为是，则当其他玩家加入世界时也需要执行播放音乐操作",
-
     "login_music.configui.music_id_type": "音乐选择的关键字",
-    "login_music.configui.music_id_type.tooltip": "音乐选择的关键字\n可选 name/uuid）",
-
+    "login_music.configui.music_id_type.tooltip": "可选：name/uuid",
     "login_music.configui.allow_lyrics": "展示歌词",
     "login_music.configui.allow_lyrics.tooltip": "播放音乐时是否展示歌词",
-
     "login_music.configui.lyrics_pos": "歌词位置",
     "login_music.configui.lyrics_pos.tooltip": "歌词的显示位置",
-
     "login_music.configui.lyrics_color": "歌词颜色",
     "login_music.configui.lyrics_color.tooltip": "目前仅支持RGB颜色格式",
 
     "login_music.commands.reload.success": "配置重载成功！",
     "login_music.commands.reload.fail": "配置重载失败！ %s",
     "login_music.commands.list.empty": "音乐配置为空！",
+    "login_music.commands.list.key": "选择音乐的主键为 %s",
     "login_music.commands.list.success": "音乐配置如下：",
     "login_music.commands.show.fail": "显示音乐配置失败",
     "login_music.commands.show.success": "音乐配置如下：",
@@ -61,6 +56,6 @@
     "login_music.message.load_failed": "加载音乐失败！",
     "login_music.message.out_of_range": "移动超出范围，已停止音乐播放！",
     "login_music.message.music_not_found": "未找到音乐！",
-    "login_music.message.play_music": "正在播放音乐：%s",
+    "login_music.message.play_music": "正在播放：%s",
     "login_music.message.play_ended": "播放结束：%s"
 }

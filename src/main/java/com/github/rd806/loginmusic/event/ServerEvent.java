@@ -1,6 +1,7 @@
 package com.github.rd806.loginmusic.event;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.config.ServerConfig;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
@@ -19,14 +20,15 @@ public class ServerEvent {
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 根据玩家名称获取音乐
-            String musicId = chooseMusic(serverPlayer);
+            SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
+            String musicId = chooseMusic(serverPlayer, key);
             MusicEntry entry = MusicConfig.getMusic(musicId);
             // 将音乐发送给全体玩家
             MinecraftServer server = serverPlayer.getServer();
             if (server != null) {
                 PlayerList playerList = server.getPlayerList();
                 for (ServerPlayer player : playerList.getPlayers()) {
-                    NetworkConfig.sendMusicToPlayer(player, entry);
+                    NetworkConfig.sendMusicToPlayer(player, entry, key);
                 }
             }
         } else {
@@ -35,9 +37,9 @@ public class ServerEvent {
     }
 
     // 选择音乐
-    public static String chooseMusic(ServerPlayer player) {
+    public static String chooseMusic(ServerPlayer player, SelectionKey type) {
         String result = "Default";
-        switch (ServerConfig.MUSIC_ID_TYPE.get()) {
+        switch (type) {
             case NAME ->  result = chooseMusicByName(player);
             case UUID ->  result = chooseMusicByUuid(player);
         }

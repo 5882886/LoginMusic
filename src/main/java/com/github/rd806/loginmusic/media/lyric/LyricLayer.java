@@ -35,18 +35,9 @@ public class LyricLayer {
     public void setLyricLayer(Position pos, int hexColor) {
         this.textColor = hexColor;
         switch (pos) {
-            case UP:
-                // 屏幕上四分之一
-                this.yOffset = -1;
-                break;
-            case MIDDLE:
-                // 屏幕正中心
-                this.yOffset = 0;
-                break;
-            case DOWN:
-                // 屏幕下四分之一
-                this.yOffset = 1;
-                break;
+            case UP -> this.yOffset = -1;
+            case MIDDLE -> this.yOffset = 0;
+            case DOWN -> this.yOffset = 1;
         }
     }
 
@@ -63,10 +54,10 @@ public class LyricLayer {
         // 计算文本位置（居中）
         String text = currentLyricText;
         int textWidth = mc.font.width(text);
-        int x = (screenWidth-textWidth) / 2;
+        int x = (screenWidth - textWidth) / 2;
         // 高度为中心加上偏移量
         int y = screenHeight/2 + (yOffset*screenHeight)/4;
         // 绘制文本
-        guiGraphics.drawString(mc.font, text, x, y, textColor);
+        guiGraphics.drawString(mc.font, text, x, y, textColor, false);
     }
 }

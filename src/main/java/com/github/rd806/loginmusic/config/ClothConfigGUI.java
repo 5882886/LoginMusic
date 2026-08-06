@@ -1,6 +1,7 @@
 package com.github.rd806.loginmusic.config;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.media.lyric.LyricLayer;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
@@ -22,14 +23,16 @@ public class ClothConfigGUI {
         ConfigBuilder builder = ConfigBuilder.create().setTitle(Component.translatable(LoginMusic.MODID + ".gui.config.title"));
         builder.setGlobalized(true);
         builder.setGlobalizedExpanded(false);
+        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         // 音乐条目
         ConfigCategory musicEntries = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.entries"));
+        buildMusicEntries(entryBuilder, musicEntries);
         // 音乐播放设置
         ConfigCategory clientSettings = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.client"));
-        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-
-        buildMusicEntries(entryBuilder, musicEntries);
         buildClientSettings(entryBuilder, clientSettings);
+        // 服务端设置
+        ConfigCategory serverSettings = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.server"));
+        buildServerSettings(entryBuilder, serverSettings);
         // 保存回调
         builder.setSavingRunnable(() -> {
             // 保存并触发 MusicConfig 重载
@@ -162,9 +165,18 @@ public class ClothConfigGUI {
         // 歌词颜色设置
         clientSettings.addEntry(
                 entryBuilder.startColorField(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color"), ClientConfig.LYRIC_COLOR.get())
-                        .setDefaultValue(ClientConfig.LYRIC_COLOR.get())
+                        .setDefaultValue(0xFFFFFF)
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color.tooltip"))
                         .setSaveConsumer(lyricColor -> ClientConfig.LYRIC_COLOR.set(lyricColor))
+                        .build());
+    }
+
+    private static void buildServerSettings(ConfigEntryBuilder entryBuilder, ConfigCategory serverSettings) {
+        serverSettings.addEntry(
+                entryBuilder.startEnumSelector(Component.translatable(LoginMusic.MODID + ".configui.music_id_type"), SelectionKey.class, ServerConfig.MUSIC_ID_TYPE.get())
+                        .setDefaultValue(SelectionKey.NAME)
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.music_id_type.tooltip"))
+                        .setSaveConsumer(selectionKey -> ServerConfig.MUSIC_ID_TYPE.set(selectionKey))
                         .build());
     }
 }
