@@ -45,38 +45,34 @@ public class ClientEvent {
             // 设置为不允许则跳过
             if (!ClientConfig.ALLOW_OTHERS_MUSIC.get()) {
                 player.displayClientMessage(
-                        Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId), false);
+                        Component.translatable(LoginMusic.MODID + ".message.not_allow_others_music", musicId),
+                        false);
                 return;
             }
             // 当前有正在播放的音乐也跳过
             if (SimpleMusicPlayer.isPlaying()) { return; }
             // 播放来自其他玩家的音乐
             player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId), false);
+                    Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId),
+                    false);
         }
 
         isInitialPos = false;
 
         // 启用下载模式
-        if (ClientConfig.ALLOW_DOWNLOAD.get()) {
-            mc.execute(() -> {
-                // 创建并显示下载界面
-                DownloadScreen screen = new DownloadScreen(musicId, () -> {
-                    // 下载完成后播放音乐
-                    mc.execute(() -> {
-                        // 关闭自定义界面，回到游戏并启动播放事件
-                        mc.setScreen(null);
-                        SimpleMusicPlayer.playMusic(music);
-                    });
+        mc.execute(() -> {
+            // 创建并显示下载界面
+            DownloadScreen screen = new DownloadScreen(music, () -> {
+                // 下载完成后播放音乐
+                mc.execute(() -> {
+                    // 关闭自定义界面，回到游戏并启动播放事件
+                    mc.setScreen(null);
+                    SimpleMusicPlayer.playMusic(music);
                 });
-                mc.setScreen(screen);
-                DownloadMethod.startDownload(music, screen);
             });
-        } else {
-            // 不启用下载，直接读取音频流
-            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".message.download_forbidden"), false);
-            mc.execute(() -> SimpleMusicPlayer.playMusic(music));
-        }
+            mc.setScreen(screen);
+            DownloadMethod.startDownload(music, screen);
+        });
         // 注册监听方法
         registerListener();
     }

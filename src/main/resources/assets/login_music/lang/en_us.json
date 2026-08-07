@@ -20,11 +20,11 @@
     "login_music.gui.config.lyricUrl.tooltip": "The the lyric file's local path or url",
     "login_music.gui.config.delete": "Delete Music",
 
-    "login_music.gui.logindownload.start": "Start downloading...",
-    "login_music.gui.logindownload.downloading": "Downloading login music",
-    "login_music.gui.logindownload.title": "Login Music download",
-    "login_music.gui.logindownload.progress": "Downloading... %.1f MB / %.1f MB",
-    "login_music.gui.logindownload.warn": "Warning, the downloaded file may not be an audio file",
+    "login_music.gui.download.start": "Start downloading...",
+    "login_music.gui.download.downloading": "Downloading login music",
+    "login_music.gui.download.title": "Login Music download",
+    "login_music.gui.download.progress": "Downloading... %.1f MB / %.1f MB",
+    "login_music.gui.download.warn": "Warning, the downloaded file may not be an audio file",
 
     "login_music.configui.allow_download": "Allow downloading music from the internet",
     "login_music.configui.allow_download.tooltip": "If false, then directly read network audio streams without downloading them locally\nPrevent malicious links but no cache support\nPlease only enable this feature on servers that you trust",

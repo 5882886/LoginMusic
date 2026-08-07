@@ -1,19 +1,11 @@
 package com.github.rd806.loginmusic.media.lyric;
 
 import com.github.rd806.loginmusic.LoginMusic;
-import com.github.rd806.loginmusic.media.music.MusicEntry;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +13,8 @@ import java.util.regex.Pattern;
 public class LyricParser {
 
     private static final Pattern TIME_TAG_PATTERN = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{2,3})]");
+
+    public static String lyricContent;
 
     // 解析LRC歌词文本
     public static List<LyricEntry> parseLRC(String lrcContent) {
@@ -98,82 +92,8 @@ public class LyricParser {
         return current;
     }
 
-    // 从音乐条目加载歌词
-    public static String loadLyrics(MusicEntry entry) {
-        if (entry == null || entry.getLyricName() == null || entry.getLyricName().isEmpty() || entry.getLyricPath() == null) {
-            return null;
-        }
-        String lyrics = loadFromFile(entry.getLyricName());
-        if (lyrics == null) {
-            lyrics = loadFromUrl(entry.getLyricPath());
-        }
-        return lyrics;
-    }
-
-    // 从本地文件加载歌词
-    private static String loadFromFile(String filePath) {
-        try {
-            LoginMusic.LOGGER.info("Loading Lyric from {}", filePath);
-            Path path = Paths.get(filePath);
-            // 如果是相对路径，尝试从配置目录查找
-            if (!path.isAbsolute()) {
-                Path configPath = LoginMusic.LYRICS_DIR.resolve(filePath);
-                if (Files.exists(configPath)) {
-                    path = configPath;
-                }
-            }
-            if (!Files.exists(path)) {
-                LoginMusic.LOGGER.info("No lyrics file found: {}, try url.", path);
-                return null;
-            }
-            String lyricContent = Files.readString(path);
-            LoginMusic.LOGGER.info("Lyric file loaded");
-            return lyricContent;
-        } catch (Exception e) {
-            LoginMusic.LOGGER.error("Error while loading Lyric from {}", filePath, e);
-            return null;
-        }
-    }
-
-    // 从url加载歌词
-    private static String loadFromUrl(String urlStr) {
-        try {
-            HttpURLConnection connection;
-            URI uri = new URI(urlStr);
-            URL url = uri.toURL();
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
-            connection.setRequestProperty("User-Agent", "LoginMusic");
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                LoginMusic.LOGGER.warn("HTTP respond code: {}", responseCode);
-                return null;
-            }
-            InputStream inputStream = connection.getInputStream();
-            // 使用 ByteArrayOutputStream 一次性读取所有数据
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[8192];  // 使用更大的缓冲区
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                baos.write(buffer, 0, bytesRead);
-            }
-            byte[] allBytes = baos.toByteArray();
-            // 检测编码
-            String charset = detectCharset(allBytes);
-            LoginMusic.LOGGER.info("Lyric file loaded from {}, using charset {}", urlStr,  charset);
-            // 转换为字符串
-            return new String(allBytes, charset);
-        } catch (Exception e) {
-            LoginMusic.LOGGER.error("Error while loading Lyric from {}", urlStr, e);
-            return null;
-        }
-    }
-
     // 检测字符编码（增强版）
-    private static String detectCharset(byte[] data) {
+    public static String detectCharset(byte[] data) {
         if (data == null || data.length == 0) { return "UTF-8"; }
         // 检测 UTF-8 BOM
         if (data.length >= 3 && data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) { return "UTF-8"; }
@@ -233,10 +153,5 @@ public class LyricParser {
             }
         }
         return true;
-    }
-
-    // 异步加载歌词
-    public static CompletableFuture<String> loadLyricAsync(MusicEntry entry) {
-        return CompletableFuture.supplyAsync(() -> loadLyrics(entry));
     }
 }

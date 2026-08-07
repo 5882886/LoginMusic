@@ -1,6 +1,7 @@
-package com.github.rd806.loginmusic.media;
+package com.github.rd806.loginmusic.media.download;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.media.PreparedAudio;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -9,16 +10,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.sound.sampled.*;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 
 @OnlyIn(Dist.CLIENT)
 public class PrepareMusic {
 
     public static TYPE type = TYPE.DEFAULT;
+    public static AudioInputStream audioInputStream;
 
     public enum TYPE {
         SOUND_EVENT,
@@ -40,23 +37,9 @@ public class PrepareMusic {
 
     // 准备外部音乐
     public static PreparedAudio prepareAudio(MusicEntry entry) {
-        File localFile = LoginMusic.MUSICS_DIR.resolve(entry.getMusicName()).toFile();
-        AudioInputStream audioStream;
-        // 加载音频流
         try {
-            if (localFile.exists()) {
-                audioStream = AudioSystem.getAudioInputStream(localFile);
-            } else {
-                URI uri = new URI(entry.getMusicPath());
-                URL url = uri.toURL();
-                URLConnection connection = url.openConnection();
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
-                audioStream = AudioSystem.getAudioInputStream(bufferedInputStream);
-            }
             // 转换格式
-            AudioFormat sourceFormat = audioStream.getFormat();
+            AudioFormat sourceFormat = audioInputStream.getFormat();
             AudioFormat targetFormat = new AudioFormat(
                     AudioFormat.Encoding.PCM_SIGNED,
                     sourceFormat.getSampleRate(),
@@ -67,14 +50,14 @@ public class PrepareMusic {
                     false
             );
             if (!sourceFormat.matches(targetFormat)) {
-                audioStream = AudioSystem.getAudioInputStream(targetFormat, audioStream);
+                audioInputStream = AudioSystem.getAudioInputStream(targetFormat, audioInputStream);
             }
             DataLine.Info info = new DataLine.Info(Clip.class, targetFormat);
             if (!AudioSystem.isLineSupported(info)) {
                 throw new UnsupportedAudioFileException("Audio format not supported");
             }
             // 预加载音频数据到字节数组，减少Clip.open()时间
-            byte[] audioData = audioStream.readAllBytes();
+            byte[] audioData = audioInputStream.readAllBytes();
             type = TYPE.PREPARED_AUDIO;
             return new PreparedAudio(audioData, targetFormat, info);
         } catch (UnsupportedAudioFileException e) {

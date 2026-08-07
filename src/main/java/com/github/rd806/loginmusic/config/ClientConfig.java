@@ -30,6 +30,8 @@ public class ClientConfig {
     public static ForgeConfigSpec.ConfigValue<Integer> LYRIC_COLOR;
     // 是否播放来自其他玩家的音频
     public static ForgeConfigSpec.BooleanValue ALLOW_OTHERS_MUSIC;
+    // 缓存容量
+    public static ForgeConfigSpec.ConfigValue<Integer> CACHE_SIZE;
 
     public static ForgeConfigSpec init() {
         BUILDER.push("Music").translation(LoginMusic.MODID + ".configui.title");
@@ -45,6 +47,8 @@ public class ClientConfig {
                 .comment("Whether to play musics from other players")
                 .translation(LoginMusic.MODID + ".configui.allow_others_music")
                 .define("AllowOthersMusic", false);
+        CACHE_SIZE = BUILDER
+                .define("CacheSize", 5);
         BUILDER.pop();
 
         BUILDER.push("Lyric").translation(LoginMusic.MODID + ".configui.lyrics");

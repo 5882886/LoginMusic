@@ -3,19 +3,21 @@ package com.github.rd806.loginmusic.media.music;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.github.rd806.loginmusic.LoginMusic;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.loading.FMLPaths;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 // 服务端覆盖客户端
@@ -28,6 +30,31 @@ public class MusicConfig {
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
     // 本地文件列表（跟随客户端）
     private static List<MusicEntry> MUSIC_ENTRY_LIST = new ArrayList<>();
+    // 缓存
+    private static final MusicLRUCache<String, ByteArrayOutputStream> MUSIC_CACHE = new MusicLRUCache<>();
+
+    // 放入
+    public static void put(String key, ByteArrayOutputStream value) { MUSIC_CACHE.put(key, value); }
+    // 取出
+    public static ByteArrayOutputStream get(String key) {
+        ByteArrayOutputStream baos = MUSIC_CACHE.get(key);
+        if (baos != null) return baos;
+        return new ByteArrayOutputStream();
+    }
+    // 查看缓存条目
+    public static void showCache() {
+        Set<String> keys = MUSIC_CACHE.keySet();
+        Player player = Minecraft.getInstance().player;
+        if (player == null) { return; }
+        if (keys.isEmpty()) {
+            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".command.cache.empty"), false);
+        } else {
+            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".command.cache.info"), false);
+            for (String key : keys) {
+                player.displayClientMessage(Component.literal("- " + key), false);
+            }
+        }
+    }
 
     // 从配置文件加载音乐
     public static void loadFromConfig() {
@@ -84,16 +111,6 @@ public class MusicConfig {
         }
     }
 
-    // 接收服务端的音乐配置
-    @OnlyIn(Dist.CLIENT)
-    public static void receiveConfig(Map<String, MusicEntry> config) {
-        MUSIC_ENTRY_MAP.clear();
-        MUSIC_ENTRY_MAP.putAll(config);
-        LoginMusic.LOGGER.info("Client music config updated, total {} musics", MUSIC_ENTRY_MAP.size());
-    }
-
-    // 获取空配置（用于服务端发送）
-    public static Map<String, MusicEntry> newMusicEntryMap() { return new HashMap<>(MUSIC_ENTRY_MAP);}
     // 获取当前配置
     public static Map<String, MusicEntry> getMusicEntryMap() { return MUSIC_ENTRY_MAP; }
     // 获取当前列表

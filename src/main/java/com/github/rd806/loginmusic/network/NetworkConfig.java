@@ -29,6 +29,10 @@ public class NetworkConfig {
                 packetID++,
                 MusicEntryPacket.class, MusicEntryPacket::encode, MusicEntryPacket::decode, MusicEntryPacket::handle);
 
+        CHANNEL.registerMessage(
+                packetID++,
+                MusicCachePacket.class, MusicCachePacket::encode, MusicCachePacket::decode, MusicCachePacket::handle);
+
         LoginMusic.LOGGER.info("Network config registered!");
     }
 
@@ -36,5 +40,10 @@ public class NetworkConfig {
     public static void sendMusicToPlayer(ServerPlayer player, MusicEntry music, SelectionKey key) {
         LoginMusic.LOGGER.info("Send music {} to {}", music.getMusicName(), player.getName().getString());
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicEntryPacket(music, key));
+    }
+
+    // 查看本地缓存
+    public static void showPlayerMusicCache(ServerPlayer player) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicCachePacket());
     }
 }

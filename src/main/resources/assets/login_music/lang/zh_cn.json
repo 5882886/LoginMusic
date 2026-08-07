@@ -20,11 +20,11 @@
     "login_music.gui.config.lyricUrl.tooltip": "歌词文件地址或url",
     "login_music.gui.config.delete": "删除音乐",
 
-    "login_music.gui.logindownload.start": "准备下载 ...",
-    "login_music.gui.logindownload.downloading": "正在下载登录音乐",
-    "login_music.gui.logindownload.title": "下载登录音乐",
-    "login_music.gui.logindownload.progress": "下载中 ... %.1f MB / %.1f MB",
-    "login_music.gui.logindownload.warn": "警告，下载的文件可能不是音频文件！",
+    "login_music.gui.download.start": "准备下载 ...",
+    "login_music.gui.download.downloading": "正在下载登录音乐",
+    "login_music.gui.download.title": "下载登录音乐",
+    "login_music.gui.download.progress": "下载中 ... %.1f MB / %.1f MB",
+    "login_music.gui.download.warn": "警告，下载的文件可能不是音频文件！",
 
     "login_music.configui.allow_download": "允许从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "如果为否，则音乐文件不会下载至本地\n防止恶意链接但无法缓存\n请仅在您信任的服务器上开启此功能",

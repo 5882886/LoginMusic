@@ -22,6 +22,7 @@ public class LoginMusicCommand {
     private static final String ROOT = "loginmusic";
     private static final String PLAY = "play";
     private static final String LIST = "list";
+    private static final String CACHE = "cache";
     private static final String RELOAD = "reload";
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
@@ -29,10 +30,12 @@ public class LoginMusicCommand {
                 .requires(source -> source.hasPermission(2));
         LiteralArgumentBuilder<CommandSourceStack> play = Commands.literal(PLAY);
         LiteralArgumentBuilder<CommandSourceStack> list = Commands.literal(LIST);
+        LiteralArgumentBuilder<CommandSourceStack> cache = Commands.literal(CACHE);
         LiteralArgumentBuilder<CommandSourceStack> reload = Commands.literal(RELOAD);
 
         root.then(play.executes(LoginMusicCommand::playMusic));
         root.then(list.executes(LoginMusicCommand::showList));
+        root.then(cache.executes(LoginMusicCommand::showCache));
         root.then(reload.executes(LoginMusicCommand::reloadConfig));
         return root;
     }
@@ -76,6 +79,17 @@ public class LoginMusicCommand {
                             false);
                 }
             }
+        } catch (Exception e) {
+            LoginMusic.LOGGER.error(e.getMessage());
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    // 显示缓存
+    private static int showCache(CommandContext<CommandSourceStack> context) {
+        try {
+            ServerPlayer serverPlayer = context.getSource().getPlayer();
+            NetworkConfig.showPlayerMusicCache(serverPlayer);
         } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
         }
