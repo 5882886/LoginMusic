@@ -17,16 +17,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @OnlyIn(Dist.CLIENT)
 public class SimpleMusicPlayer {
 
     private static final Minecraft mc = Minecraft.getInstance();
-    private static MusicEntry currentMusic;
+    private static MusicEntry musicEntry;
+    private static String musicName;
 
-    private static PreparedAudio preparedAudio;
     private static SoundEvent soundEvent;
 
     private static Clip currentClip;
@@ -34,74 +32,34 @@ public class SimpleMusicPlayer {
 
     private static boolean lyricStarted = false;
 
-    // 音频播放线程
-    public static final ExecutorService MUSIC_PLAYER = Executors.newFixedThreadPool(2, r -> {
-        Thread t = new Thread(r, "LoginMusic MusicPlayer");
-        t.setDaemon(true);
-        return t;
-    });
-
-    static {
-        // 获取原生支持的音频格式
-        AudioFileFormat.Type[] types = AudioSystem.getAudioFileTypes();
-        LoginMusic.LOGGER.info("Supported music file: ");
-        for (AudioFileFormat.Type type : types) {
-            LoginMusic.LOGGER.info("  - {}", type.getExtension());
-        }
-        // 检查MP3 SPI是否加载
-        try {
-            Class.forName("javazoom.spi.mpeg.sampled.file.MpegAudioFileReader");
-            LoginMusic.LOGGER.info("MP3 support loaded!");
-        } catch (ClassNotFoundException e) {
-            LoginMusic.LOGGER.warn("MP3 support not found!");
-        }
-    }
-
-    /* ----- 加载音频逻辑 ----- */
-    // 播放音乐，加载和播放音乐分为两个线程
-    public static void playMusic(MusicEntry music, ByteArrayInputStream inputStream, String lyric) {
-        currentMusic = music;
+    // 播放音乐
+    public static void playMusic(MusicEntry music, PreparedAudio audio, String lyric) {
+        musicEntry = music;
+        musicName = LoginMusic.removeExtension(music.getMusicName());
         if (mc.player == null) {
             LoginMusic.LOGGER.warn("Player not found!");
             return;
         }
-        if (inputStream == null) {
-            LoginMusic.LOGGER.warn("Music stream not found!");
+        if (audio == null) {
+            LoginMusic.LOGGER.warn("Music audio not found!");
             return;
         }
-        // 在音频线程池中加载
-        MUSIC_PLAYER.submit(() -> {
-            try {
-                try {
-                    soundEvent = PrepareMusic.findMusic(music);
-                } catch (Exception e) {
-                    preparedAudio = PrepareMusic.prepareAudio(inputStream);
-                }
-                // 切换到渲染线程播放
-                mc.execute(() -> startCurrentMusic(music, lyric));
-            } catch (Exception e) {
-                LoginMusic.LOGGER.error("Failed to load audio", e);
-                mc.execute(() -> mc.player.displayClientMessage(
-                        Component.translatable(LoginMusic.MODID + ".message.load_failed", music.getMusicName()),
-                        false
-                ));
-            }
-        });
+        mc.execute(() -> startMusic(music, audio, lyric));
     }
 
     // 播放音频，在渲染进程进行
-    private static void startCurrentMusic(MusicEntry entry, String lyric) {
+    private static void startMusic(MusicEntry entry, PreparedAudio audio, String lyric) {
         try {
             if (mc.player == null) { return; }
             // 尝试播放
             switch (PrepareMusic.type) {
-                case SOUND_EVENT -> playMusicFromResources(soundEvent);
-                case PREPARED_AUDIO -> playMusicFromFiles(preparedAudio, lyric);
+                case SOUND_EVENT -> playMusicFromResources(soundEvent, lyric);
+                case PREPARED_AUDIO -> playMusicFromFiles(audio, lyric);
                 case DEFAULT -> LoginMusic.LOGGER.error("No audio file found");
             }
             // 显示播放信息
             mc.player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.play_music", entry.getMusicName()),
+                    Component.translatable(LoginMusic.MODID + ".message.play_music", musicName),
                     false);
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Failed to play music: {} ", entry.getMusicName());
@@ -110,9 +68,10 @@ public class SimpleMusicPlayer {
     }
 
     // 播放资源包中的音乐
-    private static void playMusicFromResources(SoundEvent soundEvent) {
+    private static void playMusicFromResources(SoundEvent soundEvent, String lyric) {
         SimpleSoundInstance currentMusic = SimpleSoundInstance.forUI(soundEvent, 1.0f, 1.0f);
         Minecraft.getInstance().getSoundManager().play(currentMusic);
+        startLyrics(musicEntry, lyric, System.currentTimeMillis());
     }
 
     // 播放外部音乐
@@ -132,44 +91,42 @@ public class SimpleMusicPlayer {
             currentClip.open(stream);
             currentClip.start();
             // 播放歌词
-            long startTimeMillis = System.currentTimeMillis();
-            startLyrics(currentMusic, lyric, startTimeMillis);
+            startLyrics(musicEntry, lyric, System.currentTimeMillis());
             isPlaying = true;
             // 音频结束操作
             currentClip.addLineListener(event -> {
                 if (event.getType() == LineEvent.Type.STOP && isPlaying) {
                     stopMusic();
                     if (mc.player != null) {
-                        LoginMusic.LOGGER.info("Music {} stopped!", currentMusic.getMusicName());
+                        LoginMusic.LOGGER.info("Music {} stopped!", musicEntry.getMusicName());
                         mc.player.displayClientMessage(
-                                Component.translatable(LoginMusic.MODID + ".message.play_ended", currentMusic.getMusicName()),
+                                Component.translatable(LoginMusic.MODID + ".message.play_ended", musicName),
                                 false);
                     }
                 }
             });
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Fail to play music from files, {}", e.getMessage());
+            LoginMusic.LOGGER.error("Fail to play music from files.", e);
         }
     }
 
     // 播放歌词
     private static void startLyrics(MusicEntry entry, String lyric, long startTimeMillis) {
-        if (entry.getLyricName() != null && ClientConfig.ALLOW_LYRICS.get()) {
+        if (ClientConfig.ALLOW_LYRICS.get()) {
             LoginMusic.LOGGER.info("Lyrics prepared!");
             if (lyric != null && !lyric.isEmpty() && !lyricStarted) {
                 List<LyricEntry> currentLyrics = LyricParser.parseLRC(lyric);
                 lyricStarted = true;
+                // 计算展示歌词与播放开始的间隔时间，即已播放的时间
                 if (startTimeMillis > 0) {
-                    LoginMusic.LOGGER.info("Lyrics playing!");
-                    // 计算展示歌词与播放开始的间隔时间，即已播放的时间
                     long elapsedTime = System.currentTimeMillis() - startTimeMillis;
                     LyricPlayer.startLyricDisplay(currentLyrics, elapsedTime);
-                } else  {
-                    LoginMusic.LOGGER.warn("No lyrics found!");
                 }
+            } else  {
+                LoginMusic.LOGGER.warn("No lyrics found, {}", entry.getMusicName());
             }
-        } else if (!ClientConfig.ALLOW_LYRICS.get()) {
-            LoginMusic.LOGGER.warn("Lyrics are disabled!");
+        } else {
+            LoginMusic.LOGGER.warn("Lyrics not available!");
         }
     }
 

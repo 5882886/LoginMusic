@@ -22,6 +22,7 @@ public class DownloadScreen extends Screen {
     private static int barY;
 
     private final MusicEntry music;
+    private final String musicName;
     private final Runnable onComplete;
     // 进度信息
     private volatile Status audioStatus;
@@ -36,6 +37,7 @@ public class DownloadScreen extends Screen {
     public DownloadScreen(MusicEntry music, Runnable onComplete) {
         super(Component.translatable(LoginMusic.MODID + ".gui.download.title"));
         this.music = music;
+        this.musicName = LoginMusic.removeExtension(music.getMusicName());
         this.audioStatus = Status.DOWNLOAD;
         this.lyricStatus = Status.DOWNLOAD;
         this.onComplete = onComplete;
@@ -54,14 +56,19 @@ public class DownloadScreen extends Screen {
         barX = centerX - barWidth / 2;
         barY = centerY + 20;
         // 标题
-        graphics.drawCenteredString(this.font, "[LoginMusic]", centerX, centerY, 0x00AAFF);
+        graphics.drawCenteredString(this.font, "[LoginMusic]", centerX, centerY - 60, 0x00AAFF);
+        // 音乐名称，放大两倍
+        graphics.pose().pushPose();
+        graphics.pose().scale(2, 2, 2);
         graphics.drawCenteredString(
-                this.font,
-                Component.translatable(LoginMusic.MODID + ".gui.download.downloading"),
-                centerX,
-                centerY - 30,
-                0xFFFFFF);
-        graphics.drawCenteredString(this.font, music.getMusicName(), centerX, centerY - 10, 0xFFFFFF);
+                this.font, musicName,
+                centerX / 2, (centerY - 30) / 2 , 0xFFFFFF);
+        graphics.pose().popPose();
+        // 底部提示
+        graphics.drawCenteredString(
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.tooltip"),
+                centerX, this.height - 30,
+                0x808080);
         // 设置渲染类型
         switch (audioStatus) {
             case COMPLETED -> renderAudioCompleted(graphics, centerX);
@@ -73,8 +80,8 @@ public class DownloadScreen extends Screen {
             case ERROR -> renderLyricError(graphics, centerX);
             case DOWNLOAD -> renderLyricDownload(graphics, centerX);
         }
-
-        if (audioStatus.equals(Status.COMPLETED) &&  lyricStatus.equals(Status.COMPLETED)) {
+        // 自动关闭
+        if (audioStatus.equals(Status.COMPLETED) && lyricStatus.equals(Status.COMPLETED)) {
             onComplete.run();
         }
     }
@@ -111,21 +118,26 @@ public class DownloadScreen extends Screen {
 
     // 下载完成
     private void renderAudioCompleted(GuiGraphics graphics, int centerX) {
-        graphics.drawCenteredString(this.font, "§a✓ 下载完成", centerX, barY + 5, 0x00FF00);
+        graphics.drawCenteredString(
+                this.font,
+                Component.translatable(LoginMusic.MODID + ".gui.download.complete", musicName),
+                centerX, barY + 5, 0x00FF00);
     }
     private void renderLyricCompleted(GuiGraphics graphics, int centerX) {
-        graphics.drawCenteredString(this.font, "§a✓ 下载完成", centerX, barY + barHeight + 10, 0x00FF00);
+        graphics.drawCenteredString(
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.complete", music.getLyricName()),
+                centerX, barY + barHeight + 10, 0x00FF00);
     }
 
-    // 下载失败的界面
+    // 下载失败
     private void renderAudioError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, "§c✗ 下载失败" + errorMessage,
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
                 centerX, barY + 50, 0xFF0000);
     }
     private void renderLyricError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, "§c✗ 下载失败" + errorMessage,
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
                 centerX, barY + barHeight + 10, 0xFF0000);
     }
 
@@ -147,6 +159,12 @@ public class DownloadScreen extends Screen {
     public void setError(String Message) {
         this.audioStatus = Status.ERROR;
         this.errorMessage = Message;
+    }
+
+    // 打开此界面时游戏不暂停
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 
     // 是否允许ESC关闭

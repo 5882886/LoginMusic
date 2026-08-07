@@ -23,6 +23,7 @@ public class LoginMusicCommand {
 
     private static final String ROOT = "loginmusic";
     private static final String PLAY = "play";
+    private static final String STOP = "stop";
     private static final String LIST = "list";
     private static final String CACHE = "cache";
     private static final String CLEAR = "clear";
@@ -32,12 +33,14 @@ public class LoginMusicCommand {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(ROOT)
                 .requires(source -> source.hasPermission(2));
         LiteralArgumentBuilder<CommandSourceStack> play = Commands.literal(PLAY);
+        LiteralArgumentBuilder<CommandSourceStack> stop = Commands.literal(STOP);
         LiteralArgumentBuilder<CommandSourceStack> list = Commands.literal(LIST);
         LiteralArgumentBuilder<CommandSourceStack> cache = Commands.literal(CACHE);
         LiteralArgumentBuilder<CommandSourceStack> clear = Commands.literal(CLEAR);
         LiteralArgumentBuilder<CommandSourceStack> reload = Commands.literal(RELOAD);
 
         root.then(play.executes(LoginMusicCommand::playMusic));
+        root.then(stop.executes(LoginMusicCommand::stopMusic));
         root.then(list.executes(LoginMusicCommand::showList));
         root.then(cache.then(list.executes(LoginMusicCommand::listCache)));
         root.then(cache.then(clear.executes(LoginMusicCommand::clearCache)));
@@ -55,7 +58,20 @@ public class LoginMusicCommand {
                 NetworkConfig.sendMusicToPlayer(serverPlayer, music, key);
             }
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Fail to send music: {}", e.getMessage());
+            LoginMusic.LOGGER.error("Fail to send music", e);
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    // 停止音乐
+    private static int stopMusic(CommandContext<CommandSourceStack> context) {
+        try {
+            ServerPlayer serverPlayer = context.getSource().getPlayer();
+            if (serverPlayer != null) {
+                NetworkConfig.showPlayerMusicCache(serverPlayer, CommandType.STOP_MUSIC);
+            }
+        } catch (Exception e) {
+            LoginMusic.LOGGER.error("Fail to stop music", e);
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -65,17 +81,17 @@ public class LoginMusicCommand {
         try {
             Map<String, MusicEntry> tempMap = MusicConfig.getMusicEntryMap();
             if (tempMap.isEmpty()) {
-                context.getSource().sendFailure(Component.translatable(LoginMusic.MODID + ".commands.list.empty"));
+                context.getSource().sendFailure(Component.translatable(LoginMusic.MODID + ".command.list.empty"));
             } else {
                 // 显示音乐主键
                 SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
                 context.getSource().sendSuccess(
-                        () -> Component.translatable(LoginMusic.MODID + ".commands.list.key", key),
+                        () -> Component.translatable(LoginMusic.MODID + ".command.list.key", key),
                         false
                 );
                 // 显示音乐配置信息
                 context.getSource().sendSuccess(
-                        () -> Component.translatable(LoginMusic.MODID + ".commands.list.success", tempMap.size()),
+                        () -> Component.translatable(LoginMusic.MODID + ".command.list.success", tempMap.size()),
                         false);
                 for (Map.Entry<String, MusicEntry> entry : tempMap.entrySet()) {
                     String musicName = entry.getValue().getMusicName();
@@ -94,7 +110,9 @@ public class LoginMusicCommand {
     private static int listCache(CommandContext<CommandSourceStack> context) {
         try {
             ServerPlayer serverPlayer = context.getSource().getPlayer();
-            NetworkConfig.showPlayerMusicCache(serverPlayer, CommandType.CACHE_LIST);
+            if (serverPlayer != null) {
+                NetworkConfig.showPlayerMusicCache(serverPlayer, CommandType.CACHE_LIST);
+            }
         } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
         }
@@ -105,7 +123,9 @@ public class LoginMusicCommand {
     private static int clearCache(CommandContext<CommandSourceStack> context) {
         try {
             ServerPlayer serverPlayer = context.getSource().getPlayer();
-            NetworkConfig.showPlayerMusicCache(serverPlayer, CommandType.CACHE_CLEAR);
+            if (serverPlayer != null) {
+                NetworkConfig.showPlayerMusicCache(serverPlayer, CommandType.CACHE_CLEAR);
+            }
         } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
         }
@@ -117,7 +137,7 @@ public class LoginMusicCommand {
         try {
             MusicConfig.loadFromConfig();
             context.getSource().sendSuccess(
-                    () -> Component.translatable(LoginMusic.MODID + ".commands.reload.success"),
+                    () -> Component.translatable(LoginMusic.MODID + ".command.reload.success"),
                     true);
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Fail to reload LoginMusic config: {}", e.getMessage());

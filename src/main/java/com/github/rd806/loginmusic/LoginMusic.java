@@ -52,4 +52,17 @@ public class LoginMusic {
         MusicConfig.loadFromConfig();
         LOGGER.info("[LoginMusic] If you have any issues with LoginMusic, please report it at https://github.com/rd806/LoginMusic!");
     }
+
+    // 去除文件扩展名
+    public static String removeExtension(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return filename;
+        }
+        int dotIndex = filename.lastIndexOf('.');
+        // 注意：如果点位于第一个字符（隐藏文件）或不存在，则返回原文件名
+        if (dotIndex <= 0) {
+            return filename;
+        }
+        return filename.substring(0, dotIndex);
+    }
 }

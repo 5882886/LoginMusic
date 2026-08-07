@@ -32,7 +32,7 @@ public class NetworkConfig {
 
         CHANNEL.registerMessage(
                 packetID++,
-                MusicCachePacket.class, MusicCachePacket::encode, MusicCachePacket::decode, MusicCachePacket::handle);
+                MusicCommandPacket.class, MusicCommandPacket::encode, MusicCommandPacket::decode, MusicCommandPacket::handle);
 
         LoginMusic.LOGGER.info("Network config registered!");
     }
@@ -45,6 +45,6 @@ public class NetworkConfig {
 
     // 查看本地缓存
     public static void showPlayerMusicCache(ServerPlayer player, CommandType type) {
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicCachePacket(type));
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicCommandPacket(type));
     }
 }

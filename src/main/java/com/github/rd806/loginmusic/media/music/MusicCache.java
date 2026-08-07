@@ -2,20 +2,23 @@ package com.github.rd806.loginmusic.media.music;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.MusicLRUCache;
+import com.github.rd806.loginmusic.media.PreparedAudio;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Set;
 
+@OnlyIn(Dist.CLIENT)
 public class MusicCache {
     // 缓存
-    public static final MusicLRUCache<String, ByteArrayOutputStream> MUSIC_CACHE = new MusicLRUCache<>();
+    public static final MusicLRUCache<String, PreparedAudio> MUSIC_CACHE = new MusicLRUCache<>();
     public static final MusicLRUCache<String, String> LYRIC_CACHE = new MusicLRUCache<>();
 
     // 放入
-    public static void putMusic(String key, ByteArrayOutputStream value) {
+    public static void putMusic(String key, PreparedAudio value) {
         MUSIC_CACHE.put(key, value);
     }
     public static void putLyric(String key, String value) {
@@ -23,10 +26,8 @@ public class MusicCache {
     }
 
     // 取出
-    public static ByteArrayOutputStream getMusic(String key) {
-        ByteArrayOutputStream baos = MUSIC_CACHE.get(key);
-        if (baos != null) return baos;
-        return new ByteArrayOutputStream();
+    public static PreparedAudio getMusic(String key) {
+        return MUSIC_CACHE.get(key);
     }
     public static String getLyric(String key) {
         return LYRIC_CACHE.get(key);
@@ -40,18 +41,26 @@ public class MusicCache {
         if (player == null) { return; }
         // 显示缓存的音乐
         if (musicKeys.isEmpty()) {
-            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".command.cache.empty"), false);
+            player.displayClientMessage(
+                    Component.translatable(LoginMusic.MODID + ".command.music_cache.empty"),
+                    false);
         } else {
-            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".command.cache.info"), false);
+            player.displayClientMessage(Component.translatable(
+                    LoginMusic.MODID + ".command.music_cache.info"),
+                    false);
             for (String key : musicKeys) {
                 player.displayClientMessage(Component.literal("- " + key), false);
             }
         }
         // 显示缓存的歌词
         if (lyricKeys.isEmpty()) {
-            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".command.cache.empty"), false);
+            player.displayClientMessage(Component.translatable(
+                    LoginMusic.MODID + ".command.lyric_cache.empty"),
+                    false);
         } else {
-            player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".command.cache.info"), false);
+            player.displayClientMessage(Component.translatable(
+                    LoginMusic.MODID + ".command.lyric_cache.info"),
+                    false);
             for (String key : lyricKeys) {
                 player.displayClientMessage(Component.literal("- " + key), false);
             }
@@ -62,5 +71,12 @@ public class MusicCache {
     public static void clearCache() {
         MUSIC_CACHE.clear();
         LYRIC_CACHE.clear();
+
+        Player player = Minecraft.getInstance().player;
+        if (player != null) {
+            player.displayClientMessage(Component.translatable(
+                    LoginMusic.MODID + ".command.clear_cache"),
+                    false);
+        }
     }
 }

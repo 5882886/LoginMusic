@@ -33,6 +33,7 @@ public class ClientEvent {
     public static void playLoginMusic(MusicEntry music, SelectionKey key) {
         Player player = mc.player;
         if (player == null) return;
+
         // 判断是否为来自其他玩家的音乐
         String musicId = music.getId();
         boolean isOwnMusic = false;
@@ -63,7 +64,7 @@ public class ClientEvent {
         mc.execute(() -> {
             // 创建并显示下载界面
             DownloadScreen screen = new DownloadScreen(music, () -> {
-                // 下载完成后播放音乐
+                // 下载完成后关闭界面
                 mc.execute(() -> mc.setScreen(null));
             });
             mc.setScreen(screen);
