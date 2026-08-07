@@ -4,20 +4,21 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
 import com.github.rd806.loginmusic.media.lyric.LyricParser;
-import com.github.rd806.loginmusic.media.music.MusicConfig;
+import com.github.rd806.loginmusic.media.music.MusicCache;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.sound.sampled.AudioSystem;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @OnlyIn(Dist.CLIENT)
 public class DownloadMethod {
@@ -25,38 +26,70 @@ public class DownloadMethod {
     private static final Minecraft mc = Minecraft.getInstance();
     private static DownloadScreen downloadScreen;
 
+    private static ByteArrayInputStream byteArrayInputStream;
+    private static String lyric;
+
+    // 音频加载线程
+    public static final ExecutorService AUDIO_LOADER = Executors.newFixedThreadPool(2, r -> {
+        Thread t = new Thread(r, "LoginMusic AudioLoader");
+        t.setDaemon(true);
+        return t;
+    });
+    // 歌词加载线程
+    public static final ExecutorService LYRIC_LOADER = Executors.newFixedThreadPool(2, r -> {
+        Thread t = new Thread(r, "LoginMusic LyricLoader");
+        t.setDaemon(true);
+        return t;
+    });
+
     /* ----- 音乐下载方法 ----- */
     // 开始下载
     public static void startDownload(MusicEntry music, DownloadScreen screen) {
         downloadScreen = screen;
-        // 加载音乐
-        SimpleMusicPlayer.AUDIO_LOADER.submit(() -> {
-            downloadMusic(music, (downloaded, total, progress) -> {
+        // 创建两个 CompletableFuture 来跟踪下载任务
+        CompletableFuture<Void> audioFuture = CompletableFuture.runAsync(() -> {
+            byteArrayInputStream = downloadMusic(music, (downloaded, total, progress) -> {
                 Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress",
-                            String.format("%.1f", downloaded / 1024.0 / 1024.0),
-                            String.format("%.1f", total / 1024.0 / 1024.0));
-                // 在主进程中更新进度
+                        String.format("%.1f", downloaded / 1024.0 / 1024.0),
+                        String.format("%.1f", total / 1024.0 / 1024.0));
                 if (screen != null) {
                     mc.execute(() -> screen.updateAudioProgress(progress, status));
                 }
             });
             mc.execute(screen::setAudioCompleted);
-        });
-        // 加载歌词
-        SimpleMusicPlayer.LYRIC_LOADER.submit(() -> {
-            downloadLyrics(music, (downloaded, total, progress) -> {
-                Component status;
-                // 设置不同的提示信息
-                status = Component.translatable(LoginMusic.MODID + ".gui.download.progress",
+        }, AUDIO_LOADER);  // 使用 AUDIO_LOADER 作为执行器
+
+        CompletableFuture<Void> lyricFuture = CompletableFuture.runAsync(() -> {
+            lyric = downloadLyrics(music, (downloaded, total, progress) -> {
+                Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress",
                         String.format("%.1f", downloaded / 1024.0 / 1024.0),
                         String.format("%.1f", total / 1024.0 / 1024.0));
-                // 在主进程中更新进度
                 if (screen != null) {
                     mc.execute(() -> screen.updateLyricProgress(progress, status));
                 }
             });
             mc.execute(screen::setLyricCompleted);
-        });
+        }, LYRIC_LOADER);
+
+        // 等待两个任务都完成
+        CompletableFuture.allOf(audioFuture, lyricFuture)
+                .thenAccept(ignored -> {
+                    // 确保在 Minecraft 主线程中执行
+                    mc.execute(() -> {
+                        // 检查是否都完成了
+                        if (byteArrayInputStream != null && lyric != null) {
+                            SimpleMusicPlayer.playMusic(music, byteArrayInputStream, lyric);
+                        } else {
+                            LoginMusic.LOGGER.error("Could not download music or lyrics!");
+                        }
+                    });
+                })
+                .exceptionally(throwable -> {
+                    // 错误处理
+                    LoginMusic.LOGGER.error("Failed to download music or lyrics", throwable);
+                    mc.execute(() -> screen.setError(throwable.getMessage()));
+                    return null;
+                });
     }
 
     // 进度回调
@@ -81,23 +114,38 @@ public class DownloadMethod {
     }
 
     // 音乐下载方法
-    private static void downloadMusic(MusicEntry music, DownloadCallback callback) {
+    private static ByteArrayInputStream downloadMusic(MusicEntry music, DownloadCallback callback) {
         String name = music.getMusicName();
         String urlStr = music.getMusicPath();
         try {
-            Path cacheFile = LoginMusic.LYRICS_DIR.resolve(name);
+            ByteArrayOutputStream baos = MusicCache.getMusic(urlStr);
+
+            if (baos.size() > 0) {
+                byte[] allData = baos.toByteArray();
+                mc.execute(downloadScreen::setAudioCompleted);
+                return new ByteArrayInputStream(allData);
+            }
+
             // 检查缓存，命中直接返回
+            Path cacheFile = LoginMusic.LYRICS_DIR.resolve(name);
             if (isDownloaded(cacheFile, callback)) {
                 LoginMusic.LOGGER.info("The file has been downloaded!");
-                PrepareMusic.audioInputStream = AudioSystem.getAudioInputStream(cacheFile.toFile());
+                // 读取文件所有字节到 byte[]
+                byte[] data = Files.readAllBytes(cacheFile);
+                // 包装为 ByteArrayInputStream
+                ByteArrayInputStream bais = new ByteArrayInputStream(data);
                 mc.execute(downloadScreen::setAudioCompleted);
-                return;
+                return bais;
             }
+
+            // 从网络加载
             LoginMusic.LOGGER.info("Start downloading music from {}", urlStr);
-            // Java20 之后不再使用 URL() 方法
             URLConnection connection = openConnection(urlStr);
             // 获取文件大小
-            if (connection == null) { return; }
+            if (connection == null) {
+                LoginMusic.LOGGER.error("Audio network connection error!");
+                return null;
+            }
             long totalBytes = connection.getContentLengthLong();
             LoginMusic.LOGGER.info("Music size: {}", totalBytes);
 
@@ -105,116 +153,101 @@ public class DownloadMethod {
             byte[] buffer = new byte[8192];
             int bytesRead;
             long downloadedBytes = 0;
+
             // 加载文件
-            if (ClientConfig.ALLOW_DOWNLOAD.get()) {
-                try (OutputStream out = Files.newOutputStream(cacheFile)) {
-                    // 下载文件
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        out.write(buffer, 0, bytesRead);
-                        downloadedBytes += bytesRead;
-                        // 回调进度
-                        if (callback != null) {
-                            float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
-                            callback.onProgress(downloadedBytes, totalBytes, progress);
-                        }
-                    }
-                    PrepareMusic.audioInputStream = AudioSystem.getAudioInputStream(cacheFile.toFile());
-                    LoginMusic.LOGGER.info("Downloading music completed, total {} bytes", downloadedBytes);
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+                downloadedBytes += bytesRead;
+                // 回调进度
+                if (callback != null) {
+                    float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
+                    callback.onProgress(downloadedBytes, totalBytes, progress);
                 }
-            } else {
-                ByteArrayOutputStream baos = MusicConfig.get(urlStr);
-                if (baos.size() == 0) {
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        // 写入到输出流，保存所有数据
-                        baos.write(buffer, 0, bytesRead);
-                        downloadedBytes += bytesRead;
-                        // 回调进度
-                        if (callback != null) {
-                            float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
-                            callback.onProgress(downloadedBytes, totalBytes, progress);
-                        }
-                    }
-                    MusicConfig.put(urlStr, baos);
-                }
-                // 从 ByteArrayOutputStream 获取完整的字节数组
-                byte[] allData = baos.toByteArray();
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(allData);
-                PrepareMusic.audioInputStream = AudioSystem.getAudioInputStream(byteArrayInputStream);
-                mc.execute(downloadScreen::setAudioCompleted);
             }
+            // 转换为输入流
+            byte[] data = Files.readAllBytes(cacheFile);
+            if (ClientConfig.ALLOW_DOWNLOAD.get()) {
+                Files.write(cacheFile, data);
+            }
+            ByteArrayInputStream bais = new ByteArrayInputStream(data);
+            LoginMusic.LOGGER.info("Downloading music completed, total {} bytes", downloadedBytes);
+            mc.execute(downloadScreen::setAudioCompleted);
+            return bais;
         } catch (Exception e) {
             LoginMusic.LOGGER.warn("Downloading music error!", e);
             mc.execute(() -> downloadScreen.setError("Downloading error!"));
         }
+        return null;
     }
 
     // 歌词下载方法
-    private static void downloadLyrics(MusicEntry music, DownloadCallback callback) {
+    private static String downloadLyrics(MusicEntry music, DownloadCallback callback) {
         String name = music.getLyricName();
-        String urlStr = music.getLyricPath();
+        String path = music.getLyricPath();
         try {
-            Path cacheFile = LoginMusic.LYRICS_DIR.resolve(name);
+            String lyric = MusicCache.getLyric(path);
+            if (lyric != null) {
+                return lyric;
+            }
+
             // 检查缓存，命中直接返回
+            Path cacheFile = LoginMusic.LYRICS_DIR.resolve(name);
             if (isDownloaded(cacheFile, callback)) {
                 try {
-                    LyricParser.lyricContent = Files.readString(cacheFile);
                     LoginMusic.LOGGER.info("Lyric file loaded");
                     mc.execute(downloadScreen::setLyricCompleted);
-                    return;
+                    lyric = Files.readString(cacheFile);
+                    MusicCache.putLyric(path, lyric);
+                    return lyric;
                 } catch (Exception e) {
-                    LoginMusic.LOGGER.error("Error while loading Lyric from {}", urlStr, e);
-                    return;
+                    LoginMusic.LOGGER.error("Error while loading Lyric from {}", path, e);
+                    return null;
                 }
             }
-            LoginMusic.LOGGER.info("Start downloading lyrics from {}", urlStr);
-            URLConnection connection = openConnection(urlStr);
-            if (connection == null) { return; }
-            // 获取文件大小和类型
-            long totalBytes = connection.getContentLengthLong();
-            LoginMusic.LOGGER.info("Lyrics size: {}; File type: ", totalBytes);
 
+            // 从网络加载
+            LoginMusic.LOGGER.info("Start downloading lyrics from {}", path);
+            URLConnection connection = openConnection(path);
+            if (connection == null) {
+                LoginMusic.LOGGER.error("Lyric network connection error!");
+                return null;
+            }
+
+            // 获取文件大小
+            long totalBytes = connection.getContentLengthLong();
+            LoginMusic.LOGGER.info("Lyrics size: {}; ", totalBytes);
+            // 下载文件
             InputStream inputStream = connection.getInputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[8192];
             int bytesRead;
             long downloadedBytes = 0;
-            if (ClientConfig.ALLOW_DOWNLOAD.get()) {
-                // 下载文件
-                try (OutputStream out = Files.newOutputStream(cacheFile)) {
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        out.write(buffer, 0, bytesRead);
-                        downloadedBytes += bytesRead;
-                        // 回调进度
-                        if (callback != null) {
-                            float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
-                            callback.onProgress(downloadedBytes, totalBytes, progress);
-                        }
-                        LyricParser.lyricContent = Files.readString(cacheFile);
-                        mc.execute(downloadScreen::setLyricCompleted);
-                    }
-                    LoginMusic.LOGGER.info("Downloading lyrics completed, total {} bytes", downloadedBytes);
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+                downloadedBytes += bytesRead;
+                // 回调进度
+                if (callback != null) {
+                    float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
+                    callback.onProgress(downloadedBytes, totalBytes, progress);
                 }
-            } else {
-                ByteArrayOutputStream baos = MusicConfig.get(urlStr);
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    baos.write(buffer, 0, bytesRead);
-                    downloadedBytes += bytesRead;
-                    // 回调进度
-                    if (callback != null) {
-                        float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
-                        callback.onProgress(downloadedBytes, totalBytes, progress);
-                    }
-                }
-                byte[] allBytes = baos.toByteArray();
-                // 检测编码
-                String charset = LyricParser.detectCharset(allBytes);
-                LoginMusic.LOGGER.info("Lyric file loaded from {}, using charset {}", urlStr,  charset);
-                // 转换为字符串
-                LyricParser.lyricContent = new String(allBytes, charset);
-                mc.execute(downloadScreen::setLyricCompleted);
             }
+            byte[] data = baos.toByteArray();
+            // 检测编码
+            String charset = LyricParser.detectCharset(data);
+            // 转换为字符串
+            lyric = new String(data, charset);
+            MusicCache.putLyric(path, lyric);
+            // 保存到文件
+            if (ClientConfig.ALLOW_DOWNLOAD.get()) {
+                Files.write(cacheFile, data);
+            }
+            LoginMusic.LOGGER.info("Downloading lyrics completed, total {} bytes", downloadedBytes);
+            mc.execute(downloadScreen::setLyricCompleted);
+            return lyric;
         } catch (Exception e) {
             LoginMusic.LOGGER.warn("Downloading lyrics error!", e);
             mc.execute(() -> downloadScreen.setError("Downloading error!"));
+            return null;
         }
     }
 

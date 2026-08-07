@@ -10,12 +10,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.sound.sampled.*;
+import java.io.ByteArrayInputStream;
 
 @OnlyIn(Dist.CLIENT)
 public class PrepareMusic {
 
     public static TYPE type = TYPE.DEFAULT;
-    public static AudioInputStream audioInputStream;
 
     public enum TYPE {
         SOUND_EVENT,
@@ -36,8 +36,9 @@ public class PrepareMusic {
     }
 
     // 准备外部音乐
-    public static PreparedAudio prepareAudio(MusicEntry entry) {
+    public static PreparedAudio prepareAudio(ByteArrayInputStream inputStream) {
         try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(inputStream);
             // 转换格式
             AudioFormat sourceFormat = audioInputStream.getFormat();
             AudioFormat targetFormat = new AudioFormat(
@@ -59,12 +60,13 @@ public class PrepareMusic {
             // 预加载音频数据到字节数组，减少Clip.open()时间
             byte[] audioData = audioInputStream.readAllBytes();
             type = TYPE.PREPARED_AUDIO;
+            LoginMusic.LOGGER.info("Audio data prepared!");
             return new PreparedAudio(audioData, targetFormat, info);
         } catch (UnsupportedAudioFileException e) {
             LoginMusic.LOGGER.error("Unsupported type: {}", e.getMessage());
             return null;
         } catch (Exception e) {
-            LoginMusic.LOGGER.error("Fail to play music: {} ", entry.getMusicName());
+            LoginMusic.LOGGER.error("Fail to play music");
             return null;
         }
     }

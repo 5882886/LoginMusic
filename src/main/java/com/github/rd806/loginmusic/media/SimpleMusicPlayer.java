@@ -34,15 +34,9 @@ public class SimpleMusicPlayer {
 
     private static boolean lyricStarted = false;
 
-    // 音频加载线程
-    public static final ExecutorService AUDIO_LOADER = Executors.newFixedThreadPool(2, r -> {
-        Thread t = new Thread(r, "LoginMusic AudioLoader");
-        t.setDaemon(true);
-        return t;
-    });
-    // 歌词加载线程
-    public static final ExecutorService LYRIC_LOADER = Executors.newFixedThreadPool(2, r -> {
-        Thread t = new Thread(r, "LoginMusic LyricLoader");
+    // 音频播放线程
+    public static final ExecutorService MUSIC_PLAYER = Executors.newFixedThreadPool(2, r -> {
+        Thread t = new Thread(r, "LoginMusic MusicPlayer");
         t.setDaemon(true);
         return t;
     });
@@ -65,24 +59,30 @@ public class SimpleMusicPlayer {
 
     /* ----- 加载音频逻辑 ----- */
     // 播放音乐，加载和播放音乐分为两个线程
-    public static void playMusic(MusicEntry music) {
+    public static void playMusic(MusicEntry music, ByteArrayInputStream inputStream, String lyric) {
         currentMusic = music;
-        if (mc.player == null) { return; }
+        if (mc.player == null) {
+            LoginMusic.LOGGER.warn("Player not found!");
+            return;
+        }
+        if (inputStream == null) {
+            LoginMusic.LOGGER.warn("Music stream not found!");
+            return;
+        }
         // 在音频线程池中加载
-        AUDIO_LOADER.submit(() -> {
+        MUSIC_PLAYER.submit(() -> {
             try {
-                // 加载音频数据
                 try {
-                    soundEvent = PrepareMusic.findMusic(currentMusic);
+                    soundEvent = PrepareMusic.findMusic(music);
                 } catch (Exception e) {
-                    preparedAudio = PrepareMusic.prepareAudio(currentMusic);
+                    preparedAudio = PrepareMusic.prepareAudio(inputStream);
                 }
                 // 切换到渲染线程播放
-                mc.execute(() -> startCurrentMusic(currentMusic));
+                mc.execute(() -> startCurrentMusic(music, lyric));
             } catch (Exception e) {
                 LoginMusic.LOGGER.error("Failed to load audio", e);
                 mc.execute(() -> mc.player.displayClientMessage(
-                        Component.translatable(LoginMusic.MODID + ".message.load_failed", currentMusic.getMusicName()),
+                        Component.translatable(LoginMusic.MODID + ".message.load_failed", music.getMusicName()),
                         false
                 ));
             }
@@ -90,13 +90,13 @@ public class SimpleMusicPlayer {
     }
 
     // 播放音频，在渲染进程进行
-    private static void startCurrentMusic(MusicEntry entry) {
+    private static void startCurrentMusic(MusicEntry entry, String lyric) {
         try {
             if (mc.player == null) { return; }
             // 尝试播放
             switch (PrepareMusic.type) {
                 case SOUND_EVENT -> playMusicFromResources(soundEvent);
-                case PREPARED_AUDIO -> playMusicFromFiles(preparedAudio);
+                case PREPARED_AUDIO -> playMusicFromFiles(preparedAudio, lyric);
                 case DEFAULT -> LoginMusic.LOGGER.error("No audio file found");
             }
             // 显示播放信息
@@ -116,9 +116,12 @@ public class SimpleMusicPlayer {
     }
 
     // 播放外部音乐
-    private static void playMusicFromFiles(PreparedAudio preparedAudio) {
+    private static void playMusicFromFiles(PreparedAudio preparedAudio, String lyric) {
         try {
-            if (mc.player == null) { return; }
+            if (preparedAudio == null) {
+                LoginMusic.LOGGER.error("Audio is not available!");
+                return;
+            }
             // 使用预加载的数据
             currentClip = (Clip) AudioSystem.getLine(preparedAudio.info());
             AudioInputStream stream = new AudioInputStream(
@@ -130,7 +133,7 @@ public class SimpleMusicPlayer {
             currentClip.start();
             // 播放歌词
             long startTimeMillis = System.currentTimeMillis();
-            startLyrics(currentMusic, startTimeMillis);
+            startLyrics(currentMusic, lyric, startTimeMillis);
             isPlaying = true;
             // 音频结束操作
             currentClip.addLineListener(event -> {
@@ -150,13 +153,11 @@ public class SimpleMusicPlayer {
     }
 
     // 播放歌词
-    private static void startLyrics(MusicEntry entry, long startTimeMillis) {
+    private static void startLyrics(MusicEntry entry, String lyric, long startTimeMillis) {
         if (entry.getLyricName() != null && ClientConfig.ALLOW_LYRICS.get()) {
             LoginMusic.LOGGER.info("Lyrics prepared!");
-            // 播放歌词
-            String lyrics = LyricParser.lyricContent;
-            if (lyrics != null && !lyrics.isEmpty() && !lyricStarted) {
-                List<LyricEntry> currentLyrics = LyricParser.parseLRC(lyrics);
+            if (lyric != null && !lyric.isEmpty() && !lyricStarted) {
+                List<LyricEntry> currentLyrics = LyricParser.parseLRC(lyric);
                 lyricStarted = true;
                 if (startTimeMillis > 0) {
                     LoginMusic.LOGGER.info("Lyrics playing!");

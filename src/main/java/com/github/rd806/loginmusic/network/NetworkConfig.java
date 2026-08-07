@@ -2,6 +2,7 @@ package com.github.rd806.loginmusic.network;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.SelectionKey;
+import com.github.rd806.loginmusic.command.CommandType;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,7 +44,7 @@ public class NetworkConfig {
     }
 
     // 查看本地缓存
-    public static void showPlayerMusicCache(ServerPlayer player) {
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicCachePacket());
+    public static void showPlayerMusicCache(ServerPlayer player, CommandType type) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicCachePacket(type));
     }
 }

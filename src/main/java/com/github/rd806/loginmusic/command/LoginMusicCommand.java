@@ -1,5 +1,7 @@
-package com.github.rd806.loginmusic;
+package com.github.rd806.loginmusic.command;
 
+import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.config.ServerConfig;
 import com.github.rd806.loginmusic.event.ServerEvent;
 import com.github.rd806.loginmusic.network.NetworkConfig;
@@ -23,6 +25,7 @@ public class LoginMusicCommand {
     private static final String PLAY = "play";
     private static final String LIST = "list";
     private static final String CACHE = "cache";
+    private static final String CLEAR = "clear";
     private static final String RELOAD = "reload";
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
@@ -31,11 +34,13 @@ public class LoginMusicCommand {
         LiteralArgumentBuilder<CommandSourceStack> play = Commands.literal(PLAY);
         LiteralArgumentBuilder<CommandSourceStack> list = Commands.literal(LIST);
         LiteralArgumentBuilder<CommandSourceStack> cache = Commands.literal(CACHE);
+        LiteralArgumentBuilder<CommandSourceStack> clear = Commands.literal(CLEAR);
         LiteralArgumentBuilder<CommandSourceStack> reload = Commands.literal(RELOAD);
 
         root.then(play.executes(LoginMusicCommand::playMusic));
         root.then(list.executes(LoginMusicCommand::showList));
-        root.then(cache.executes(LoginMusicCommand::showCache));
+        root.then(cache.then(list.executes(LoginMusicCommand::listCache)));
+        root.then(cache.then(clear.executes(LoginMusicCommand::clearCache)));
         root.then(reload.executes(LoginMusicCommand::reloadConfig));
         return root;
     }
@@ -86,10 +91,21 @@ public class LoginMusicCommand {
     }
 
     // 显示缓存
-    private static int showCache(CommandContext<CommandSourceStack> context) {
+    private static int listCache(CommandContext<CommandSourceStack> context) {
         try {
             ServerPlayer serverPlayer = context.getSource().getPlayer();
-            NetworkConfig.showPlayerMusicCache(serverPlayer);
+            NetworkConfig.showPlayerMusicCache(serverPlayer, CommandType.CACHE_LIST);
+        } catch (Exception e) {
+            LoginMusic.LOGGER.error(e.getMessage());
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    // 清理缓存
+    private static int clearCache(CommandContext<CommandSourceStack> context) {
+        try {
+            ServerPlayer serverPlayer = context.getSource().getPlayer();
+            NetworkConfig.showPlayerMusicCache(serverPlayer, CommandType.CACHE_CLEAR);
         } catch (Exception e) {
             LoginMusic.LOGGER.error(e.getMessage());
         }

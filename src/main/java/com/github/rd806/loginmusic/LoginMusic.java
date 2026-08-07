@@ -1,5 +1,6 @@
 package com.github.rd806.loginmusic;
 
+import com.github.rd806.loginmusic.command.LoginMusicCommand;
 import com.mojang.logging.LogUtils;
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.config.ServerConfig;

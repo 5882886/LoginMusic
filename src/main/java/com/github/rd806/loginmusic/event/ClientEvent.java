@@ -64,11 +64,7 @@ public class ClientEvent {
             // 创建并显示下载界面
             DownloadScreen screen = new DownloadScreen(music, () -> {
                 // 下载完成后播放音乐
-                mc.execute(() -> {
-                    // 关闭自定义界面，回到游戏并启动播放事件
-                    mc.setScreen(null);
-                    SimpleMusicPlayer.playMusic(music);
-                });
+                mc.execute(() -> mc.setScreen(null));
             });
             mc.setScreen(screen);
             DownloadMethod.startDownload(music, screen);
