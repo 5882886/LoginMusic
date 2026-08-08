@@ -1,6 +1,7 @@
 package com.github.rd806.loginmusic.media.download;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -8,21 +9,44 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class DownloadScreen extends Screen {
-    private final String musicId;
+
+    public enum Status {
+        DOWNLOAD,
+        COMPLETED,
+        ERROR
+    }
+
+    private static final int barWidth = 200;
+    private static final int barHeight = 20;
+    private static int barX;
+    private static int barY;
+
+    private final MusicEntry music;
+    private final String musicName;
     private final Runnable onComplete;
 
-    private volatile boolean completed = false;
-    private volatile boolean error = false;
-    private volatile String errorMessage;
-    private volatile float progress;
-    private volatile Component status = Component.translatable(LoginMusic.MODID + ".gui.logindownload.start");
+    // 进度信息
+    private volatile Status audioStatus;
+    private volatile Status lyricStatus;
+    private volatile Component audioStatusMessage = Component.translatable(LoginMusic.MODID + ".gui.download.start");
+    private volatile Component lyricStatusMessage = Component.translatable(LoginMusic.MODID + ".gui.download.start");
+    private volatile float audioProgress;
+    private volatile float lyricProgress;
 
-    private boolean callbackTriggered = false;
+    private volatile String errorMessage = "";
 
-    public DownloadScreen(String musicId, Runnable onComplete) {
+    public DownloadScreen(MusicEntry music, Runnable onComplete) {
         super(Component.translatable(LoginMusic.MODID + ".gui.logindownload.title"));
-        this.musicId = musicId;
+        this.music = music;
+        this.musicName = LoginMusic.removeExtension(music.getMusicName());
+        this.audioStatus = Status.DOWNLOAD;
+        this.lyricStatus = Status.DOWNLOAD;
         this.onComplete = onComplete;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
     }
 
     @Override
@@ -33,82 +57,123 @@ public class DownloadScreen extends Screen {
 
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-
+        barX = centerX - barWidth / 2;
+        barY = centerY + 20;
         // 标题
-        graphics.drawCenteredString(this.font, "[LoginMusic]", centerX, centerY, 0x00AAFF);
-
+        graphics.drawCenteredString(this.font, "[LoginMusic]", centerX, centerY - 60, 0x00AAFF);
+        // 音乐名称，放大两倍
+        graphics.pose().pushPose();
+        graphics.pose().scale(2, 2, 2);
+        graphics.drawCenteredString(
+                this.font, musicName,
+                centerX / 2, (centerY - 30) / 2 , 0xFFFFFF);
+        graphics.pose().popPose();
+        // 底部提示
+        graphics.drawCenteredString(
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.tooltip"),
+                centerX, this.height - 30,
+                0x808080);
         // 设置渲染类型
-        if (error) {
-            renderError(graphics, centerX, centerY);
-        } else if (completed) {
-            renderCompleted(graphics, centerX, centerY);
-            if (!callbackTriggered) {
-                callbackTriggered = true;
-                onComplete.run();
-            }
-        } else {
-            renderDownload(graphics, centerX, centerY);
+        switch (audioStatus) {
+            case COMPLETED -> renderAudioCompleted(graphics, centerX);
+            case ERROR -> renderAudioError(graphics, centerX);
+            case DOWNLOAD -> renderAudioDownload(graphics, centerX);
+        }
+        switch (lyricStatus) {
+            case COMPLETED -> renderLyricCompleted(graphics, centerX);
+            case ERROR -> renderLyricError(graphics, centerX);
+            case DOWNLOAD -> renderLyricDownload(graphics, centerX);
+        }
+        // 自动关闭
+        if (audioStatus.equals(Status.COMPLETED) && lyricStatus.equals(Status.COMPLETED)) {
+            onComplete.run();
         }
     }
 
     // 正在下载
-    private void renderDownload(GuiGraphics graphics, int centerX, int centerY) {
-        graphics.drawCenteredString(
-                this.font,
-                Component.translatable(LoginMusic.MODID + ".gui.logindownload.downloading"),
-                centerX,
-                centerY - 30,
-                0xFFFFFF);
-
-        graphics.drawCenteredString(this.font, musicId, centerX, centerY - 10, 0xFFFFFF);
-        // 进度条参数
-        int barWidth = 200;
-        int barHeight = 20;
-        int barX = centerX - barWidth / 2;
-        int barY = centerY + 20;
-
+    private void renderAudioDownload(GuiGraphics graphics, int centerX) {
         // 背景
-        graphics.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF333333);
+        graphics.fill(
+                barX, barY,
+                barX + barWidth, barY + barHeight, 0xFF333333);
         // 进度条
-        int fillWith = (int) (barWidth * progress);
-        graphics.fill(barX, barY, barX + fillWith, barY + barHeight, 0xFF00AA00);
-        // 进度文字
-        String progressText = String.format("%.1f%%", progress * 100);
-        graphics.drawCenteredString(this.font, progressText, centerX, barY + 5, 0xFFFFFF);
+        int audioWidth = (int) (barWidth * audioProgress);
+        graphics.fill(
+                barX, barY,
+                barX + audioWidth, barY + barHeight,
+                0xFF00AA00);
         // 状态文字
-        graphics.drawCenteredString(this.font, status, centerX, barY + 30, 0xAAAAAA);
+        graphics.drawCenteredString(this.font, audioStatusMessage, centerX, barY + 5, 0xFFFFFF);
+    }
+    private void renderLyricDownload(GuiGraphics graphics, int centerX) {
+        // 背景
+        graphics.fill(
+                barX, barY + barHeight + 5,
+                barX + barWidth, barY +  2* barHeight + 5, 0xFF333333);
+        // 进度条
+        int lyricWidth = (int) (barWidth * lyricProgress);
+        graphics.fill(
+                barX, barY + barHeight + 5,
+                barX + lyricWidth, barY + 2 * barHeight + 5,
+                0xFF00AA00);
+        // 状态文字
+        graphics.drawCenteredString(this.font, lyricStatusMessage, centerX, barY + barHeight + 10, 0xFFFFFF);
     }
 
     // 下载完成
-    private void renderCompleted(GuiGraphics graphics, int centerX, int centerY) {
-        graphics.drawCenteredString(this.font, "§a✓ 下载完成", centerX, centerY - 20, 0x00FF00);
-        graphics.drawCenteredString(this.font, "§e" + musicId, centerX, centerY, 0xFFFFAA);
-        graphics.drawCenteredString(this.font, "§7正在播放...", centerX, centerY + 30, 0xAAAAAA);
+    private void renderAudioCompleted(GuiGraphics graphics, int centerX) {
+        graphics.drawCenteredString(
+                this.font,
+                Component.translatable(LoginMusic.MODID + ".gui.download.complete", musicName),
+                centerX, barY + 5, 0x00FF00);
+    }
+    private void renderLyricCompleted(GuiGraphics graphics, int centerX) {
+        graphics.drawCenteredString(
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.complete", music.getLyricName()),
+                centerX, barY + barHeight + 10, 0x00FF00);
     }
 
-    // 下载失败的界面
-    private void renderError(GuiGraphics graphics, int centerX, int centerY) {
-        graphics.drawCenteredString(this.font, "§c✗ 下载失败", centerX, centerY - 20, 0xFF0000);
-        graphics.drawCenteredString(this.font, errorMessage, centerX, centerY, 0xFF5555);
-        graphics.drawCenteredString(this.font, "§7按ESC进入游戏", centerX, centerY + 40, 0x888888);
+    // 下载失败
+    private void renderAudioError(GuiGraphics graphics, int centerX) {
+        graphics.drawCenteredString(
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
+                centerX, barY + 50, 0xFF0000);
+    }
+    private void renderLyricError(GuiGraphics graphics, int centerX) {
+        graphics.drawCenteredString(
+                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
+                centerX, barY + barHeight + 10, 0xFF0000);
     }
 
     // 线程安全的更新
-    public synchronized void updateProgress(float progress, Component status) {
-        // 计算progress，保证在[0.0f, 1.0f]
-        // max和min别写反了
-        this.progress = Math.max(0.0f, Math.min(1.0f, progress));
-        this.status = status;
+    // 计算progress，保证在[0.0f, 1.0f]，max和min别写反了
+    public synchronized void updateAudioProgress(float progress, Component status) {
+        this.audioProgress = Math.clamp(progress, 0.0f, 1.0f);
+        this.audioStatusMessage = status;
+    }
+    public synchronized void updateLyricProgress(float progress, Component status) {
+        this.lyricProgress = Math.clamp(progress, 0.0f, 1.0f);
+        this.lyricStatusMessage = status;
     }
 
-    public void setCompleted() { this.completed = true; }
+    public void setAudioCompleted() { this.audioStatus = Status.COMPLETED; }
+
+    public void setLyricCompleted() { this.lyricStatus = Status.COMPLETED; }
 
     public void setError(String Message) {
-        this.error = true;
+        this.audioStatus = Status.ERROR;
         this.errorMessage = Message;
     }
 
+    // 打开此界面时游戏不暂停
     @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+
     // 是否允许ESC关闭
-    public boolean shouldCloseOnEsc() { return error; }
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return true;
+    }
 }

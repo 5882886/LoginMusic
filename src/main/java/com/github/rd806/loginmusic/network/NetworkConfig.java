@@ -1,6 +1,8 @@
 package com.github.rd806.loginmusic.network;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.SelectionKey;
+import com.github.rd806.loginmusic.command.CommandType;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,10 +10,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-import java.util.Map;
-
 // 网络包类
 public class NetworkConfig {
+
     public static final ResourceLocation CHANNEL_ID =
             ResourceLocation.fromNamespaceAndPath(LoginMusic.MODID, "main");
 
@@ -22,33 +23,30 @@ public class NetworkConfig {
                 .versioned("1")
                 .optional();
 
-        // 注册数据包
         registrar.playToClient(
-                LoginMusicPacket.TYPE,
-                LoginMusicPacket.STREAM_CODEC,
-                LoginMusicPacket::handle
+                MusicEntryPacket.TYPE,
+                MusicEntryPacket.STREAM_CODEC,
+                MusicEntryPacket::handle
+        );
+
+        registrar.playToClient(
+                MusicCommandPacket.TYPE,
+                MusicCommandPacket.STREAM_CODEC,
+                MusicCommandPacket::handle
         );
 
         LoginMusic.LOGGER.info("Network config registered!");
     }
 
     // 发送音乐给特定玩家
-    public static void sendLoginMusic(ServerPlayer player, String musicId) {
-        if (player == null) return;
-
+    public static void sendMusicToPlayer(ServerPlayer player, MusicEntry music, SelectionKey key) {
         // 发送数据包到客户端
-        PacketDistributor.sendToPlayer(player, new LoginMusicPacket(musicId));
-
-        LoginMusic.LOGGER.info("Send music {} to {}", musicId, player.getName().getString());
+        LoginMusic.LOGGER.info("Send music {} to {}", music.getMusicName(), player.getName().getString());
+        PacketDistributor.sendToPlayer(player, new MusicEntryPacket(music, key));
     }
 
-    // 同步数据给玩家
-    public static void sendConfigToPlayer(Map<String, MusicEntry> musicConfig, ServerPlayer player) {
-        if (player == null || musicConfig == null) return;
-
-        // 发送配置同步包到客户端
-        PacketDistributor.sendToPlayer(player, new LoginMusicPacket(musicConfig));
-
-        LoginMusic.LOGGER.info("Sending music config to {}，total {} musics", player.getName().getString(), musicConfig.size());
+    // 查看本地缓存
+    public static void showPlayerMusicCache(ServerPlayer player, CommandType type) {
+        PacketDistributor.sendToPlayer(player, new MusicCommandPacket(type));
     }
 }

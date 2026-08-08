@@ -1,15 +1,16 @@
 package com.github.rd806.loginmusic.event;
 
+import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.download.DownloadMethod;
-import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.download.DownloadScreen;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,11 +30,17 @@ public class ClientEvent {
     private static double lastX, lastY, lastZ;
 
     // 登录事件
-    public static void playLoginMusic(String musicId) {
-        if (mc.player == null) return;
+    public static void playLoginMusic(MusicEntry music, SelectionKey key) {
+        Player player = mc.player;
+        if (player == null) return;
         // 判断是否为来自其他玩家的音乐
-        boolean isOwnMusic = musicId.equalsIgnoreCase(mc.player.getGameProfile().getName())
-                            || musicId.equalsIgnoreCase(mc.player.getStringUUID());
+        String musicId = music.getId();
+        boolean isOwnMusic = false;
+        switch (key) {
+            case NAME -> isOwnMusic = musicId.equalsIgnoreCase(player.getName().getString());
+            case UUID -> isOwnMusic = musicId.equalsIgnoreCase(player.getUUID().toString());
+        }
+
         // 是否为来自其他玩家的音乐
         if (!isOwnMusic) {
             // 设置为不允许则跳过
@@ -49,37 +56,15 @@ public class ClientEvent {
                     Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId), false);
         }
         isInitialPos = false;
-        MusicEntry entry = MusicConfig.getMusic(musicId);
-
-        if (entry == null) {
-            LoginMusic.LOGGER.warn("Music not found {}", musicId);
-            mc.player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".message.music_not_found", musicId), false);
-            return;
-        }
 
         // 启用下载模式
-        if (ClientConfig.ALLOW_DOWNLOAD.get()) {
-            mc.execute(() -> {
-                // 创建并显示下载界面
-                DownloadScreen screen = new DownloadScreen(musicId, () -> {
-                    // 下载完成后播放音乐
-                    mc.execute(() -> {
-                        // 关闭自定义界面，回到游戏
-                        mc.setScreen(null);
-                        // 启动播放事件
-                        SimpleMusicPlayer.playMusic(entry);
-                    });
-                });
-                mc.setScreen(screen);
-                DownloadMethod.startDownload(entry, screen);
-            });
-        }
-        // 不启用下载，直接读取音频流
-        else {
-            mc.player.displayClientMessage(Component.translatable(LoginMusic.MODID + ".message.download_forbidden"), false);
-            mc.execute(() -> SimpleMusicPlayer.playMusic(entry));
-        }
+        mc.execute(() -> {
+            // 创建并显示下载界面
+            DownloadScreen screen = new DownloadScreen(music, () -> mc.execute(() -> mc.setScreen(null)));
+            mc.setScreen(screen);
+            DownloadMethod.startDownload(music, screen);
+        });
+
         // 注册监听方法
         registerListener();
     }
@@ -115,7 +100,7 @@ public class ClientEvent {
 
         // 检测移动范围
         if (outOfRange) {
-            SimpleMusicPlayer.stopCurrentMusic();
+            SimpleMusicPlayer.stopMusic();
             mc.player.displayClientMessage(
                     Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
                     false

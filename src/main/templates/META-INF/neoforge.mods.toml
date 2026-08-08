@@ -19,33 +19,24 @@ issueTrackerURL="https://github.com/rd806/LoginMusic/issues" #optional
 
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
-
-# The modid of the mod
-modId="login_music" #mandatory
-
-# The version number of the mod
-version="1.2.5" #mandatory
-
-# A display name for the mod
-displayName="Login Music" #mandatory
-
-# A URL to query for updates for this mod. See the JSON update specification https://docs.neoforged.net/docs/misc/updatechecker/
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-
-# A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://github.com/rd806/LoginMusic" #optional
-
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile="/assets/login_music_icon.png" #optional
-
-# A text field displayed in the mod UI
-#credits="" #optional
-
-# The authors of the mod, displayed in the mod UI (optional)
-authors="RunicDolphin806"
-
-# The description text for the mod (multi line!) (#mandatory)
-description='''A simple mod that can play music when players join in the world'''
+    # The modid of the mod
+    modId="login_music" #mandatory
+    # The version number of the mod
+    version="1.2.6" #mandatory
+    # A display name for the mod
+    displayName="Login Music" #mandatory
+    # A URL to query for updates for this mod. See the JSON update specification https://docs.neoforged.net/docs/misc/updatechecker/
+    #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+    # A URL for the "homepage" for this mod, displayed in the mod UI
+    displayURL="https://github.com/rd806/LoginMusic" #optional
+    # A file name (in the root of the mod JAR) containing a logo for display
+    logoFile="login_music_icon.png" #optional
+    # A text field displayed in the mod UI
+    #credits="" #optional
+    # The authors of the mod, displayed in the mod UI (optional)
+    authors="RunicDolphin806"
+    # The description text for the mod (multi line!) (#mandatory)
+    description='''A simple mod that can play music when players join in the world.'''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
 #[[mixins]]
@@ -82,7 +73,7 @@ description='''A simple mod that can play music when players join in the world''
     modId="minecraft"
     type="required"
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="${minecraft_version_range}"
+    versionRange="[1.21.1,)"
     ordering="NONE"
     side="BOTH"
 
@@ -95,7 +86,7 @@ description='''A simple mod that can play music when players join in the world''
 
 # 配置界面的支持
 [modproperties."login_music"]
-    catalogueImageIcon="/assets/login_music_icon.png"
+    catalogueImageIcon="login_music_icon.png"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't

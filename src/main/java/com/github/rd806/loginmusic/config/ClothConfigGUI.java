@@ -1,8 +1,9 @@
-package com.github.rd806.loginmusic.config.gui;
+package com.github.rd806.loginmusic.config;
 
 import com.github.rd806.loginmusic.LoginMusic;
-import com.github.rd806.loginmusic.config.ClientConfig;
+import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.media.lyric.LyricLayer;
+import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -16,26 +17,24 @@ import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class ClothConfigGUI {
-    private static VisualWrapper visualWrapper;
 
     public static ConfigBuilder buildScreen() {
-        visualWrapper = new VisualWrapper();
         ConfigBuilder builder = ConfigBuilder.create().setTitle(Component.translatable(LoginMusic.MODID + ".gui.config.title"));
         builder.setGlobalized(true);
         builder.setGlobalizedExpanded(false);
-
+        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         // 音乐条目
         ConfigCategory musicEntries = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.entries"));
+        buildMusicEntries(entryBuilder, musicEntries);
         // 音乐播放设置
         ConfigCategory clientSettings = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.client"));
-        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-
-        buildMusicEntries(entryBuilder, musicEntries);
         buildClientSettings(entryBuilder, clientSettings);
-
+        // 服务端设置
+        ConfigCategory serverSettings = builder.getOrCreateCategory(Component.translatable(LoginMusic.MODID + ".gui.config.server"));
+        buildServerSettings(entryBuilder, serverSettings);
         // 保存回调
         builder.setSavingRunnable(() -> {
-            visualWrapper.saveToFile();
+            MusicConfig.saveToFile();
             LyricLayer.getInstance().setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
         });
         return builder;
@@ -44,7 +43,7 @@ public class ClothConfigGUI {
     // 音乐条目配置
     private static void buildMusicEntries(ConfigEntryBuilder entryBuilder, ConfigCategory musicEntries) {
         // 使用临时列表来存储 GUI 中的顺序
-        List<MusicEntry> currentList = visualWrapper.getMusicList();
+        List<MusicEntry> currentList = MusicConfig.getMusicList();
         // 为每个音乐条目创建编辑界面
         for (int index = 0; index < currentList.size(); index++) {
             MusicEntry entry = currentList.get(index);
@@ -58,13 +57,13 @@ public class ClothConfigGUI {
                         .setSaveConsumer(shouldAdd -> {
                             if (shouldAdd) {
                                 MusicEntry newEntry = new MusicEntry();
-                                newEntry.setId("NewMusic" + (visualWrapper.getMusicList().size() + 1));
-                                newEntry.setMusic("");
-                                newEntry.setMusicUrl("");
-                                newEntry.setLyric("");
-                                newEntry.setLyricUrl("");
+                                newEntry.setId("NewMusic" + (MusicConfig.getMusicList().size() + 1));
+                                newEntry.setMusicName("");
+                                newEntry.setMusicPath("");
+                                newEntry.setLyricName("");
+                                newEntry.setLyricPath("");
                                 currentList.add(newEntry);
-                                visualWrapper.setMusicList(currentList);
+                                MusicConfig.setMusicList(currentList);
                             }
                         })
                         .build());
@@ -82,37 +81,37 @@ public class ClothConfigGUI {
                         .build());
         // 添加音乐文件字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.music"), entry.getMusic())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.music"), entry.getMusicName())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.music.tooltip"))
-                        .setSaveConsumer(entry::setMusic)
+                        .setSaveConsumer(entry::setMusicName)
                         .build());
         // 添加音乐 URL 字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.musicUrl"), entry.getMusicUrl())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.musicUrl"), entry.getMusicPath())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.musicUrl.tooltip"))
-                        .setSaveConsumer(entry::setMusicUrl)
+                        .setSaveConsumer(entry::setMusicPath)
                         .build());
 
         // 本地歌词文件字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyric"), entry.getLyric())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyric"), entry.getLyricName())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.lyric.tooltip"))
-                        .setSaveConsumer(entry::setLyric)
+                        .setSaveConsumer(entry::setLyricName)
                         .build());
         // 歌词 URL 字段
         subCategoryBuilder.add(
-                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyricUrl"), entry.getLyricUrl())
+                entryBuilder.startStrField(Component.translatable(LoginMusic.MODID + ".gui.config.lyricUrl"), entry.getLyricPath())
                         .setDefaultValue("")
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".gui.config.lyricUrl.tooltip"))
-                        .setSaveConsumer(entry::setLyricUrl)
+                        .setSaveConsumer(entry::setLyricPath)
                         .build());
         // 删除按钮
         subCategoryBuilder.add(
                 entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".gui.config.delete"), false)
-                        .setSaveConsumer(shouldDelete -> {if (shouldDelete) { visualWrapper.getMusicList().remove(index);}})
+                        .setSaveConsumer(shouldDelete -> {if (shouldDelete) { MusicConfig.getMusicList().remove(index);}})
                         .build());
         return subCategoryBuilder.build();
     }
@@ -157,9 +156,18 @@ public class ClothConfigGUI {
         // 歌词颜色设置
         clientSettings.addEntry(
                 entryBuilder.startColorField(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color"), ClientConfig.LYRIC_COLOR.get())
-                        .setDefaultValue(ClientConfig.LYRIC_COLOR.get())
+                        .setDefaultValue(0xFFFFFF)
                         .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color.tooltip"))
                         .setSaveConsumer(lyricColor -> ClientConfig.LYRIC_COLOR.set(lyricColor))
+                        .build());
+    }
+
+    private static void buildServerSettings(ConfigEntryBuilder entryBuilder, ConfigCategory serverSettings) {
+        serverSettings.addEntry(
+                entryBuilder.startEnumSelector(Component.translatable(LoginMusic.MODID + ".configui.music_id_type"), SelectionKey.class, ServerConfig.MUSIC_ID_TYPE.get())
+                        .setDefaultValue(SelectionKey.NAME)
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.music_id_type.tooltip"))
+                        .setSaveConsumer(selectionKey -> ServerConfig.MUSIC_ID_TYPE.set(selectionKey))
                         .build());
     }
 }

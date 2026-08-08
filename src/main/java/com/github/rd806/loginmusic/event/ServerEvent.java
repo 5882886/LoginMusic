@@ -1,6 +1,7 @@
 package com.github.rd806.loginmusic.event;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.config.ServerConfig;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
@@ -20,29 +21,24 @@ public class ServerEvent {
         // 服务端
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 根据玩家名称获取音乐
-            String musicId = chooseMusic(serverPlayer);
-            // 玩家登录时发送音乐配置
-            if (!MusicConfig.isConfigLoaded()) {
-                MusicConfig.loadFromConfig();
-            }
-            LoginMusic.LOGGER.info("Player {} is logging in, sending music config", serverPlayer.getName().getString());
-
+            SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
+            String musicId = chooseMusic(serverPlayer, key);
+            MusicEntry entry = MusicConfig.getMusic(musicId);
             // 将音乐发送给全体玩家
             MinecraftServer server = serverPlayer.getServer();
             if (server != null) {
                 PlayerList playerList = server.getPlayerList();
                 for (ServerPlayer player : playerList.getPlayers()) {
-                    NetworkConfig.sendConfigToPlayer(MusicConfig.getMusicConfig(), player);
-                    NetworkConfig.sendLoginMusic(player, musicId);
+                    NetworkConfig.sendMusicToPlayer(player, entry, key);
                 }
             }
         }
     }
 
     // 选择音乐
-    private static String chooseMusic(ServerPlayer player) {
+    public static String chooseMusic(ServerPlayer player, SelectionKey key) {
         String result = "Default";
-        switch (ServerConfig.MUSIC_ID_TYPE.get()) {
+        switch (key) {
             case NAME -> result = chooseMusicByName(player);
             case UUID -> result = chooseMusicByUuid(player);
         }
@@ -52,11 +48,10 @@ public class ServerEvent {
     // 通过name选择音乐
     private static String chooseMusicByName(ServerPlayer player) {
         String MusicID = "Default";
-        MusicEntry entry;
         // 获取玩家名称
         String playerName = player.getName().getString();
         // 根据玩家名称获取音乐
-        entry = MusicConfig.getMusic(playerName);
+        MusicEntry entry = MusicConfig.getMusic(playerName);
         if (entry == null) {
             return MusicID;
         }
@@ -67,10 +62,9 @@ public class ServerEvent {
     // 通过uuid选择音乐
     private static String chooseMusicByUuid(ServerPlayer player) {
         String MusicID = "Default";
-        MusicEntry entry;
 
         String playerStringUUID = player.getStringUUID();
-        entry = MusicConfig.getMusic(playerStringUUID);
+        MusicEntry entry = MusicConfig.getMusic(playerStringUUID);
         if (entry == null) {
             return MusicID;
         }

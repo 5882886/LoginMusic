@@ -26,6 +26,8 @@ public class ClientConfig {
     public static ModConfigSpec.ConfigValue<Integer> LYRIC_COLOR;
     // 是否播放来自其他玩家的音频
     public static ModConfigSpec.BooleanValue ALLOW_OTHERS_MUSIC;
+    // 缓存容量
+    public static ModConfigSpec.ConfigValue<Integer> CACHE_SIZE;
 
     public static ModConfigSpec init() {
         BUILDER.push("Music").translation(LoginMusic.MODID + ".configui.title");
@@ -41,6 +43,9 @@ public class ClientConfig {
                 .comment("Whether to play musics from other players")
                 .translation(LoginMusic.MODID + ".configui.allow_others_music")
                 .define("AllowOthersMusic", false);
+        CACHE_SIZE = BUILDER
+                .comment("The maximum number of cache entries")
+                .defineInRange("CacheSize", 5, 0, 10);
         BUILDER.pop();
 
         BUILDER.push("Lyrics").translation(LoginMusic.MODID + ".configui.lyrics");

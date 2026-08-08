@@ -66,6 +66,6 @@ public class LyricLayer {
         // 高度为中心加上偏移量
         int y = screenHeight/2 + (yOffset*screenHeight)/4;
         // 绘制文本
-        guiGraphics.drawString(mc.font, text, x, y, textColor);
+        guiGraphics.drawString(mc.font, text, x, y, textColor, false);
     }
 }
