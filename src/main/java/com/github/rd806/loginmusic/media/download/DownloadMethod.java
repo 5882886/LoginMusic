@@ -128,7 +128,7 @@ public class DownloadMethod {
             }
 
             // 检查缓存，命中直接返回
-            Path cacheFile = LoginMusic.LYRICS_DIR.resolve(name);
+            Path cacheFile = LoginMusic.MUSICS_DIR.resolve(name);
             if (isDownloaded(cacheFile, callback)) {
                 LoginMusic.LOGGER.info("The file has been downloaded!");
                 // 读取文件所有字节到 byte[]
@@ -189,8 +189,8 @@ public class DownloadMethod {
             if (downloadScreen != null) {
                 mc.execute(() -> downloadScreen.setError("Downloading error!"));
             }
+            return null;
         }
-        return null;
     }
 
     // 歌词下载方法
@@ -199,6 +199,7 @@ public class DownloadMethod {
         String path = music.getLyricPath();
         try {
             String lyric = MusicCache.getLyric(path);
+
             if (lyric != null) {
                 if (downloadScreen != null) {
                     mc.execute(downloadScreen::setLyricCompleted);

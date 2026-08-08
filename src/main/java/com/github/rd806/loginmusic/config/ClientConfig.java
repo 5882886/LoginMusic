@@ -48,7 +48,8 @@ public class ClientConfig {
                 .translation(LoginMusic.MODID + ".configui.allow_others_music")
                 .define("AllowOthersMusic", false);
         CACHE_SIZE = BUILDER
-                .define("CacheSize", 5);
+                .comment("The maximum number of cache entries")
+                .defineInRange("CacheSize", 5, 0, 10);
         BUILDER.pop();
 
         BUILDER.push("Lyric").translation(LoginMusic.MODID + ".configui.lyrics");
