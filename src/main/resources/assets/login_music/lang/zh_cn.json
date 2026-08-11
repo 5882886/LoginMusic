@@ -29,6 +29,8 @@
     "login_music.gui.download.complete": "加载完成：%s",
     "login_music.gui.download.fail": "加载失败！",
 
+    "login_music.gui.info": "正在播放：%s",
+
     "login_music.configui.allow_download": "允许从互联网下载音乐",
     "login_music.configui.allow_download.tooltip": "如果为否，则音乐文件不会下载至本地\n请仅在您信任的服务器上开启此功能",
     "login_music.configui.music_play_range": "音乐播放范围",
@@ -64,6 +66,5 @@
     "login_music.message.load_failed": "加载音乐失败！",
     "login_music.message.out_of_range": "移动超出范围，已停止音乐播放！",
     "login_music.message.music_not_found": "未找到音乐！",
-    "login_music.message.play_music": "正在播放：%s",
     "login_music.message.play_ended": "播放结束：%s"
 }

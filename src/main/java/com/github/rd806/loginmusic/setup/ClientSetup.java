@@ -16,6 +16,7 @@ import java.nio.file.Files;
 
 @Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         // 创建缓存目录
@@ -32,7 +33,7 @@ public class ClientSetup {
                     () -> new ConfigScreenHandler.ConfigScreenFactory((client, parent) ->
                             ClothConfigGUI.buildScreen().setParentScreen(parent).build()));
         }
-        LyricLayer.getInstance().setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
+        LyricLayer.setLyric(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
         LoginMusic.LOGGER.info("Start LoginMusic on client!");
     }
 }

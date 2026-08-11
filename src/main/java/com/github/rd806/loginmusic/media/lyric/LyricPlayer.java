@@ -53,7 +53,7 @@ public class LyricPlayer {
                         if (mc.player != null) {
                             String lyricMessage = "♪ " + currentLyric.getText() + " ♪";
                             // 在屏幕底部显示歌词
-                            LyricLayer.getInstance().showLyric(lyricMessage);
+                            LyricLayer.showLyric(lyricMessage);
                         }
                     });
                 }
@@ -71,7 +71,7 @@ public class LyricPlayer {
         currentLyrics = null;
         lastLyricEntry = null;
         // 清除歌词内容
-        LyricLayer.getInstance().showLyric(null);
+        LyricLayer.showLyric(null);
         LoginMusic.LOGGER.info("Lyrics is stopped!");
     }
 }

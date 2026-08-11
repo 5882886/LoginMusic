@@ -2,38 +2,14 @@ package com.github.rd806.loginmusic.media.download;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.PreparedAudio;
-import com.github.rd806.loginmusic.media.music.MusicEntry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 
 @OnlyIn(Dist.CLIENT)
 public class PrepareMusic {
-
-    public static TYPE type = TYPE.DEFAULT;
-
-    public enum TYPE {
-        SOUND_EVENT,
-        PREPARED_AUDIO,
-        DEFAULT
-    }
-
-    // 准备已注册到游戏内的音乐
-    public static SoundEvent findMusic(MusicEntry entry) {
-        ResourceLocation music = ResourceLocation.parse(entry.getMusicPath());
-        SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(music);
-        if (soundEvent != null) {
-            LoginMusic.LOGGER.info("Found audio music for {}: {}", entry.getMusicName(), soundEvent);
-            type = TYPE.SOUND_EVENT;
-            return soundEvent;
-        }
-        return null;
-    }
 
     // 准备外部音乐
     public static PreparedAudio prepareAudio(ByteArrayInputStream inputStream) {
@@ -59,7 +35,6 @@ public class PrepareMusic {
             }
             // 预加载音频数据到字节数组，减少Clip.open()时间
             byte[] audioData = audioInputStream.readAllBytes();
-            type = TYPE.PREPARED_AUDIO;
             LoginMusic.LOGGER.info("Audio data prepared!");
             return new PreparedAudio(audioData, targetFormat, info);
         } catch (UnsupportedAudioFileException e) {

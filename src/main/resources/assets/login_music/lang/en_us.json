@@ -29,6 +29,8 @@
     "login_music.gui.download.complete": "Downloading Complete: %s",
     "login_music.gui.download.fail": "Fail to download!",
 
+    "login_music.gui.info": "Playing: %s",
+
     "login_music.configui.allow_download": "Allow downloading music from the internet",
     "login_music.configui.allow_download.tooltip": "If false, then directly read network audio streams without downloading them locally\nPlease only enable this feature on servers that you trust",
     "login_music.configui.music_play_range": "Music play range",
@@ -64,6 +66,5 @@
     "login_music.message.load_failed": "Failed to load music!",
     "login_music.message.out_of_range": "Moving out of range, music playback has stopped!",
     "login_music.message.music_not_found": "Music not found!",
-    "login_music.message.play_music": "Playing music: %s",
     "login_music.message.play_ended": "Music ends: %s"
 }

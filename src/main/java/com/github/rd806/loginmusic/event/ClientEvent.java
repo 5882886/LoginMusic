@@ -14,20 +14,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
 public class ClientEvent {
 
-    private static final Minecraft mc = Minecraft.getInstance();
     // 是否初始化位置
-    private static boolean isInitialPos = false;
-    // 是否已注册活动
-    private static boolean listenerRegistered = false;
+    public static boolean isInitialPos = false;
     // 记录玩家位置
     private static double lastX, lastY, lastZ;
+    private static final Minecraft mc = Minecraft.getInstance();
 
     // 登录事件
     public static void playLoginMusic(MusicEntry music, SelectionKey key) {
@@ -70,16 +69,13 @@ public class ClientEvent {
             mc.setScreen(screen);
             DownloadMethod.startDownload(music, screen);
         });
-        // 注册监听方法
-        registerListener();
     }
 
-    // 注册监听器
-    private static void registerListener() {
-        if (!listenerRegistered) {
-            MinecraftForge.EVENT_BUS.register(ClientEvent.class);
-            listenerRegistered = true;
-        }
+    // 玩家退出世界则停止播放
+    @SubscribeEvent
+    public static void checkLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+        SimpleMusicPlayer.stopCurrentMusic();
+        LoginMusic.LOGGER.info("Player exits the world, stop playing!");
     }
 
     // 检测玩家移动
@@ -99,9 +95,9 @@ public class ClientEvent {
             return;
         }
         // 检测移动范围
-        boolean outOfRange = Math.abs(player.getX() - lastX) >  ClientConfig.MUSIC_PLAY_RANGE.get() ||
-                            Math.abs(player.getY() - lastY) >  ClientConfig.MUSIC_PLAY_RANGE.get() ||
-                            Math.abs(player.getZ() - lastZ) >  ClientConfig.MUSIC_PLAY_RANGE.get();
+        int range = ClientConfig.MUSIC_PLAY_RANGE.get();
+        boolean outOfRange = Math.abs(player.getX() - lastX) > range ||
+                Math.abs(player.getY() - lastY) > range || Math.abs(player.getZ() - lastZ) > range;
 
         if (outOfRange) {
             SimpleMusicPlayer.stopCurrentMusic();
@@ -109,13 +105,5 @@ public class ClientEvent {
                     Component.translatable(LoginMusic.MODID + ".message.out_of_range"),
                     false);
         }
-    }
-
-    // 检测退出世界操作
-    @SubscribeEvent
-    public static void checkLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        // 解决玩家退出世界仍播放音乐的问题
-        SimpleMusicPlayer.stopCurrentMusic();
-        LoginMusic.LOGGER.info("Player exits the world, stop playing!");
     }
 }

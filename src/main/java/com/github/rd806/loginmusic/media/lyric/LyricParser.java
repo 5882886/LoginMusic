@@ -14,8 +14,6 @@ public class LyricParser {
 
     private static final Pattern TIME_TAG_PATTERN = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{2,3})]");
 
-    public static String lyricContent;
-
     // 解析LRC歌词文本
     public static List<LyricEntry> parseLRC(String lrcContent) {
         List<LyricEntry> lyrics = new ArrayList<>();

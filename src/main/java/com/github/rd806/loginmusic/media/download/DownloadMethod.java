@@ -146,12 +146,12 @@ public class DownloadMethod {
             // 从网络加载
             LoginMusic.LOGGER.info("Start downloading music from {}", path);
             URLConnection connection = openConnection(path);
-            // 获取文件大小
             if (connection == null) {
                 LoginMusic.LOGGER.error("Audio network connection error!");
-                mc.execute(() -> downloadScreen.setError("Downloading error!"));
+                mc.execute(() -> downloadScreen.setAudioError("Downloading error!"));
                 return null;
             }
+            // 获取文件大小
             long totalBytes = connection.getContentLengthLong();
             LoginMusic.LOGGER.info("Music size: {}", totalBytes);
 
@@ -187,7 +187,7 @@ public class DownloadMethod {
         } catch (Exception e) {
             LoginMusic.LOGGER.warn("Downloading music error!", e);
             if (downloadScreen != null) {
-                mc.execute(() -> downloadScreen.setError("Downloading error!"));
+                mc.execute(() -> downloadScreen.setAudioError("Downloading error!"));
             }
             return null;
         }
@@ -221,7 +221,7 @@ public class DownloadMethod {
                 } catch (Exception e) {
                     LoginMusic.LOGGER.error("Error while loading Lyric from {}", path, e);
                     if (downloadScreen != null) {
-                        mc.execute(() -> downloadScreen.setError("Downloading error!"));
+                        mc.execute(() -> downloadScreen.setLyricError("Downloading error!"));
                     }
                     return null;
                 }
@@ -233,7 +233,7 @@ public class DownloadMethod {
             if (connection == null) {
                 LoginMusic.LOGGER.error("Lyric network connection error!");
                 if (downloadScreen != null) {
-                    mc.execute(() -> downloadScreen.setError("Downloading error!"));
+                    mc.execute(() -> downloadScreen.setLyricError("Downloading error!"));
                 }
                 return null;
             }
@@ -274,7 +274,7 @@ public class DownloadMethod {
         } catch (Exception e) {
             LoginMusic.LOGGER.warn("Downloading lyric error!", e);
             if (downloadScreen != null) {
-                mc.execute(() -> downloadScreen.setError("Downloading error!"));
+                mc.execute(() -> downloadScreen.setLyricError("Downloading error!"));
             }
             return null;
         }

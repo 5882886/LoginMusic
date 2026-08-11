@@ -37,7 +37,7 @@ public class ClothConfigGUI {
         builder.setSavingRunnable(() -> {
             // 保存并触发 MusicConfig 重载
             MusicConfig.saveToFile();
-            LyricLayer.getInstance().setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
+            LyricLayer.setLyric(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
         });
 
         return builder;

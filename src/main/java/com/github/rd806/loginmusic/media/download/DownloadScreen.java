@@ -4,6 +4,7 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,8 +32,9 @@ public class DownloadScreen extends Screen {
     private volatile Component lyricStatusMessage = Component.translatable(LoginMusic.MODID + ".gui.download.start");
     private volatile float audioProgress;
     private volatile float lyricProgress;
-
-    private volatile String errorMessage = "";
+    // 错误信息
+    private volatile String audioErrorMessage = "";
+    private volatile String lyricErrorMessage = "";
 
     public DownloadScreen(MusicEntry music, Runnable onComplete) {
         super(Component.translatable(LoginMusic.MODID + ".gui.download.title"));
@@ -132,12 +134,12 @@ public class DownloadScreen extends Screen {
     // 下载失败
     private void renderAudioError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
-                centerX, barY + 50, 0xFF0000);
+                this.font, Component.literal(I18n.get(LoginMusic.MODID + ".gui.download.fail") + audioErrorMessage),
+                centerX, barY + 5, 0xFF0000);
     }
     private void renderLyricError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
+                this.font, Component.literal(I18n.get(LoginMusic.MODID + ".gui.download.fail") + audioErrorMessage),
                 centerX, barY + barHeight + 10, 0xFF0000);
     }
 
@@ -156,9 +158,14 @@ public class DownloadScreen extends Screen {
 
     public void setLyricCompleted() { this.lyricStatus = Status.COMPLETED; }
 
-    public void setError(String Message) {
+    public void setAudioError(String Message) {
         this.audioStatus = Status.ERROR;
-        this.errorMessage = Message;
+        this.audioErrorMessage = Message;
+    }
+
+    public void setLyricError(String Message) {
+        this.lyricStatus = Status.ERROR;
+        this.lyricErrorMessage = Message;
     }
 
     // 打开此界面时游戏不暂停

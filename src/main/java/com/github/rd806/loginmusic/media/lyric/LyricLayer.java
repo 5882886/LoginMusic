@@ -2,47 +2,21 @@ package com.github.rd806.loginmusic.media.lyric;
 
 import com.github.rd806.loginmusic.config.ClientConfig.Position;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 // 显示歌词的专用区域
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class LyricLayer {
 
-    private static LyricLayer lyricLayer;
-    private String currentLyricText;
-    private int textColor;
-    private int yOffset;
-
-    private LyricLayer() {
-        // 注册监听事件
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    public static LyricLayer getInstance() {
-        if (lyricLayer == null) {
-            lyricLayer = new LyricLayer();
-        }
-        return lyricLayer;
-    }
-
-    // 展示歌词
-    public void showLyric(String lyric) {
-        this.currentLyricText = lyric;
-    }
-
-    // 设置歌词样式
-    public void setLyricLayer(Position pos, int hexColor) {
-        this.textColor = hexColor;
-        switch (pos) {
-            case UP -> this.yOffset = -1;
-            case MIDDLE -> this.yOffset = 0;
-            case DOWN -> this.yOffset = 1;
-        }
-    }
+    private static String currentLyricText;
+    private static int textColor;
+    private static int yOffset;
 
     @SubscribeEvent
-    public void onRenderGui(RenderGuiEvent.Post event) {
+    public static void onRenderGui(RenderGuiEvent.Post event) {
         if (currentLyricText == null) return;
 
         Minecraft mc = Minecraft.getInstance();
@@ -59,5 +33,18 @@ public class LyricLayer {
         int y = screenHeight/2 + (yOffset*screenHeight)/4;
         // 绘制文本
         guiGraphics.drawString(mc.font, text, x, y, textColor, false);
+    }
+
+    // 展示歌词
+    public static void showLyric(String lyric) { currentLyricText = lyric; }
+
+    // 设置歌词样式
+    public static void setLyric(Position pos, int hexColor) {
+        textColor = hexColor;
+        switch (pos) {
+            case UP -> yOffset = -1;
+            case MIDDLE -> yOffset = 0;
+            case DOWN -> yOffset = 1;
+        }
     }
 }
