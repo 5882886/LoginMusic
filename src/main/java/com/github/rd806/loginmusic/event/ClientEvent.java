@@ -5,6 +5,7 @@ import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.download.DownloadMethod;
 import com.github.rd806.loginmusic.media.download.DownloadScreen;
+import com.github.rd806.loginmusic.media.layer.MusicInfo;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
@@ -33,13 +34,18 @@ public class ClientEvent {
         Player player = mc.player;
         if (player == null) return;
 
+        // 当前有正在播放的音乐跳过
+        if (SimpleMusicPlayer.isPlaying()) { return; }
+
         // 判断是否为来自其他玩家的音乐
         String musicId = music.getId();
         boolean isOwnMusic = false;
         switch (key) {
-            case NAME -> isOwnMusic = musicId.equalsIgnoreCase(player.getName().getString());
-            case UUID -> isOwnMusic = musicId.equalsIgnoreCase(player.getUUID().toString());
+            case NAME -> isOwnMusic = musicId.equalsIgnoreCase(player.getName().getString()) || musicId.equalsIgnoreCase("Default");
+            case UUID -> isOwnMusic = musicId.equalsIgnoreCase(player.getUUID().toString())  || musicId.equalsIgnoreCase("Default");
+            case RANDOM -> isOwnMusic = true;
         }
+
         // 不是则进入判断
         if (!isOwnMusic) {
             // 设置为不允许则跳过
@@ -49,8 +55,6 @@ public class ClientEvent {
                         false);
                 return;
             }
-            // 当前有正在播放的音乐也跳过
-            if (SimpleMusicPlayer.isPlaying()) { return; }
             // 播放来自其他玩家的音乐
             player.displayClientMessage(
                     Component.translatable(LoginMusic.MODID + ".message.play_others_music", musicId),
@@ -58,7 +62,6 @@ public class ClientEvent {
         }
 
         isInitialPos = false;
-
         // 启用下载模式
         mc.execute(() -> {
             // 创建并显示下载界面
@@ -67,6 +70,7 @@ public class ClientEvent {
                 mc.setScreen(screen);
             }
             DownloadMethod.startDownload(music, screen);
+            MusicInfo.prepareMusicInfo(music);
         });
     }
 

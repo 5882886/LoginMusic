@@ -2,6 +2,7 @@ package com.github.rd806.loginmusic.media;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
+import com.github.rd806.loginmusic.media.download.DownloadMethod;
 import com.github.rd806.loginmusic.media.layer.MusicInfo;
 import com.github.rd806.loginmusic.media.lyric.LyricEntry;
 import com.github.rd806.loginmusic.media.lyric.LyricParser;
@@ -36,7 +37,7 @@ public class SimpleMusicPlayer {
             return;
         }
         startMusic(audio, lyric);
-        MusicInfo.setMusic(music);
+        MusicInfo.playMusicInfo();
     }
 
     // 播放外部音乐
@@ -78,7 +79,6 @@ public class SimpleMusicPlayer {
     // 播放歌词
     private static void startLyric(MusicEntry entry, String lyric, long startTimeMillis) {
         if (ClientConfig.ALLOW_LYRICS.get()) {
-            LoginMusic.LOGGER.info("Lyrics prepared!");
             if (lyric != null && !lyric.isEmpty() && !lyricPlaying) {
                 List<LyricEntry> currentLyrics = LyricParser.parseLRC(lyric);
                 lyricPlaying = true;
@@ -91,7 +91,7 @@ public class SimpleMusicPlayer {
                 LoginMusic.LOGGER.warn("No lyrics found, {}", entry.getMusicName());
             }
         } else {
-            LoginMusic.LOGGER.info("Lyrics not available!");
+            LoginMusic.LOGGER.info("Lyrics are not available!");
         }
     }
 
@@ -101,9 +101,10 @@ public class SimpleMusicPlayer {
         currentClip.close();
         // 停止歌词
         LyricPlayer.stopLyricDisplay();
-        MusicInfo.setMusic(null);
+        MusicInfo.stopMusicInfo();
         lyricPlaying = false;
         musicPlaying = false;
+        DownloadMethod.stopDownloading();
     }
 
     // 立即停止播放

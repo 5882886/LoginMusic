@@ -29,7 +29,8 @@
     "login_music.gui.download.complete": "加载完成：%s",
     "login_music.gui.download.fail": "加载失败！",
 
-    "login_music.gui.info": "正在播放：%s",
+    "login_music.gui.info.prepare": "正在准备：%s（%.1f%%）",
+    "login_music.gui.info.play": "正在播放：%s",
 
     "login_music.config.title.loading": "加载设置",
     "login_music.config.show_loading": "加载界面",
@@ -70,7 +71,7 @@
 
     "login_music.message.download_forbidden": "直接播放网络流",
     "login_music.message.loading_music": "加载音乐：%s",
-    "login_music.message.not_allow_others_music": "跳过其他玩家的音乐",
+    "login_music.message.not_allow_others_music": "跳过来自 %s 的音乐",
     "login_music.message.play_others_music": "播放来自 %s 的音乐",
     "login_music.message.load_failed": "加载音乐失败！",
     "login_music.message.out_of_range": "移动超出范围，已停止音乐播放！",

@@ -4,6 +4,7 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.media.PreparedAudio;
 import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
+import com.github.rd806.loginmusic.media.layer.MusicInfo;
 import com.github.rd806.loginmusic.media.music.MusicCache;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
@@ -42,13 +43,16 @@ public class DownloadMethod {
         t.setDaemon(true);
         return t;
     });
+    // 加载资源
+    private static CompletableFuture<Void> audioFuture;
+    private static CompletableFuture<Void> lyricFuture;
 
     /* ----- 音乐下载方法 ----- */
     // 开始下载
     public static void startDownload(MusicEntry music, DownloadScreen screen) {
         downloadScreen = screen;
         // 创建两个 CompletableFuture 来跟踪下载任务
-        CompletableFuture<Void> audioFuture = CompletableFuture.runAsync(() -> {
+        audioFuture = CompletableFuture.runAsync(() -> {
             preparedAudio = downloadMusic(music, (downloaded, total, progress) -> {
                 Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress.music",
                         String.format("%.1f", downloaded / 1024.0 / 1024.0),
@@ -60,7 +64,7 @@ public class DownloadMethod {
             mc.execute(screen::setAudioCompleted);
         }, AUDIO_LOADER);  // 使用 AUDIO_LOADER 作为执行器
 
-        CompletableFuture<Void> lyricFuture = CompletableFuture.runAsync(() -> {
+        lyricFuture = CompletableFuture.runAsync(() -> {
             lyric = downloadLyrics(music, (downloaded, total, progress) -> {
                 Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress.lyric",
                         String.format("%.1f", downloaded / 1024.0 / 1024.0),
@@ -171,6 +175,7 @@ public class DownloadMethod {
                 if (callback != null) {
                     float progress = totalBytes > 0 ? downloadedBytes / (float) totalBytes : 0;
                     callback.onProgress(downloadedBytes, totalBytes, progress);
+                    MusicInfo.setProgress(progress);
                 }
             }
             // 转换为输入流
@@ -288,6 +293,13 @@ public class DownloadMethod {
             LoginMusic.LOGGER.warn("Failed to load from local file!", e);
             return false;
         }
+    }
+
+    // 停止加载线程
+    public static void stopDownloading() {
+        audioFuture.cancel(true);
+        lyricFuture.cancel(true);
+        LoginMusic.LOGGER.info("Stop downloading!");
     }
 
     // 准备外部音乐

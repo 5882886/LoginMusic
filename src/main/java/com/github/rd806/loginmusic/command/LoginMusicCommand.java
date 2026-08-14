@@ -54,7 +54,7 @@ public class LoginMusicCommand {
             ServerPlayer serverPlayer = context.getSource().getPlayer();
             if (serverPlayer != null) {
                 SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
-                MusicEntry music = MusicConfig.getMusic(ServerEvent.chooseMusic(serverPlayer, key));
+                MusicEntry music = ServerEvent.chooseMusic(serverPlayer, key);
                 NetworkConfig.sendMusicToPlayer(serverPlayer, music, key);
             }
         } catch (Exception e) {

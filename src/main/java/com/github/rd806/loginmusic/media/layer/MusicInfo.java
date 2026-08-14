@@ -3,6 +3,7 @@ package com.github.rd806.loginmusic.media.layer;
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
@@ -12,21 +13,52 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = LoginMusic.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class MusicInfo {
 
-    private static MusicEntry music;
+    private enum Status {
+        PREPARING,
+        PLAYING,
+        STOPPED
+    }
+
+    private static String musicName;
+    private static Status status;
+    private static float progress;
+
+    private static final Minecraft mc = Minecraft.getInstance();
 
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Post event) {
-        Minecraft mc = Minecraft.getInstance();
-        // 获取文件名称
-        if (music == null) return;
-        String musicName = LoginMusic.removeExtension(music.getMusicName());
         // 绘制文字
         var guiGraphics = event.getGuiGraphics();
-        Component text = Component.translatable(LoginMusic.MODID + ".gui.info", musicName);
+
+        switch (status) {
+            case PREPARING -> renderPreparingInfo(guiGraphics);
+            case PLAYING -> renderPlayingInfo(guiGraphics);
+            case STOPPED -> {}
+        }
+    }
+
+    private static void renderPreparingInfo(GuiGraphics guiGraphics) {
+        Component text = Component.translatable(LoginMusic.MODID + ".gui.info.prepare",
+                musicName, String.format("%.1f", progress * 100));
         guiGraphics.drawString(mc.font, text, 20, 20, 0xffffff, false);
     }
 
-    public static void setMusic(MusicEntry musicEntry) {
-        music = musicEntry;
+    private static void renderPlayingInfo(GuiGraphics guiGraphics) {
+        Component text = Component.translatable(LoginMusic.MODID + ".gui.info.play", musicName);
+        guiGraphics.drawString(mc.font, text, 20, 20, 0xffffff, false);
     }
+
+    public static void prepareMusicInfo(MusicEntry musicEntry) {
+        musicName = LoginMusic.removeExtension(musicEntry.getMusicName());
+        status = Status.PREPARING;
+    }
+
+    public static void setProgress(float prepareProgress) { progress = prepareProgress; }
+
+    public static void playMusicInfo() {
+        progress = 0;
+        status = Status.PLAYING;
+    }
+
+    public static void stopMusicInfo() { status = Status.STOPPED; }
 }
