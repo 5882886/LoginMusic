@@ -29,7 +29,8 @@
   "login_music.gui.download.complete": "Downloading Complete: %s",
   "login_music.gui.download.fail": "Fail to download!",
 
-  "login_music.gui.info": "Playing: %s",
+  "login_music.gui.info.prepare": "Preparing: %s (%.1f%%)",
+  "login_music.gui.info.play": "Playing: %s",
 
   "login_music.config.title.loading": "Loading screen settings",
   "login_music.config.show_loading": "Loading screen",
@@ -70,7 +71,7 @@
 
   "login_music.message.download_forbidden": "Playing audio streams.",
   "login_music.message.loading_music": "Loading music: %s",
-  "login_music.message.not_allow_others_music": "Skip playing other players' music",
+  "login_music.message.not_allow_others_music": "Skip playing music from %s",
   "login_music.message.play_others_music": "Playing music from %s",
   "login_music.message.load_failed": "Failed to load music!",
   "login_music.message.out_of_range": "Moving out of range, music playback has stopped!",

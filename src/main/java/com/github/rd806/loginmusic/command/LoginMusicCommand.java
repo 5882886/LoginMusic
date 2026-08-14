@@ -54,7 +54,7 @@ public class LoginMusicCommand {
             ServerPlayer serverPlayer = context.getSource().getPlayer();
             if (serverPlayer != null) {
                 SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
-                MusicEntry music = MusicConfig.getMusic(ServerEvent.chooseMusic(serverPlayer, key));
+                MusicEntry music = ServerEvent.chooseMusic(serverPlayer, key);
                 NetworkConfig.sendMusicToPlayer(serverPlayer, music, key);
             }
         } catch (Exception e) {
@@ -89,6 +89,7 @@ public class LoginMusicCommand {
                 switch (key) {
                     case UUID -> keyName = "UUID";
                     case NAME -> keyName = "Name";
+                    case RANDOM -> keyName = "Random";
                 }
                 Component message = Component.translatable(LoginMusic.MODID + ".command.list.key", keyName);
                 context.getSource().sendSuccess(() -> message, false);

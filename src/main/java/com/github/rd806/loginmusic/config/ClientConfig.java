@@ -32,7 +32,6 @@ public class ClientConfig {
     public static ModConfigSpec.ConfigValue<Integer> CACHE_SIZE;
 
     public static ModConfigSpec init() {
-
         BUILDER.push("Loading").translation(LoginMusic.MODID + ".config.title.loading");
         SHOW_LOADING = BUILDER
                 .comment("Whether to show loading screen when preparing music")

@@ -2,6 +2,7 @@ package com.github.rd806.loginmusic.media;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
+import com.github.rd806.loginmusic.media.download.DownloadMethod;
 import com.github.rd806.loginmusic.media.layer.MusicInfo;
 import com.github.rd806.loginmusic.media.lyric.LyricEntry;
 import com.github.rd806.loginmusic.media.lyric.LyricParser;
@@ -37,7 +38,7 @@ public class SimpleMusicPlayer {
         musicName = LoginMusic.removeExtension(musicEntry.getMusicName());
         // 显示加载提示
         mc.execute(() -> startMusic(music, audio, lyric));
-        MusicInfo.setMusic(music);
+        MusicInfo.playMusicInfo();
     }
 
     // 播放音频，在渲染进程进行
@@ -79,7 +80,6 @@ public class SimpleMusicPlayer {
     // 播放歌词
     private static void startLyrics(MusicEntry entry, String lyric, long startTimeMillis) {
         if (ClientConfig.ALLOW_LYRICS.get()) {
-            LoginMusic.LOGGER.info("Lyrics prepared!");
             if (lyric != null && !lyric.isEmpty() && !lyricPlaying) {
                 List<LyricEntry> currentLyrics = LyricParser.parseLRC(lyric);
                 lyricPlaying = true;
@@ -101,7 +101,8 @@ public class SimpleMusicPlayer {
         currentClip.stop();
         currentClip.close();
         LyricPlayer.stopLyricDisplay();
-        MusicInfo.setMusic(null);
+        MusicInfo.stopMusicInfo();
+        DownloadMethod.stopDownloading();
         lyricPlaying = false;
         musicPlaying = false;
     }

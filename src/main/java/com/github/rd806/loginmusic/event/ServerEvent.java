@@ -13,6 +13,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
+import java.util.Random;
+
 @EventBusSubscriber(modid = LoginMusic.MODID)
 public class ServerEvent {
     @SubscribeEvent
@@ -22,8 +24,12 @@ public class ServerEvent {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 根据玩家名称获取音乐
             SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
-            String musicId = chooseMusic(serverPlayer, key);
-            MusicEntry entry = MusicConfig.getMusic(musicId);
+            MusicEntry entry = chooseMusic(serverPlayer, key);
+            // 判空
+            if (entry == null) {
+                LoginMusic.LOGGER.error("Can't find correct music!");
+                return;
+            }
             // 将音乐发送给全体玩家
             MinecraftServer server = serverPlayer.getServer();
             if (server != null) {
@@ -35,40 +41,35 @@ public class ServerEvent {
         }
     }
 
-    // 选择音乐
-    public static String chooseMusic(ServerPlayer player, SelectionKey key) {
-        String result = "Default";
-        switch (key) {
+    public static MusicEntry chooseMusic(ServerPlayer player, SelectionKey type) {
+        MusicEntry result = null;
+        switch (type) {
             case NAME -> result = chooseMusicByName(player);
             case UUID -> result = chooseMusicByUuid(player);
+            case RANDOM -> result = chooseRandomMusic();
+        }
+        if (result == null) {
+            result = MusicConfig.getMusic("Default");
         }
         return result;
     }
 
     // 通过name选择音乐
-    private static String chooseMusicByName(ServerPlayer player) {
-        String MusicID = "Default";
-        // 获取玩家名称
+    private static MusicEntry chooseMusicByName(ServerPlayer player) {
         String playerName = player.getName().getString();
-        // 根据玩家名称获取音乐
-        MusicEntry entry = MusicConfig.getMusic(playerName);
-        if (entry == null) {
-            return MusicID;
-        }
-        MusicID = entry.getId();
-        return MusicID;
+        return MusicConfig.getMusic(playerName);
     }
 
     // 通过uuid选择音乐
-    private static String chooseMusicByUuid(ServerPlayer player) {
-        String MusicID = "Default";
+    private static MusicEntry chooseMusicByUuid(ServerPlayer player) {
+        String playerUUIDString = player.getStringUUID();
+        return MusicConfig.getMusic(playerUUIDString);
+    }
 
-        String playerStringUUID = player.getStringUUID();
-        MusicEntry entry = MusicConfig.getMusic(playerStringUUID);
-        if (entry == null) {
-            return MusicID;
-        }
-        MusicID = entry.getId();
-        return MusicID;
+    // 随机分配音乐
+    private static MusicEntry chooseRandomMusic() {
+        Random random = new Random();
+        int index = random.nextInt(MusicConfig.getMusicList().size());
+        return MusicConfig.getMusicList().get(index);
     }
 }

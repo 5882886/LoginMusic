@@ -87,7 +87,7 @@ public class DownloadScreen extends Screen {
             case DOWNLOAD -> renderLyricDownload(graphics, centerX);
         }
         // 自动关闭
-        if (audioStatus.equals(Status.COMPLETED) && lyricStatus.equals(Status.COMPLETED)) {
+        if (!(audioStatus.equals(Status.DOWNLOAD) || lyricStatus.equals(Status.DOWNLOAD))) {
             onComplete.run();
         }
     }
