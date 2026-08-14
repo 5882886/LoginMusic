@@ -1,4 +1,4 @@
-package com.github.rd806.loginmusic.media.lyric;
+package com.github.rd806.loginmusic.media.layer;
 
 import com.github.rd806.loginmusic.config.ClientConfig.Position;
 import net.minecraft.client.Minecraft;

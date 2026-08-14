@@ -62,11 +62,10 @@ public class ClientEvent {
         // 启用下载模式
         mc.execute(() -> {
             // 创建并显示下载界面
-            DownloadScreen screen = new DownloadScreen(music, () -> {
-                // 下载完成后关闭界面
-                mc.execute(() -> mc.setScreen(null));
-            });
-            mc.setScreen(screen);
+            DownloadScreen screen = new DownloadScreen(music, () -> mc.execute(() -> mc.setScreen(null)));
+            if (ClientConfig.SHOW_LOADING.get()) {
+                mc.setScreen(screen);
+            }
             DownloadMethod.startDownload(music, screen);
         });
     }
@@ -82,7 +81,7 @@ public class ClientEvent {
     @SubscribeEvent
     public static void checkMove(TickEvent.ClientTickEvent event) {
         // 已经停止则不再检测
-        if (!SimpleMusicPlayer.isPlaying() || ClientConfig.MUSIC_PLAY_RANGE.get() < 0) return;
+        if (!SimpleMusicPlayer.isPlaying() || ClientConfig.MUSIC_PLAY_RANGE.get() == 0) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;

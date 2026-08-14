@@ -4,7 +4,6 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.media.PreparedAudio;
 import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
-import com.github.rd806.loginmusic.media.lyric.LyricParser;
 import com.github.rd806.loginmusic.media.music.MusicCache;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.Minecraft;
@@ -258,12 +257,12 @@ public class DownloadMethod {
             }
             byte[] data = baos.toByteArray();
             // 检测编码
-            String charset = LyricParser.detectCharset(data);
+            String charset = TypeDetector.detectCharset(data);
             // 转换为字符串
             lyric = new String(data, charset);
             // 保存到文件
             if (ClientConfig.ALLOW_DOWNLOAD.get()) {
-                Files.write(cacheFile, data);
+                Files.writeString(cacheFile, lyric);
             }
             MusicCache.putLyric(path, lyric);
             LoginMusic.LOGGER.info("Downloading lyric completed, total {} bytes", downloadedBytes);

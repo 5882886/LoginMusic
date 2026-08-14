@@ -51,4 +51,67 @@ public class TypeDetector {
         }
         return false;
     }
+
+    // 检测字符编码（增强版）
+    public static String detectCharset(byte[] data) {
+        if (data == null || data.length == 0) { return "UTF-8"; }
+        // 检测 UTF-8 BOM
+        if (data.length >= 3 && data[0] == (byte) 0xEF && data[1] == (byte) 0xBB && data[2] == (byte) 0xBF) { return "UTF-8"; }
+        // 检测 UTF-16 BE BOM
+        if (data.length >= 2 && data[0] == (byte) 0xFE && data[1] == (byte) 0xFF) { return "UTF-16BE"; }
+        // 检测 UTF-16 LE BOM
+        if (data.length >= 2 && data[0] == (byte) 0xFF && data[1] == (byte) 0xFE) { return "UTF-16LE"; }
+        // 尝试判断是否为 GBK/GB2312
+        // 简单检测：如果存在非 UTF-8 序列的字节，则认为是 GBK
+        boolean isAscii = true;
+        boolean hasChineseByte = false;
+        // 只检测前1KB
+        for (int i = 0; i < data.length && i < 1024; i++) {
+            byte b = data[i];
+            if (b < 0) {
+                isAscii = false;
+                // 检测是否可能是 GBK 编码（GBK 首字节范围 0x81-0xFE）
+                if ((b & 0xFF) >= 0x81 && (b & 0xFF) <= 0xFE) { hasChineseByte = true; }
+            }
+        }
+        if (isAscii) { return "US-ASCII"; }
+        // 尝试 UTF-8 解码，检查是否有无效序列
+        if (isValidUtf8(data)) { return "UTF-8"; }
+        // 默认返回 GBK（中文环境下常见）
+        return hasChineseByte ? "GBK" : "UTF-8";
+    }
+
+    // 检查是否为有效的 UTF-8 编码
+    private static boolean isValidUtf8(byte[] data) {
+        int i = 0;
+        while (i < data.length) {
+            byte b = data[i];
+            if ((b & 0x80) == 0) {
+                // ASCII 字符，1字节
+                i++;
+            } else if ((b & 0xE0) == 0xC0) {
+                // 2字节 UTF-8
+                if (i + 1 >= data.length) return false;
+                if ((data[i+1] & 0xC0) != 0x80) return false;
+                i += 2;
+            } else if ((b & 0xF0) == 0xE0) {
+                // 3字节 UTF-8
+                if (i + 2 >= data.length) return false;
+                if ((data[i+1] & 0xC0) != 0x80) return false;
+                if ((data[i+2] & 0xC0) != 0x80) return false;
+                i += 3;
+            } else if ((b & 0xF8) == 0xF0) {
+                // 4字节 UTF-8
+                if (i + 3 >= data.length) return false;
+                if ((data[i+1] & 0xC0) != 0x80) return false;
+                if ((data[i+2] & 0xC0) != 0x80) return false;
+                if ((data[i+3] & 0xC0) != 0x80) return false;
+                i += 4;
+            } else {
+                // 无效的 UTF-8 序列
+                return false;
+            }
+        }
+        return true;
+    }
 }

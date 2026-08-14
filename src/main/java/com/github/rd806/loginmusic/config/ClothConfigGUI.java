@@ -2,7 +2,7 @@ package com.github.rd806.loginmusic.config;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.SelectionKey;
-import com.github.rd806.loginmusic.media.lyric.LyricLayer;
+import com.github.rd806.loginmusic.media.layer.LyricLayer;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -125,57 +125,71 @@ public class ClothConfigGUI {
         return subCategoryBuilder.build();
     }
 
-    // 音乐播放配置
+    // 客户端配置
     private static void buildClientSettings(ConfigEntryBuilder entryBuilder, ConfigCategory clientSettings) {
+        // 显示加载界面
+        clientSettings.addEntry(
+                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".config.show_loading"), ClientConfig.SHOW_LOADING.get())
+                        .setDefaultValue(true)
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.show_loading.tooltip"))
+                        .setSaveConsumer(showLoading -> ClientConfig.SHOW_LOADING.set(showLoading))
+                        .build());
         // 音乐播放范围
         clientSettings.addEntry(
-                entryBuilder.startIntField(Component.translatable(LoginMusic.MODID + ".configui.music_play_range"), ClientConfig.MUSIC_PLAY_RANGE.get())
+                entryBuilder.startIntSlider(Component.translatable(LoginMusic.MODID + ".config.music_play_range"), ClientConfig.MUSIC_PLAY_RANGE.get(), 0, 100)
                         .setDefaultValue(3)
-                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.music_play_range.tooltip"))
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.music_play_range.tooltip"))
                         .setSaveConsumer(range -> ClientConfig.MUSIC_PLAY_RANGE.set(range))
                         .build());
         // 是否允许下载
         clientSettings.addEntry(
-                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".configui.allow_download"), ClientConfig.ALLOW_DOWNLOAD.get())
+                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".config.allow_download"), ClientConfig.ALLOW_DOWNLOAD.get())
                         .setDefaultValue(false)
-                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.allow_download.tooltip"))
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.allow_download.tooltip"))
                         .setSaveConsumer(allowDownload -> ClientConfig.ALLOW_DOWNLOAD.set(allowDownload))
                         .build());
         // 是否允许播放其他玩家的音乐
         clientSettings.addEntry(
-                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".configui.allow_others_music"), ClientConfig.ALLOW_OTHERS_MUSIC.get())
+                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".config.allow_others_music"), ClientConfig.ALLOW_OTHERS_MUSIC.get())
                         .setDefaultValue(false)
-                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.allow_others_music.tooltip"))
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.allow_others_music.tooltip"))
                         .setSaveConsumer(allowOthersMusic -> ClientConfig.ALLOW_OTHERS_MUSIC.set(allowOthersMusic))
+                        .build());
+        // 歌曲缓存大小
+        clientSettings.addEntry(
+                entryBuilder.startIntSlider(Component.translatable(LoginMusic.MODID + ".config.cache_size"), ClientConfig.CACHE_SIZE.get(), 0, 10)
+                        .setDefaultValue(5)
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.cache_size.tooltip"))
+                        .setSaveConsumer(cacheSize -> ClientConfig.CACHE_SIZE.set(cacheSize))
                         .build());
         // 是否展示歌词
         clientSettings.addEntry(
-                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".configui.allow_lyrics"), ClientConfig.ALLOW_LYRICS.get())
+                entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".config.allow_lyrics"), ClientConfig.ALLOW_LYRICS.get())
                         .setDefaultValue(true)
-                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.allow_lyrics.tooltip"))
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.allow_lyrics.tooltip"))
                         .setSaveConsumer(allowLyrics -> ClientConfig.ALLOW_LYRICS.set(allowLyrics))
                         .build());
         // 歌词位置设置
         clientSettings.addEntry(
-                entryBuilder.startEnumSelector(Component.translatable(LoginMusic.MODID + ".configui.lyrics_pos"), ClientConfig.Position.class, ClientConfig.LYRIC_POS.get())
+                entryBuilder.startEnumSelector(Component.translatable(LoginMusic.MODID + ".config.lyrics_pos"), ClientConfig.Position.class, ClientConfig.LYRIC_POS.get())
                         .setDefaultValue(ClientConfig.Position.DOWN)
-                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.lyrics_pos.tooltip"))
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.lyrics_pos.tooltip"))
                         .setSaveConsumer(lyricPos -> ClientConfig.LYRIC_POS.set(lyricPos))
                         .build());
         // 歌词颜色设置
         clientSettings.addEntry(
-                entryBuilder.startColorField(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color"), ClientConfig.LYRIC_COLOR.get())
+                entryBuilder.startColorField(Component.translatable(LoginMusic.MODID + ".config.lyrics_color"), ClientConfig.LYRIC_COLOR.get())
                         .setDefaultValue(0xFFFFFF)
-                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.lyrics_color.tooltip"))
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.lyrics_color.tooltip"))
                         .setSaveConsumer(lyricColor -> ClientConfig.LYRIC_COLOR.set(lyricColor))
                         .build());
     }
 
     private static void buildServerSettings(ConfigEntryBuilder entryBuilder, ConfigCategory serverSettings) {
         serverSettings.addEntry(
-                entryBuilder.startEnumSelector(Component.translatable(LoginMusic.MODID + ".configui.music_id_type"), SelectionKey.class, ServerConfig.MUSIC_ID_TYPE.get())
+                entryBuilder.startEnumSelector(Component.translatable(LoginMusic.MODID + ".config.music_id_type"), SelectionKey.class, ServerConfig.MUSIC_ID_TYPE.get())
                         .setDefaultValue(SelectionKey.NAME)
-                        .setTooltip(Component.translatable(LoginMusic.MODID + ".configui.music_id_type.tooltip"))
+                        .setTooltip(Component.translatable(LoginMusic.MODID + ".config.music_id_type.tooltip"))
                         .setSaveConsumer(selectionKey -> ServerConfig.MUSIC_ID_TYPE.set(selectionKey))
                         .build());
     }

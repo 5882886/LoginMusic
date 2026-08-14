@@ -2,6 +2,7 @@ package com.github.rd806.loginmusic.media;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
+import com.github.rd806.loginmusic.media.layer.MusicInfo;
 import com.github.rd806.loginmusic.media.lyric.LyricEntry;
 import com.github.rd806.loginmusic.media.lyric.LyricParser;
 import com.github.rd806.loginmusic.media.lyric.LyricPlayer;
@@ -34,12 +35,12 @@ public class SimpleMusicPlayer {
             LoginMusic.LOGGER.warn("Music audio not found!");
             return;
         }
-        playMusicFromFiles(audio, lyric);
+        startMusic(audio, lyric);
         MusicInfo.setMusic(music);
     }
 
     // 播放外部音乐
-    private static void playMusicFromFiles(PreparedAudio preparedAudio, String lyric) {
+    private static void startMusic(PreparedAudio preparedAudio, String lyric) {
         try {
             if (preparedAudio == null) {
                 LoginMusic.LOGGER.error("Audio is not available!");
@@ -55,7 +56,7 @@ public class SimpleMusicPlayer {
             currentClip.open(stream);
             currentClip.start();
             // 播放歌词
-            startLyrics(musicEntry, lyric, System.currentTimeMillis());
+            startLyric(musicEntry, lyric, System.currentTimeMillis());
             musicPlaying = true;
             // 音频结束操作
             currentClip.addLineListener(event -> {
@@ -75,7 +76,7 @@ public class SimpleMusicPlayer {
     }
 
     // 播放歌词
-    private static void startLyrics(MusicEntry entry, String lyric, long startTimeMillis) {
+    private static void startLyric(MusicEntry entry, String lyric, long startTimeMillis) {
         if (ClientConfig.ALLOW_LYRICS.get()) {
             LoginMusic.LOGGER.info("Lyrics prepared!");
             if (lyric != null && !lyric.isEmpty() && !lyricPlaying) {

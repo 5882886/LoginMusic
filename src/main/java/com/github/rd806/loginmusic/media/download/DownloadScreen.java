@@ -139,7 +139,7 @@ public class DownloadScreen extends Screen {
     }
     private void renderLyricError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, Component.literal(I18n.get(LoginMusic.MODID + ".gui.download.fail") + audioErrorMessage),
+                this.font, Component.literal(I18n.get(LoginMusic.MODID + ".gui.download.fail") + lyricErrorMessage),
                 centerX, barY + barHeight + 10, 0xFF0000);
     }
 
