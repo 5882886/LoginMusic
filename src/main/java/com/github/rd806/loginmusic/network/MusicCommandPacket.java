@@ -16,8 +16,7 @@ public class MusicCommandPacket implements CustomPacketPayload {
 
     // 定义包类型
     public static final Type<MusicCommandPacket> TYPE =
-            new Type<>(
-                    ResourceLocation.fromNamespaceAndPath(LoginMusic.MODID, "command"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(LoginMusic.MODID, "command"));
 
     private final CommandType type;
 

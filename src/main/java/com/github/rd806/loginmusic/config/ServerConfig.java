@@ -15,7 +15,7 @@ public class ServerConfig {
         BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
                 .comment("Keywords for music selection (name/uuid)")
-                .translation(LoginMusic.MODID + ".configui.music_id_type")
+                .translation(LoginMusic.MODID + ".config.music_id_type")
                 .defineEnum("type", SelectionKey.NAME);
         BUILDER.pop();
 

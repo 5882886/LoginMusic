@@ -36,7 +36,7 @@ public class MusicConfig {
             }
             // 读取json文件
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
-                var json =  GSON.fromJson(reader, JsonWrapper.class);
+                var json = GSON.fromJson(reader, JsonWrapper.class);
                 if (json != null && json.musics != null) {
                     MUSIC_ENTRY_LIST = json.musics;
                     MUSIC_ENTRY_MAP.clear();

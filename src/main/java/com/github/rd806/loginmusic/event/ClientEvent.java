@@ -1,31 +1,30 @@
 package com.github.rd806.loginmusic.event;
 
+import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.config.ClientConfig;
-import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
 import com.github.rd806.loginmusic.media.download.DownloadMethod;
 import com.github.rd806.loginmusic.media.download.DownloadScreen;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
-import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.common.NeoForge;
 
-@OnlyIn(Dist.CLIENT)
+@Mod(value = LoginMusic.MODID, dist = Dist.CLIENT)
+@EventBusSubscriber(modid = LoginMusic.MODID, value = Dist.CLIENT)
 public class ClientEvent {
 
     private static final Minecraft mc = Minecraft.getInstance();
     // 是否初始化位置
     private static boolean isInitialPos = false;
-    // 是否已注册活动
-    private static boolean listenerRegistered = false;
     // 记录玩家位置
     private static double lastX, lastY, lastZ;
 
@@ -59,29 +58,21 @@ public class ClientEvent {
 
         // 启用下载模式
         mc.execute(() -> {
-            // 创建并显示下载界面
+            // 创建下载界面
             DownloadScreen screen = new DownloadScreen(music, () -> mc.execute(() -> mc.setScreen(null)));
-            mc.setScreen(screen);
+            // 显示加载界面
+            if (ClientConfig.SHOW_LOADING.get()) {
+                mc.setScreen(screen);
+            }
             DownloadMethod.startDownload(music, screen);
         });
-
-        // 注册监听方法
-        registerListener();
-    }
-
-    // 注册监听器
-    private static void registerListener() {
-        if (!listenerRegistered) {
-            NeoForge.EVENT_BUS.register(ClientEvent.class);
-            listenerRegistered = true;
-        }
     }
 
     // 检测玩家移动
     @SubscribeEvent
     public static void checkMove(ClientTickEvent.Post event) {
         // 已经停止则不再检测
-        if (SimpleMusicPlayer.isStopped() || ClientConfig.MUSIC_PLAY_RANGE.get() < 0) return;
+        if (SimpleMusicPlayer.isStopped() || ClientConfig.MUSIC_PLAY_RANGE.get() == 0) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;

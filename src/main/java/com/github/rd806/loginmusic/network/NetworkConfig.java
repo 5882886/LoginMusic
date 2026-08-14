@@ -23,17 +23,8 @@ public class NetworkConfig {
                 .versioned("1")
                 .optional();
 
-        registrar.playToClient(
-                MusicEntryPacket.TYPE,
-                MusicEntryPacket.STREAM_CODEC,
-                MusicEntryPacket::handle
-        );
-
-        registrar.playToClient(
-                MusicCommandPacket.TYPE,
-                MusicCommandPacket.STREAM_CODEC,
-                MusicCommandPacket::handle
-        );
+        registrar.playToClient(MusicEntryPacket.TYPE, MusicEntryPacket.STREAM_CODEC, MusicEntryPacket::handle);
+        registrar.playToClient(MusicCommandPacket.TYPE, MusicCommandPacket.STREAM_CODEC, MusicCommandPacket::handle);
 
         LoginMusic.LOGGER.info("Network config registered!");
     }

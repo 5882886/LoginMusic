@@ -1,6 +1,7 @@
 package com.github.rd806.loginmusic.media.lyric;
 
 import com.github.rd806.loginmusic.LoginMusic;
+import com.github.rd806.loginmusic.media.layer.LyricLayer;
 import net.minecraft.client.Minecraft;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class LyricPlayer {
                         if (mc.player != null) {
                             String lyricMessage = "♪ " + currentLyric.getText() + " ♪";
                             // 显示歌词
-                            LyricLayer.getInstance().showLyric(lyricMessage);
+                            LyricLayer.showLyric(lyricMessage);
                         }
                     });
                 }
@@ -68,7 +69,7 @@ public class LyricPlayer {
         currentLyrics = null;
         lastLyricEntry = null;
         // 清除歌词内容
-        LyricLayer.getInstance().showLyric(null);
+        LyricLayer.showLyric(null);
         LoginMusic.LOGGER.info("Lyrics is stopped!");
     }
 }

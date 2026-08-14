@@ -3,7 +3,7 @@ package com.github.rd806.loginmusic.setup;
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.config.ClothConfigGUI;
-import com.github.rd806.loginmusic.media.lyric.LyricLayer;
+import com.github.rd806.loginmusic.media.layer.LyricLayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -20,6 +20,7 @@ import java.nio.file.Files;
 // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
 @EventBusSubscriber(modid = LoginMusic.MODID, value = Dist.CLIENT)
 public class ClientSetup {
+
     public ClientSetup(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
@@ -37,7 +38,7 @@ public class ClientSetup {
         } catch (IOException e) {
             LoginMusic.LOGGER.warn("Failed to create cache directory!", e);
         }
-        LyricLayer.getInstance().setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
+        LyricLayer.setLyricLayer(ClientConfig.LYRIC_POS.get(), ClientConfig.LYRIC_COLOR.get());
         LoginMusic.LOGGER.info("Start LoginMusic on client!");
     }
 }

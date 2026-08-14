@@ -4,6 +4,7 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +34,8 @@ public class DownloadScreen extends Screen {
     private volatile float audioProgress;
     private volatile float lyricProgress;
 
-    private volatile String errorMessage = "";
+    private volatile String audioErrorMessage = "";
+    private volatile String lyricErrorMessage = "";
 
     public DownloadScreen(MusicEntry music, Runnable onComplete) {
         super(Component.translatable(LoginMusic.MODID + ".gui.logindownload.title"));
@@ -129,19 +131,22 @@ public class DownloadScreen extends Screen {
     }
     private void renderLyricCompleted(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.complete", music.getLyricName()),
+                this.font,
+                Component.translatable(LoginMusic.MODID + ".gui.download.complete", music.getLyricName()),
                 centerX, barY + barHeight + 10, 0x00FF00);
     }
 
     // 下载失败
     private void renderAudioError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
-                centerX, barY + 50, 0xFF0000);
+                this.font,
+                Component.literal(I18n.get(LoginMusic.MODID + ".gui.download.fail") + audioErrorMessage),
+                centerX, barY + 5, 0xFF0000);
     }
     private void renderLyricError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
-                this.font, Component.translatable(LoginMusic.MODID + ".gui.download.fail") + errorMessage,
+                this.font,
+                Component.literal(I18n.get(LoginMusic.MODID + ".gui.download.fail") + lyricErrorMessage),
                 centerX, barY + barHeight + 10, 0xFF0000);
     }
 
@@ -160,20 +165,21 @@ public class DownloadScreen extends Screen {
 
     public void setLyricCompleted() { this.lyricStatus = Status.COMPLETED; }
 
-    public void setError(String Message) {
+    public void setAudioError(String message) {
         this.audioStatus = Status.ERROR;
-        this.errorMessage = Message;
+        this.audioErrorMessage = message;
+    }
+
+    public void setLyricError(String message) {
+        this.lyricStatus = Status.ERROR;
+        this.lyricErrorMessage = message;
     }
 
     // 打开此界面时游戏不暂停
     @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
+    public boolean isPauseScreen() { return false; }
 
     // 是否允许ESC关闭
     @Override
-    public boolean shouldCloseOnEsc() {
-        return true;
-    }
+    public boolean shouldCloseOnEsc() { return true; }
 }
