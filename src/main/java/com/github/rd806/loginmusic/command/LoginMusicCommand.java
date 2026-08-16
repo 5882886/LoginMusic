@@ -79,23 +79,29 @@ public class LoginMusicCommand {
     // 展示列表
     private static int showList(CommandContext<CommandSourceStack> context) {
         try {
+            // 显示音乐主键
+            SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
+            String keyName = "";
+            switch (key) {
+                case UUID -> keyName = "UUID";
+                case NAME -> keyName = "Name";
+                case RANDOM -> keyName = "Random";
+            }
+            Component message = Component.translatable(LoginMusic.MODID + ".command.list.key", keyName);
+            context.getSource().sendSuccess(() -> message, false);
+            // 默认音乐
+            MusicEntry defaultMusic = MusicConfig.getDefaultMusic();
+            context.getSource().sendSuccess(
+                    () -> Component.literal("§a▍ §7Default: §r" + defaultMusic.getMusicName()),
+                    false);
+            // 音乐列表
             Map<String, MusicEntry> tempMap = MusicConfig.getMusicEntryMap();
             if (tempMap.isEmpty()) {
                 context.getSource().sendFailure(Component.translatable(LoginMusic.MODID + ".command.list.empty"));
             } else {
-                // 显示音乐主键
-                SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
-                String keyName = "";
-                switch (key) {
-                    case UUID -> keyName = "UUID";
-                    case NAME -> keyName = "Name";
-                    case RANDOM -> keyName = "Random";
-                }
-                Component message = Component.translatable(LoginMusic.MODID + ".command.list.key", keyName);
-                context.getSource().sendSuccess(() -> message, false);
                 // 显示音乐配置信息
                 context.getSource().sendSuccess(
-                        () -> Component.translatable(LoginMusic.MODID + ".command.list.success", tempMap.size()),
+                        () -> Component.translatable(LoginMusic.MODID + ".command.list.success", String.valueOf(tempMap.size())),
                         false);
                 for (Map.Entry<String, MusicEntry> entry : tempMap.entrySet()) {
                     String musicName = entry.getValue().getMusicName();

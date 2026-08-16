@@ -28,7 +28,7 @@ public class DownloadMethod {
     private static final Minecraft mc = Minecraft.getInstance();
     private static DownloadScreen downloadScreen;
 
-    private static volatile PreparedAudio preparedAudio;
+    private static volatile PreparedAudio audio;
     private static volatile String lyric;
 
     // 音频加载线程
@@ -51,22 +51,18 @@ public class DownloadMethod {
     public static void startDownload(MusicEntry music, DownloadScreen screen) {
         downloadScreen = screen;
         // 创建两个 CompletableFuture 来跟踪下载任务
-        audioFuture = CompletableFuture.runAsync(() -> preparedAudio = downloadMusic(music, (downloaded, total, progress) -> {
+        audioFuture = CompletableFuture.runAsync(() -> audio = downloadMusic(music, (downloaded, total, progress) -> {
             Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress.music",
                     String.format("%.1f", downloaded / 1024.0 / 1024.0),
                     String.format("%.1f", total / 1024.0 / 1024.0));
-            if (screen != null) {
-                mc.execute(() -> screen.updateAudioProgress(progress, status));
-            }
+            mc.execute(() -> screen.updateAudioProgress(progress, status));
         }), AUDIO_LOADER);  // 使用 AUDIO_LOADER 作为执行器
 
-        lyricFuture = CompletableFuture.runAsync(() -> lyric = downloadLyrics(music, (downloaded, total, progress) -> {
+        lyricFuture = CompletableFuture.runAsync(() -> lyric = downloadLyric(music, (downloaded, total, progress) -> {
             Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress.lyric",
                     String.format("%.1f", downloaded / 1024.0 / 1024.0),
                     String.format("%.1f", total / 1024.0 / 1024.0));
-            if (screen != null) {
-                mc.execute(() -> screen.updateLyricProgress(progress, status));
-            }
+            mc.execute(() -> screen.updateLyricProgress(progress, status));
         }), LYRIC_LOADER);
 
         // 等待两个任务都完成
@@ -75,10 +71,11 @@ public class DownloadMethod {
                     // 确保在 Minecraft 主线程中执行
                     mc.execute(() -> {
                         // 检查是否都完成了
-                        if (preparedAudio != null) {
-                            SimpleMusicPlayer.playMusic(music, preparedAudio, lyric);
+                        if (audio != null) {
+                            SimpleMusicPlayer.playMusic(music, audio, lyric);
                         } else {
                             LoginMusic.LOGGER.error("Could not load music or lyrics!");
+                            MusicInfo.stopMusicInfo();
                         }
                     });
                 })
@@ -193,7 +190,7 @@ public class DownloadMethod {
     }
 
     // 歌词下载方法
-    private static String downloadLyrics(MusicEntry music, DownloadCallback callback) {
+    private static String downloadLyric(MusicEntry music, DownloadCallback callback) {
         String name = music.getLyricName();
         String path = music.getLyricPath();
         try {

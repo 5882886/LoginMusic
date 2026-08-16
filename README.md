@@ -1,3 +1,5 @@
+# Login Music
+
 A simple Minecraft mod that can play music when players join in the world.
 
 > This mod uses AI to assist in development.
@@ -57,20 +59,27 @@ If you enter a server with this mod, the config file on the server has higher pr
 
 ```json
 {
+  "defaultMusic": {
+    "id": "Default",
+    "musicName": "Default.mp3",
+    "musicPath": "https://www.example.com/example.mp3",
+    "lyricName": "Default.lrc",
+    "lyricPath": "https://www.example.com/example.lrc"
+  },  
   "musics": [
     {
-      "id": "Default",
-      "musicName": "Default.mp3",
-      "musicPath": "https://www.example.com/example.mp3",
-      "lyricName": "Default.lrc",
-      "lyricPath": "https://www.example.com/example.lrc" 
-    }, 
-    {
       "id": "Steve",
-      "musicName": "login_music.mp3",
-      "musicPath": "https://www.example.com/login_music.mp3",
-      "lyricName": "login_music.lrc",
-      "lyricPath": "https://www.example.com/login_music.lrc"
+      "musicName": "login_music_1.mp3",
+      "musicPath": "https://www.example.com/login_music_1.mp3",
+      "lyricName": "login_music_1.lrc",
+      "lyricPath": "https://www.example.com/login_music_1.lrc"
+    },
+    {
+      "id": "Alex",
+      "musicName": "login_music_2.mp3",
+      "musicPath": "https://www.example.com/login_music_2.mp3",
+      "lyricName": "login_music_2.lrc",
+      "lyricPath": "https://www.example.com/login_music_2.lrc"
     }
   ]
 }
@@ -78,9 +87,10 @@ If you enter a server with this mod, the config file on the server has higher pr
 
 > The music will be downloaded if `InternetAccess` is set `true` (the default setting is `false`), otherwise, the music is played through network audio streams, which may cause a short pause when entering a world.
 
-For example, When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music.mp3` ) in the folder `data/login_music` first. Then try to download it from its related url if it has failed before.
+For example, When a player named Steve enters the world, the mod will try to find the music matched the name `Steve` (in this case it's `login_music_1.mp3` ) in the folder `data/login_music` first. Then try to download it from its related url if it has failed before.
 
-> Tips: If there is a file with the same name in the folder, it will skip the download even if the file does not match the URL.
+> [!Note]
+> If there is a file with the same name in the folder, it will skip the download even if the file does not match the URL.
 
 If more entries need to be added, please follow the JSON's rule.
 
