@@ -44,7 +44,7 @@
     "login_music.config.allow_others_music": "Play music from other players",
     "login_music.config.allow_others_music.tooltip": "If true, you will have to do music playing logic when other players join in the world",
     "login_music.config.music_id_type": "Keywords for music selection",
-    "login_music.config.music_id_type.tooltip": "Available: NAME, UUID",
+    "login_music.config.music_id_type.tooltip": "Available: NAME, UUID, RANDOM",
     "login_music.config.cache_size": "Cache size",
     "login_music.config.cache_size.tooltip": "Define how many musics will be cached during games",
 
