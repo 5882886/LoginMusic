@@ -63,7 +63,7 @@
     "login_music.command.clear_cache": "Cache is cleared!",
     "login_music.command.list.empty": "The music config is empty!",
     "login_music.command.list.key": "The music key is %s",
-    "login_music.command.list.success": "The following is the music config:",
+    "login_music.command.list.success": "The following is the music config, total %s:",
     "login_music.command.show.fail": "Fail to show player's music config!",
     "login_music.command.show.success": "The player's music config:",
     "login_music.command.reload.success": "Reload successfully!",

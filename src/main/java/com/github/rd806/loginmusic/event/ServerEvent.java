@@ -51,7 +51,7 @@ public class ServerEvent {
             case RANDOM -> result = chooseRandomMusic();
         }
         if (result == null) {
-            result = MusicConfig.getMusic("Default");
+            result = MusicConfig.getDefaultMusic();
         }
         return result;
     }

@@ -1,3 +1,5 @@
+# Login Music
+
 A simple Minecraft mod that can play music when players join in the world.
 
 > This mod uses AI to assist in development.
@@ -57,20 +59,27 @@ If you enter a server with this mod, the config file on the server has higher pr
 
 ```json
 {
+  "defaultMusic": {
+    "id": "Default",
+    "musicName": "Default.mp3",
+    "musicPath": "https://www.example.com/example.mp3",
+    "lyricName": "Default.lrc",
+    "lyricPath": "https://www.example.com/example.lrc"
+  },  
   "musics": [
     {
-      "id": "Default",
-      "musicName": "Default.mp3",
-      "musicPath": "https://www.example.com/example.mp3",
-      "lyricName": "Default.lrc",
-      "lyricPath": "https://www.example.com/example.lrc" 
-    }, 
-    {
       "id": "Steve",
-      "musicName": "login_music.mp3",
-      "musicPath": "https://www.example.com/login_music.mp3",
-      "lyricName": "login_music.lrc",
-      "lyricPath": "https://www.example.com/login_music.lrc"
+      "musicName": "login_music_1.mp3",
+      "musicPath": "https://www.example.com/login_music_1.mp3",
+      "lyricName": "login_music_1.lrc",
+      "lyricPath": "https://www.example.com/login_music_1.lrc"
+    },
+    {
+      "id": "Alex",
+      "musicName": "login_music_2.mp3",
+      "musicPath": "https://www.example.com/login_music_2.mp3",
+      "lyricName": "login_music_2.lrc",
+      "lyricPath": "https://www.example.com/login_music_2.lrc"
     }
   ]
 }

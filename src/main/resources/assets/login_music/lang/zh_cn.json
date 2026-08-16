@@ -63,7 +63,7 @@
     "login_music.command.clear_cache": "已清理缓存！",
     "login_music.command.list.empty": "音乐配置为空！",
     "login_music.command.list.key": "选择音乐的主键为 %s",
-    "login_music.command.list.success": "音乐配置如下：",
+    "login_music.command.list.success": "音乐配置如下，共 %s 首：",
     "login_music.command.show.fail": "显示音乐配置失败",
     "login_music.command.show.success": "音乐配置如下：",
     "login_music.command.reload.success": "配置重载成功！",

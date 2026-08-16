@@ -115,9 +115,7 @@ public class ClothConfigGUI {
         subCategoryBuilder.add(
                 entryBuilder.startBooleanToggle(Component.translatable(LoginMusic.MODID + ".gui.config.delete"), false)
                         .setSaveConsumer(shouldDelete -> {
-                            if (shouldDelete) {
-                                MusicConfig.getMusicList().remove(index);
-                            }
+                            if (shouldDelete) { MusicConfig.getMusicList().remove(index); }
                         })
                         .build()
         );

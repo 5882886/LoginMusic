@@ -42,7 +42,7 @@ public class LoginMusicCommand {
         root.then(play.executes(LoginMusicCommand::playMusic));
         root.then(stop.executes(LoginMusicCommand::stopMusic));
         root.then(list.executes(LoginMusicCommand::showList));
-        root.then(cache.then(list.executes(LoginMusicCommand::listCache)));
+        root.then(cache.then(list.executes(LoginMusicCommand::showCache)));
         root.then(cache.then(clear.executes(LoginMusicCommand::clearCache)));
         root.then(reload.executes(LoginMusicCommand::reloadConfig));
         return root;
@@ -79,19 +79,25 @@ public class LoginMusicCommand {
     // 展示列表
     private static int showList(CommandContext<CommandSourceStack> context) {
         try {
+            // 显示音乐主键
+            SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
+            context.getSource().sendSuccess(
+                    () -> Component.translatable(LoginMusic.MODID + ".command.list.key", key),
+                    false
+            );
+            // 默认音乐
+            MusicEntry defaultMusic = MusicConfig.getDefaultMusic();
+            context.getSource().sendSuccess(
+                    () -> Component.literal("§a▍ §7Default: §r" + defaultMusic.getMusicName()),
+                    false);
+            // 音乐列表
             Map<String, MusicEntry> tempMap = MusicConfig.getMusicEntryMap();
             if (tempMap.isEmpty()) {
                 context.getSource().sendFailure(Component.translatable(LoginMusic.MODID + ".command.list.empty"));
             } else {
-                // 显示音乐主键
-                SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
-                context.getSource().sendSuccess(
-                        () -> Component.translatable(LoginMusic.MODID + ".command.list.key", key),
-                        false
-                );
                 // 显示音乐配置信息
                 context.getSource().sendSuccess(
-                        () -> Component.translatable(LoginMusic.MODID + ".command.list.success", tempMap.size()),
+                        () -> Component.translatable(LoginMusic.MODID + ".command.list.success", String.valueOf(tempMap.size())),
                         false);
                 for (Map.Entry<String, MusicEntry> entry : tempMap.entrySet()) {
                     String musicName = entry.getValue().getMusicName();
@@ -107,7 +113,7 @@ public class LoginMusicCommand {
     }
 
     // 显示缓存
-    private static int listCache(CommandContext<CommandSourceStack> context) {
+    private static int showCache(CommandContext<CommandSourceStack> context) {
         try {
             ServerPlayer serverPlayer = context.getSource().getPlayer();
             if (serverPlayer != null) {

@@ -21,10 +21,11 @@ public class MusicConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG = LoginMusic.MODID + "-music.json";
     private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve(CONFIG);
-    // 播放配置Map（跟随服务端）
+    // 播放配置Map
     private static final Map<String, MusicEntry> MUSIC_ENTRY_MAP = new ConcurrentHashMap<>();
-    // 本地文件列表（跟随客户端）
+    // 文件列表
     private static List<MusicEntry> MUSIC_ENTRY_LIST = new ArrayList<>();
+    private static MusicEntry DEFAULT_MUSIC = new MusicEntry();
 
     // 从配置文件加载音乐
     public static void loadFromConfig() {
@@ -36,9 +37,11 @@ public class MusicConfig {
             }
             // 读取json文件
             try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
-                var json =  GSON.fromJson(reader, JsonWrapper.class);
+                var json = GSON.fromJson(reader, JsonWrapper.class);
                 if (json != null && json.musics != null) {
+                    DEFAULT_MUSIC = json.defaultMusic;
                     MUSIC_ENTRY_LIST = json.musics;
+                    // 构建 Map
                     MUSIC_ENTRY_MAP.clear();
                     for (MusicEntry music : json.musics) {
                         MUSIC_ENTRY_MAP.put(music.getId(), music);
@@ -55,24 +58,16 @@ public class MusicConfig {
     }
 
     // 根据id获取音乐
-    public static MusicEntry getMusic(String id) {
-        return MUSIC_ENTRY_MAP.get(id);
-    }
+    public static MusicEntry getMusic(String id) { return MUSIC_ENTRY_MAP.get(id); }
+    public static MusicEntry getDefaultMusic() { return DEFAULT_MUSIC; }
 
     // 创建默认配置文件
     private static void createDefaultConfig() {
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             String defaultConfig = """
                     {
-                      "musics": [
-                        {
-                          "id": "Default",
-                          "musicName": "Default.mp3",
-                          "musicPath": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                          "lyricName": "example.lrc",
-                          "lyricPath": "Default.lrc"
-                        }
-                      ]
+                      "defaultMusic": {},
+                      "musics": []
                     }
                     """;
             writer.write(defaultConfig);
@@ -93,6 +88,7 @@ public class MusicConfig {
             Files.createDirectories(CONFIG_PATH.getParent());
             try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
                 JsonWrapper wrapper = new JsonWrapper();
+                wrapper.defaultMusic = DEFAULT_MUSIC;
                 wrapper.musics = MUSIC_ENTRY_LIST;
                 GSON.toJson(wrapper, writer);
             }
@@ -105,6 +101,7 @@ public class MusicConfig {
 
     // 辅助包装类，匹配 JSON 格式
     private static class JsonWrapper {
+        MusicEntry defaultMusic;
         List<MusicEntry> musics;
     }
 }
