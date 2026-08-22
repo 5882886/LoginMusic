@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 public class LoginMusic {
 
     // MODID
-    public static final String MODID = "login_music";
+    public static final String MODID = "loginmusic";
     // 日志文件
     public static final Logger LOGGER = LogUtils.getLogger();
     // 配置文件目录

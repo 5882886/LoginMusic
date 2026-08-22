@@ -1,6 +1,5 @@
 package com.github.rd806.loginmusic.config;
 
-import com.github.rd806.loginmusic.LoginMusic;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 // 客户端配置文件
@@ -32,43 +31,43 @@ public class ClientConfig {
     public static ModConfigSpec.ConfigValue<Integer> CACHE_SIZE;
 
     public static ModConfigSpec init() {
-        BUILDER.push("Loading").translation(LoginMusic.MODID + ".config.title.loading");
+        BUILDER.push("Loading").translation("loginmusic.config.title.loading");
         SHOW_LOADING = BUILDER
                 .comment("Whether to show loading screen when preparing music")
-                .translation(LoginMusic.MODID + ".config.show_loading")
+                .translation("loginmusic.config.show_loading")
                 .define("show_loading", true);
         BUILDER.pop();
 
-        BUILDER.push("Music").translation(LoginMusic.MODID + ".config.title.music");
+        BUILDER.push("Music").translation("loginmusic.config.title.music");
         MUSIC_PLAY_RANGE = BUILDER
                 .comment("Range of music play (a non negative integer)")
-                .translation(LoginMusic.MODID + ".config.music_play_range")
+                .translation("loginmusic.config.music_play_range")
                 .defineInRange("range", 3, 0, 100);
         ALLOW_DOWNLOAD = BUILDER
                 .comment("Whether to allow downloading music from the internet")
-                .translation(LoginMusic.MODID + ".config.allow_download")
+                .translation("loginmusic.config.allow_download")
                 .define("InternetAccess", false);
         ALLOW_OTHERS_MUSIC = BUILDER
                 .comment("Whether to play musics from other players")
-                .translation(LoginMusic.MODID + ".config.allow_others_music")
+                .translation("loginmusic.config.allow_others_music")
                 .define("AllowOthersMusic", false);
         CACHE_SIZE = BUILDER
                 .comment("The maximum number of cache entries")
                 .defineInRange("CacheSize", 5, 0, 10);
         BUILDER.pop();
 
-        BUILDER.push("Lyric").translation(LoginMusic.MODID + ".config.title.lyric");
+        BUILDER.push("Lyric").translation("loginmusic.config.title.lyric");
         ALLOW_LYRICS = BUILDER
                 .comment("Whether to show lyrics while playing music")
-                .translation(LoginMusic.MODID + ".config.allow_lyrics")
+                .translation("loginmusic.config.allow_lyrics")
                 .define("ShowLyrics", true);
         LYRIC_POS = BUILDER
                 .comment("Defines the position of the lyrics")
-                .translation(LoginMusic.MODID + ".config.lyrics_pos")
+                .translation("loginmusic.config.lyrics_pos")
                 .defineEnum("LyricsPosition", Position.DOWN);
         LYRIC_COLOR = BUILDER
                 .comment("Defines the color of the lyrics you want to use")
-                .translation(LoginMusic.MODID + ".config.lyrics_color")
+                .translation("loginmusic.config.lyrics_color")
                 .define("LyricsColor", 0xFFFFFF);
         BUILDER.pop();
         return BUILDER.build();

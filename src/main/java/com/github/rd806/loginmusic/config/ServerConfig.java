@@ -1,6 +1,5 @@
 package com.github.rd806.loginmusic.config;
 
-import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.SelectionKey;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -15,7 +14,7 @@ public class ServerConfig {
         BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
                 .comment("Keywords for music selection (name/uuid)")
-                .translation(LoginMusic.MODID + ".config.music_id_type")
+                .translation("loginmusic.config.music_id_type")
                 .defineEnum("type", SelectionKey.NAME);
         BUILDER.pop();
 

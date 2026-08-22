@@ -87,7 +87,7 @@ public class LoginMusicCommand {
                 case NAME -> keyName = "Name";
                 case RANDOM -> keyName = "Random";
             }
-            Component message = Component.translatable(LoginMusic.MODID + ".command.list.key", keyName);
+            Component message = Component.translatable("loginmusic.command.list.key", keyName);
             context.getSource().sendSuccess(() -> message, false);
             // 默认音乐
             MusicEntry defaultMusic = MusicConfig.getDefaultMusic();
@@ -97,11 +97,11 @@ public class LoginMusicCommand {
             // 音乐列表
             Map<String, MusicEntry> tempMap = MusicConfig.getMusicEntryMap();
             if (tempMap.isEmpty()) {
-                context.getSource().sendFailure(Component.translatable(LoginMusic.MODID + ".command.list.empty"));
+                context.getSource().sendFailure(Component.translatable("loginmusic.command.list.empty"));
             } else {
                 // 显示音乐配置信息
                 context.getSource().sendSuccess(
-                        () -> Component.translatable(LoginMusic.MODID + ".command.list.success", String.valueOf(tempMap.size())),
+                        () -> Component.translatable("loginmusic.command.list.success", String.valueOf(tempMap.size())),
                         false);
                 for (Map.Entry<String, MusicEntry> entry : tempMap.entrySet()) {
                     String musicName = entry.getValue().getMusicName();
@@ -147,7 +147,7 @@ public class LoginMusicCommand {
         try {
             MusicConfig.loadFromConfig();
             context.getSource().sendSuccess(
-                    () -> Component.translatable(LoginMusic.MODID + ".command.reload.success"),
+                    () -> Component.translatable("loginmusic.command.reload.success"),
                     true);
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Fail to reload LoginMusic config: {}", e.getMessage());

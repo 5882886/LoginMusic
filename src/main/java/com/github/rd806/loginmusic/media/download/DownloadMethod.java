@@ -52,14 +52,14 @@ public class DownloadMethod {
         downloadScreen = screen;
         // 创建两个 CompletableFuture 来跟踪下载任务
         audioFuture = CompletableFuture.runAsync(() -> audio = downloadMusic(music, (downloaded, total, progress) -> {
-            Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress.music",
+            Component status = Component.translatable("loginmusic.gui.download.progress.music",
                     String.format("%.1f", downloaded / 1024.0 / 1024.0),
                     String.format("%.1f", total / 1024.0 / 1024.0));
             mc.execute(() -> screen.updateAudioProgress(progress, status));
         }), AUDIO_LOADER);  // 使用 AUDIO_LOADER 作为执行器
 
         lyricFuture = CompletableFuture.runAsync(() -> lyric = downloadLyric(music, (downloaded, total, progress) -> {
-            Component status = Component.translatable(LoginMusic.MODID + ".gui.download.progress.lyric",
+            Component status = Component.translatable("loginmusic.gui.download.progress.lyric",
                     String.format("%.1f", downloaded / 1024.0 / 1024.0),
                     String.format("%.1f", total / 1024.0 / 1024.0));
             mc.execute(() -> screen.updateLyricProgress(progress, status));
