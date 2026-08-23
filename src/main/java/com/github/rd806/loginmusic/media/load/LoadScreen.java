@@ -1,4 +1,4 @@
-package com.github.rd806.loginmusic.media.download;
+package com.github.rd806.loginmusic.media.load;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 
-public class DownloadScreen extends Screen {
+public class LoadScreen extends Screen {
 
     public enum Status {
         DOWNLOAD,
@@ -29,16 +29,16 @@ public class DownloadScreen extends Screen {
     // 进度信息
     private volatile Status audioStatus;
     private volatile Status lyricStatus;
-    private volatile Component audioStatusMessage = Component.translatable("loginmusic.gui.download.start");
-    private volatile Component lyricStatusMessage = Component.translatable("loginmusic.gui.download.start");
+    private volatile Component audioStatusMessage = Component.translatable("gui.loginmusic.load.start");
+    private volatile Component lyricStatusMessage = Component.translatable("gui.loginmusic.load.start");
     private volatile float audioProgress;
     private volatile float lyricProgress;
 
     private volatile String audioErrorMessage = "";
     private volatile String lyricErrorMessage = "";
 
-    public DownloadScreen(MusicEntry music, Runnable onComplete) {
-        super(Component.translatable("loginmusic.gui.download.title"));
+    public LoadScreen(MusicEntry music, Runnable onComplete) {
+        super(Component.translatable("gui.loginmusic.load.title"));
         this.music = music;
         this.musicName = LoginMusic.removeExtension(music.getMusicName());
         this.audioStatus = Status.DOWNLOAD;
@@ -72,7 +72,7 @@ public class DownloadScreen extends Screen {
         graphics.pose().popPose();
         // 底部提示
         graphics.drawCenteredString(
-                this.font, Component.translatable("loginmusic.gui.download.tooltip"),
+                this.font, Component.translatable("gui.loginmusic.load.tooltip"),
                 centerX, this.height - 30,
                 0x808080);
         // 设置渲染类型
@@ -126,13 +126,13 @@ public class DownloadScreen extends Screen {
     private void renderAudioCompleted(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
                 this.font,
-                Component.translatable("loginmusic.gui.download.complete", musicName),
+                Component.translatable("gui.loginmusic.load.complete", musicName),
                 centerX, barY + 5, 0x00FF00);
     }
     private void renderLyricCompleted(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
                 this.font,
-                Component.translatable("loginmusic.gui.download.complete", music.getLyricName()),
+                Component.translatable("gui.loginmusic.load.complete", music.getLyricName()),
                 centerX, barY + barHeight + 10, 0x00FF00);
     }
 
@@ -140,13 +140,13 @@ public class DownloadScreen extends Screen {
     private void renderAudioError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
                 this.font,
-                Component.literal(I18n.get("loginmusic.gui.download.fail") + audioErrorMessage),
+                Component.literal(I18n.get("gui.loginmusic.load.fail") + audioErrorMessage),
                 centerX, barY + 5, 0xFF0000);
     }
     private void renderLyricError(GuiGraphics graphics, int centerX) {
         graphics.drawCenteredString(
                 this.font,
-                Component.literal(I18n.get("loginmusic.gui.download.fail") + lyricErrorMessage),
+                Component.literal(I18n.get("gui.loginmusic.load.fail") + lyricErrorMessage),
                 centerX, barY + barHeight + 10, 0xFF0000);
     }
 

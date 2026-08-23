@@ -1,6 +1,5 @@
 package com.github.rd806.loginmusic.media.music;
 
-import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.MusicLRUCache;
 import com.github.rd806.loginmusic.media.PreparedAudio;
 import net.minecraft.ChatFormatting;
@@ -36,11 +35,11 @@ public class MusicCache {
         // 显示缓存的音乐
         if (musicKeys.isEmpty()) {
             player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".command.music_cache.empty").withStyle(ChatFormatting.GRAY),
+                    Component.translatable("message.loginmusic.command.cache.music.empty").withStyle(ChatFormatting.GRAY),
                     false);
         } else {
             player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".command.music_cache.info").withStyle(ChatFormatting.GREEN),
+                    Component.translatable("message.loginmusic.command.cache.music.info").withStyle(ChatFormatting.GREEN),
                     false);
             for (String key : musicKeys) {
                 player.displayClientMessage(Component.literal("§a▍ §7" + key), false);
@@ -49,11 +48,11 @@ public class MusicCache {
         // 显示缓存的歌词
         if (lyricKeys.isEmpty()) {
             player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".command.lyric_cache.empty").withStyle(ChatFormatting.GRAY),
+                    Component.translatable("message.loginmusic.command.cache.lyric.empty").withStyle(ChatFormatting.GRAY),
                     false);
         } else {
             player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".command.lyric_cache.info").withStyle(ChatFormatting.GREEN),
+                    Component.translatable("message.loginmusic.command.cache.lyric.info").withStyle(ChatFormatting.GREEN),
                     false);
             for (String key : lyricKeys) {
                 player.displayClientMessage(Component.literal("§a▍ §7" + key), false);
@@ -69,7 +68,7 @@ public class MusicCache {
         Player player = Minecraft.getInstance().player;
         if (player != null) {
             player.displayClientMessage(
-                    Component.translatable(LoginMusic.MODID + ".command.clear_cache").withStyle(ChatFormatting.GREEN),
+                    Component.translatable("message.loginmusic.command.cache.clear").withStyle(ChatFormatting.GREEN),
                     false);
         }
     }

@@ -4,6 +4,7 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.event.ClientEvent;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -21,11 +22,14 @@ public class MusicEntryPacket implements CustomPacketPayload {
 
     // 音乐播放信息
     private final MusicEntry music;
+    private final BlockPos pos;
     private final SelectionKey key;
 
+
     // 构造器：播放音乐
-    public MusicEntryPacket(MusicEntry music, SelectionKey key) {
+    public MusicEntryPacket(MusicEntry music, BlockPos pos, SelectionKey key) {
         this.music = music;
+        this.pos = pos;
         this.key = key;
     }
 
@@ -39,6 +43,8 @@ public class MusicEntryPacket implements CustomPacketPayload {
             buf.writeUtf(packet.music.getMusicPath());
             buf.writeUtf(packet.music.getLyricName());
             buf.writeUtf(packet.music.getLyricPath());
+            // 写入位置
+            buf.writeBlockPos(packet.pos);
             buf.writeEnum(packet.key);
         }
 
@@ -50,9 +56,10 @@ public class MusicEntryPacket implements CustomPacketPayload {
             String musicPath = buf.readUtf();
             String lyricName = buf.readUtf();
             String lyricPath = buf.readUtf();
+            BlockPos pos = buf.readBlockPos();
             SelectionKey key = buf.readEnum(SelectionKey.class);
             MusicEntry music = new MusicEntry(musicId, musicName, musicPath, lyricName, lyricPath);
-            return new MusicEntryPacket(music, key);
+            return new MusicEntryPacket(music, pos, key);
         }
     };
 
@@ -66,7 +73,7 @@ public class MusicEntryPacket implements CustomPacketPayload {
             LoginMusic.LOGGER.info("Prepare music: {}", packet.music.getMusicName());
             // 只在客户端执行
             if (Dist.CLIENT.isClient()) {
-                ClientEvent.playLoginMusic(packet.music, packet.key);
+                ClientEvent.playLoginMusic(packet.music, packet.pos, packet.key);
             }
         });
     }

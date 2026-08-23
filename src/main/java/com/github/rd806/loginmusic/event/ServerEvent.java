@@ -6,6 +6,7 @@ import com.github.rd806.loginmusic.config.ServerConfig;
 import com.github.rd806.loginmusic.media.music.MusicConfig;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
 import com.github.rd806.loginmusic.network.NetworkConfig;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -30,13 +31,18 @@ public class ServerEvent {
                 LoginMusic.LOGGER.error("Can't find correct music!");
                 return;
             }
-            // 将音乐发送给全体玩家
-            MinecraftServer server = serverPlayer.getServer();
-            if (server != null) {
-                PlayerList playerList = server.getPlayerList();
-                for (ServerPlayer player : playerList.getPlayers()) {
-                    NetworkConfig.sendMusicToPlayer(player, entry, key);
-                }
+            playMusic(entry, serverPlayer, key);
+        }
+    }
+
+    public static void playMusic(MusicEntry entry, ServerPlayer player, SelectionKey key) {
+        MinecraftServer server = player.getServer();
+        // 将音乐发送给全体玩家
+        if (server != null) {
+            PlayerList playerList = server.getPlayerList();
+            for (ServerPlayer target : playerList.getPlayers()) {
+                BlockPos pos = target.blockPosition();
+                NetworkConfig.sendMusicToPlayer(target, pos, entry, key);
             }
         }
     }

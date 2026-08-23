@@ -16,7 +16,6 @@ public class LyricPlayer {
     private static List<LyricEntry> currentLyrics;
     // 当前播放时间
     private static long startTime;
-    private static long currentPlayTime;
     private static LyricEntry lastLyricEntry = null;
     private static boolean isPlaying = false;
     private static final AtomicReference<Long> currentPosition = new AtomicReference<>(0L);
@@ -42,7 +41,7 @@ public class LyricPlayer {
             public void run() {
                 if (!isPlaying) { return; }
                 // 获取当前应处于的播放位置
-                currentPlayTime = System.currentTimeMillis() - startTime;
+                long currentPlayTime = System.currentTimeMillis() - startTime;
                 currentPosition.set(currentPlayTime);
                 LyricEntry currentLyric = LyricParser.getCurrentLyric(currentLyrics, currentPlayTime);
                 if (currentLyric != null && (lastLyricEntry == null || !lastLyricEntry.getText().equals(currentLyric.getText()))) {

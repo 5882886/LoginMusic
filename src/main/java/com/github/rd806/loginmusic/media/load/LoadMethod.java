@@ -1,7 +1,6 @@
-package com.github.rd806.loginmusic.media.download;
+package com.github.rd806.loginmusic.media.load;
 
 import com.github.rd806.loginmusic.LoginMusic;
-import com.github.rd806.loginmusic.config.ClientConfig;
 import com.github.rd806.loginmusic.media.PreparedAudio;
 import com.github.rd806.loginmusic.media.SimpleMusicPlayer;
 import com.github.rd806.loginmusic.media.layer.MusicInfo;
@@ -23,10 +22,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class DownloadMethod {
+public class LoadMethod {
 
     private static final Minecraft mc = Minecraft.getInstance();
-    private static DownloadScreen downloadScreen;
+    private static LoadScreen loadScreen;
 
     private static volatile PreparedAudio audio;
     private static volatile String lyric;
@@ -48,18 +47,18 @@ public class DownloadMethod {
     private static CompletableFuture<Void> lyricFuture;
 
     // 开始下载
-    public static void startDownload(MusicEntry music, DownloadScreen screen) {
-        downloadScreen = screen;
+    public static void startDownload(MusicEntry music, LoadScreen screen) {
+        loadScreen = screen;
         // 创建两个 CompletableFuture 来跟踪下载任务
         audioFuture = CompletableFuture.runAsync(() -> audio = downloadMusic(music, (downloaded, total, progress) -> {
-            Component status = Component.translatable("loginmusic.gui.download.progress.music",
+            Component status = Component.translatable("gui.loginmusic.load.progress.music",
                     String.format("%.1f", downloaded / 1024.0 / 1024.0),
                     String.format("%.1f", total / 1024.0 / 1024.0));
             mc.execute(() -> screen.updateAudioProgress(progress, status));
         }), AUDIO_LOADER);  // 使用 AUDIO_LOADER 作为执行器
 
         lyricFuture = CompletableFuture.runAsync(() -> lyric = downloadLyric(music, (downloaded, total, progress) -> {
-            Component status = Component.translatable("loginmusic.gui.download.progress.lyric",
+            Component status = Component.translatable("gui.loginmusic.load.progress.lyric",
                     String.format("%.1f", downloaded / 1024.0 / 1024.0),
                     String.format("%.1f", total / 1024.0 / 1024.0));
             mc.execute(() -> screen.updateLyricProgress(progress, status));
@@ -115,7 +114,7 @@ public class DownloadMethod {
             PreparedAudio audio = MusicCache.getMusic(path);
 
             if (audio != null) {
-                mc.execute(downloadScreen::setAudioCompleted);
+                mc.execute(loadScreen::setAudioCompleted);
                 return audio;
             }
 
@@ -129,7 +128,7 @@ public class DownloadMethod {
                 ByteArrayInputStream bais = new ByteArrayInputStream(data);
                 audio = prepareAudio(bais);
                 MusicCache.putMusic(path, audio);
-                mc.execute(downloadScreen::setAudioCompleted);
+                mc.execute(loadScreen::setAudioCompleted);
 
                 return audio;
             }
@@ -140,7 +139,7 @@ public class DownloadMethod {
             // 获取文件大小
             if (connection == null) {
                 LoginMusic.LOGGER.error("Audio network connection error!");
-                mc.execute(() -> downloadScreen.setAudioError("Downloading error!"));
+                mc.execute(() -> loadScreen.setAudioError("Downloading error!"));
                 return null;
             }
             long totalBytes = connection.getContentLengthLong();
@@ -168,23 +167,20 @@ public class DownloadMethod {
             // 检查文件类型
             if (!TypeDetector.isAudioMagic(data, data.length)) {
                 LoginMusic.LOGGER.warn("Not an audio file!");
-                mc.execute(() -> downloadScreen.setAudioError("Not an audio file!"));
+                mc.execute(() -> loadScreen.setAudioError("Not an audio file!"));
                 return null;
             }
 
-            if (ClientConfig.ALLOW_DOWNLOAD.get()) {
-                Files.write(cacheFile, data);
-            }
             ByteArrayInputStream bais = new ByteArrayInputStream(data);
             LoginMusic.LOGGER.info("Downloading music completed, total {} bytes", downloadedBytes);
             audio = prepareAudio(bais);
             MusicCache.putMusic(path, audio);
-            mc.execute(downloadScreen::setAudioCompleted);
+            mc.execute(loadScreen::setAudioCompleted);
 
             return audio;
         } catch (Exception e) {
             LoginMusic.LOGGER.warn("Downloading music error!", e);
-            mc.execute(() -> downloadScreen.setAudioError("Downloading error!"));
+            mc.execute(() -> loadScreen.setAudioError("Downloading error!"));
             return null;
         }
     }
@@ -196,7 +192,7 @@ public class DownloadMethod {
         try {
             String lyric = MusicCache.getLyric(path);
             if (lyric != null) {
-                mc.execute(downloadScreen::setLyricCompleted);
+                mc.execute(loadScreen::setLyricCompleted);
                 return lyric;
             }
 
@@ -207,11 +203,11 @@ public class DownloadMethod {
                     LoginMusic.LOGGER.info("Lyric file loaded");
                     lyric = Files.readString(cacheFile);
                     MusicCache.putLyric(path, lyric);
-                    mc.execute(downloadScreen::setLyricCompleted);
+                    mc.execute(loadScreen::setLyricCompleted);
                     return lyric;
                 } catch (Exception e) {
                     LoginMusic.LOGGER.error("Error while loading Lyric from {}", path, e);
-                    mc.execute(() -> downloadScreen.setLyricError("Downloading error!"));
+                    mc.execute(() -> loadScreen.setLyricError("Downloading error!"));
                     return null;
                 }
             }
@@ -221,7 +217,7 @@ public class DownloadMethod {
             URLConnection connection = openConnection(path);
             if (connection == null) {
                 LoginMusic.LOGGER.error("Lyric network connection error!");
-                mc.execute(() -> downloadScreen.setLyricError("Downloading error!"));
+                mc.execute(() -> loadScreen.setLyricError("Downloading error!"));
                 return null;
             }
 
@@ -248,18 +244,14 @@ public class DownloadMethod {
             String charset = TypeDetector.detectCharset(data);
             // 转换为字符串
             lyric = new String(data, charset);
-            // 保存到文件
-            if (ClientConfig.ALLOW_DOWNLOAD.get()) {
-                Files.writeString(cacheFile, lyric);
-            }
             MusicCache.putLyric(path, lyric);
             LoginMusic.LOGGER.info("Downloading lyric completed, total {} bytes", downloadedBytes);
-            mc.execute(downloadScreen::setLyricCompleted);
+            mc.execute(loadScreen::setLyricCompleted);
 
             return lyric;
         } catch (Exception e) {
             LoginMusic.LOGGER.warn("Downloading lyric error!", e);
-            mc.execute(() -> downloadScreen.setLyricError("Downloading error!"));
+            mc.execute(() -> loadScreen.setLyricError("Downloading error!"));
             return null;
         }
     }

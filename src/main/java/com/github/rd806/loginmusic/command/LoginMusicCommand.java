@@ -26,6 +26,7 @@ public class LoginMusicCommand {
     private static final String STOP = "stop";
     private static final String LIST = "list";
     private static final String CACHE = "cache";
+    private static final String SHOW = "show";
     private static final String CLEAR = "clear";
     private static final String RELOAD = "reload";
 
@@ -36,13 +37,14 @@ public class LoginMusicCommand {
         LiteralArgumentBuilder<CommandSourceStack> stop = Commands.literal(STOP);
         LiteralArgumentBuilder<CommandSourceStack> list = Commands.literal(LIST);
         LiteralArgumentBuilder<CommandSourceStack> cache = Commands.literal(CACHE);
+        LiteralArgumentBuilder<CommandSourceStack> show = Commands.literal(SHOW);
         LiteralArgumentBuilder<CommandSourceStack> clear = Commands.literal(CLEAR);
         LiteralArgumentBuilder<CommandSourceStack> reload = Commands.literal(RELOAD);
 
         root.then(play.executes(LoginMusicCommand::playMusic));
         root.then(stop.executes(LoginMusicCommand::stopMusic));
         root.then(list.executes(LoginMusicCommand::showList));
-        root.then(cache.then(list.executes(LoginMusicCommand::listCache)));
+        root.then(cache.then(show.executes(LoginMusicCommand::listCache)));
         root.then(cache.then(clear.executes(LoginMusicCommand::clearCache)));
         root.then(reload.executes(LoginMusicCommand::reloadConfig));
         return root;
@@ -55,7 +57,7 @@ public class LoginMusicCommand {
             if (serverPlayer != null) {
                 SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
                 MusicEntry music = ServerEvent.chooseMusic(serverPlayer, key);
-                NetworkConfig.sendMusicToPlayer(serverPlayer, music, key);
+                ServerEvent.playMusic(music, serverPlayer, key);
             }
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Fail to send music", e);
@@ -87,7 +89,7 @@ public class LoginMusicCommand {
                 case NAME -> keyName = "Name";
                 case RANDOM -> keyName = "Random";
             }
-            Component message = Component.translatable("loginmusic.command.list.key", keyName);
+            Component message = Component.translatable("message.loginmusic.command.list.key", keyName);
             context.getSource().sendSuccess(() -> message, false);
             // 默认音乐
             MusicEntry defaultMusic = MusicConfig.getDefaultMusic();
@@ -97,11 +99,11 @@ public class LoginMusicCommand {
             // 音乐列表
             Map<String, MusicEntry> tempMap = MusicConfig.getMusicEntryMap();
             if (tempMap.isEmpty()) {
-                context.getSource().sendFailure(Component.translatable("loginmusic.command.list.empty"));
+                context.getSource().sendFailure(Component.translatable("message.loginmusic.command.list.empty"));
             } else {
                 // 显示音乐配置信息
                 context.getSource().sendSuccess(
-                        () -> Component.translatable("loginmusic.command.list.success", String.valueOf(tempMap.size())),
+                        () -> Component.translatable("message.loginmusic.command.list.success", String.valueOf(tempMap.size())),
                         false);
                 for (Map.Entry<String, MusicEntry> entry : tempMap.entrySet()) {
                     String musicName = entry.getValue().getMusicName();
@@ -147,7 +149,7 @@ public class LoginMusicCommand {
         try {
             MusicConfig.loadFromConfig();
             context.getSource().sendSuccess(
-                    () -> Component.translatable("loginmusic.command.reload.success"),
+                    () -> Component.translatable("message.loginmusic.command.reload.success"),
                     true);
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Fail to reload LoginMusic config: {}", e.getMessage());
