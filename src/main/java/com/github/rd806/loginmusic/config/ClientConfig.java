@@ -22,8 +22,6 @@ public class ClientConfig {
     public static ForgeConfigSpec.BooleanValue SHOW_LOADING;
     // 允许音乐播放的范围
     public static ForgeConfigSpec.ConfigValue<Integer> MUSIC_PLAY_RANGE;
-    // 是否允许从Url下载音乐
-    public static ForgeConfigSpec.BooleanValue ALLOW_DOWNLOAD;
     // 是否允许展示歌词
     public static ForgeConfigSpec.BooleanValue ALLOW_LYRICS;
     // 歌词文本位置
@@ -36,43 +34,40 @@ public class ClientConfig {
     public static ForgeConfigSpec.ConfigValue<Integer> CACHE_SIZE;
 
     public static ForgeConfigSpec init() {
-        BUILDER.push("Loading").translation(LoginMusic.MODID + ".config.title.loading");
+        BUILDER.push("Loading").translation("config.loginmusic.loading.title");
         SHOW_LOADING = BUILDER
                 .comment("Whether to show loading screen when preparing music")
-                .translation(LoginMusic.MODID + ".config.show_loading")
+                .translation("config.loginmusic.loading.show")
                 .define("show_loading", true);
         BUILDER.pop();
 
-        BUILDER.push("Music").translation(LoginMusic.MODID + ".config.title.music");
+        BUILDER.push("Music").translation("config.loginmusic.music.title");
         MUSIC_PLAY_RANGE = BUILDER
                 .comment("Range of music play (a non negative integer)")
-                .translation(LoginMusic.MODID + ".config.music_play_range")
+                .translation("config.loginmusic.music.play_range")
                 .defineInRange("range", 3, 0, 100);
-        ALLOW_DOWNLOAD = BUILDER
-                .comment("Whether to allow downloading music from the internet")
-                .translation(LoginMusic.MODID + ".config.allow_download")
-                .define("InternetAccess", false);
         ALLOW_OTHERS_MUSIC = BUILDER
                 .comment("Whether to play musics from other players")
-                .translation(LoginMusic.MODID + ".config.allow_others_music")
+                .translation("config.loginmusic.music.allow_others")
                 .define("AllowOthersMusic", false);
         CACHE_SIZE = BUILDER
                 .comment("The maximum number of cache entries")
+                .translation("config.loginmusic.music.cache_size")
                 .defineInRange("CacheSize", 5, 0, 10);
         BUILDER.pop();
 
-        BUILDER.push("Lyric").translation(LoginMusic.MODID + ".config.title.lyric");
+        BUILDER.push("Lyric").translation("config.loginmusic.lyric.title");
         ALLOW_LYRICS = BUILDER
                 .comment("Whether to show lyrics while playing music")
-                .translation(LoginMusic.MODID + ".config.allow_lyrics")
+                .translation("config.loginmusic.lyric.allow")
                 .define("ShowLyrics", true);
         LYRIC_POS = BUILDER
                 .comment("Defines the position of the lyrics")
-                .translation(LoginMusic.MODID + ".config.lyrics_pos")
+                .translation("config.loginmusic.lyric.pos")
                 .defineEnum("LyricsPosition", Position.DOWN);
         LYRIC_COLOR = BUILDER
                 .comment("Defines the color of the lyrics you want to use")
-                .translation(LoginMusic.MODID + ".config.lyrics_color")
+                .translation("config.loginmusic.lyric.color")
                 .define("LyricsColor", 0xFFFFFF);
         BUILDER.pop();
         return BUILDER.build();

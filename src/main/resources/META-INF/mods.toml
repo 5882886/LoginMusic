@@ -19,9 +19,9 @@ issueTrackerURL="https://github.com/rd806/LoginMusic/issues" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
     # The modid of the mod
-    modId="login_music" #mandatory
+    modId="loginmusic" #mandatory
     # The version number of the mod
-    version="1.2.7" #mandatory
+    version="2.0.0" #mandatory
     # A display name for the mod
     displayName="Login Music" #mandatory
     # A URL to query for updates for this mod. See the JSON update specification https://docs.minecraftforge.net/en/latest/misc/updatechecker/
@@ -29,7 +29,7 @@ issueTrackerURL="https://github.com/rd806/LoginMusic/issues" #optional
     # A URL for the "homepage" for this mod, displayed in the mod UI
     displayURL="https://github.com/rd806/LoginMusic" #optional
     # A file name (in the root of the mod JAR) containing a logo for display
-    logoFile="login_music_icon.png" #optional
+    logoFile= "loginmusic_icon.png" #optional
     # A text field displayed in the mod UI
     #credits="" #optional
     # A text field displayed in the mod UI
@@ -46,7 +46,7 @@ issueTrackerURL="https://github.com/rd806/LoginMusic/issues" #optional
     description='''A simple mod that can play music when players join in the world'''
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies."login_music"]] #optional
+[[dependencies."loginmusic"]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -60,14 +60,14 @@ issueTrackerURL="https://github.com/rd806/LoginMusic/issues" #optional
     # Side this dependency is applied on - BOTH, CLIENT, or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies."login_music"]]
+[[dependencies."loginmusic"]]
     modId="minecraft"
     mandatory=true
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="[1.20.1,1.21)"
     ordering="NONE"
     side="BOTH"
-[[dependencies."login_music"]]
+[[dependencies."loginmusic"]]
     modId="cloth_config"
     mandatory=false
     versionRange="[11.1.136,)"
@@ -75,8 +75,8 @@ issueTrackerURL="https://github.com/rd806/LoginMusic/issues" #optional
     side="BOTH"
 
 # 配置界面的支持
-[modproperties."login_music"]
-    catalogueImageIcon="login_music_icon.png"
+[modproperties."loginmusic"]
+    catalogueImageIcon="loginmusic_icon.png"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't

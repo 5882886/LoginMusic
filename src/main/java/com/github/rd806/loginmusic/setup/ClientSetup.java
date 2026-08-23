@@ -2,7 +2,7 @@ package com.github.rd806.loginmusic.setup;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
-import com.github.rd806.loginmusic.config.ClothConfigGUI;
+import com.github.rd806.loginmusic.compat.cloth.ClothConfigGUI;
 import com.github.rd806.loginmusic.media.layer.LyricLayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;

@@ -20,7 +20,7 @@ public class MusicInfo {
     }
 
     private static String musicName;
-    private static Status status;
+    private static Status status = Status.STOPPED;
     private static float progress;
 
     private static final Minecraft mc = Minecraft.getInstance();
@@ -38,13 +38,13 @@ public class MusicInfo {
     }
 
     private static void renderPreparingInfo(GuiGraphics guiGraphics) {
-        Component text = Component.translatable(LoginMusic.MODID + ".gui.info.prepare",
+        Component text = Component.translatable("gui.loginmusic.info.prepare",
                 musicName, String.format("%.1f", progress * 100));
         guiGraphics.drawString(mc.font, text, 20, 20, 0xffffff, false);
     }
 
     private static void renderPlayingInfo(GuiGraphics guiGraphics) {
-        Component text = Component.translatable(LoginMusic.MODID + ".gui.info.play", musicName);
+        Component text = Component.translatable("gui.loginmusic.info.play", musicName);
         guiGraphics.drawString(mc.font, text, 20, 20, 0xffffff, false);
     }
 

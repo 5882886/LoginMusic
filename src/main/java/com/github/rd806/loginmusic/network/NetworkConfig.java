@@ -4,6 +4,7 @@ import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.SelectionKey;
 import com.github.rd806.loginmusic.command.CommandType;
 import com.github.rd806.loginmusic.media.music.MusicEntry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkRegistry;
@@ -40,7 +41,8 @@ public class NetworkConfig {
     // 发送音乐给特定玩家
     public static void sendMusicToPlayer(ServerPlayer player, MusicEntry music, SelectionKey key) {
         LoginMusic.LOGGER.info("Send music {} to {}", music.getMusicName(), player.getName().getString());
-        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicEntryPacket(music, key));
+        BlockPos pos = player.blockPosition();
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new MusicEntryPacket(music, pos, key));
     }
 
     // 查看本地缓存

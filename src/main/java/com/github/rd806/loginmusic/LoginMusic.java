@@ -21,7 +21,7 @@ import java.nio.file.Paths;
 @Mod(LoginMusic.MODID)
 public class LoginMusic {
 
-    public static final String MODID = "login_music";
+    public static final String MODID = "loginmusic";
     public static final Logger LOGGER = LogUtils.getLogger();
     // 配置文件目录
     public static final Path DATA_PATH = Paths.get("data/login_music");

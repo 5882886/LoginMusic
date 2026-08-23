@@ -13,12 +13,10 @@ public class ServerConfig {
     public static ForgeConfigSpec.EnumValue<SelectionKey> MUSIC_ID_TYPE;
 
     public static ForgeConfigSpec init() {
-        BUILDER.push("Selection");
         MUSIC_ID_TYPE = BUILDER
                 .comment("Keywords for music selection (name/uuid)")
-                .translation(LoginMusic.MODID + ".configui.music_id_type")
+                .translation("config.loginmusic.music.id")
                 .defineEnum("type", SelectionKey.NAME);
-        BUILDER.pop();
         return BUILDER.build();
     }
 }

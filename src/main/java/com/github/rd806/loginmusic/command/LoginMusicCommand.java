@@ -55,7 +55,7 @@ public class LoginMusicCommand {
             if (serverPlayer != null) {
                 SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
                 MusicEntry music = ServerEvent.chooseMusic(serverPlayer, key);
-                NetworkConfig.sendMusicToPlayer(serverPlayer, music, key);
+                ServerEvent.playMusic(music, serverPlayer, key);
             }
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Fail to send music", e);
@@ -82,7 +82,7 @@ public class LoginMusicCommand {
             // 显示音乐主键
             SelectionKey key = ServerConfig.MUSIC_ID_TYPE.get();
             context.getSource().sendSuccess(
-                    () -> Component.translatable(LoginMusic.MODID + ".command.list.key", key),
+                    () -> Component.translatable("message.loginmusic.command.list.key", key),
                     false
             );
             // 默认音乐
@@ -93,11 +93,11 @@ public class LoginMusicCommand {
             // 音乐列表
             Map<String, MusicEntry> tempMap = MusicConfig.getMusicEntryMap();
             if (tempMap.isEmpty()) {
-                context.getSource().sendFailure(Component.translatable(LoginMusic.MODID + ".command.list.empty"));
+                context.getSource().sendFailure(Component.translatable("message.loginmusic.command.list.empty"));
             } else {
                 // 显示音乐配置信息
                 context.getSource().sendSuccess(
-                        () -> Component.translatable(LoginMusic.MODID + ".command.list.success", String.valueOf(tempMap.size())),
+                        () -> Component.translatable("message.loginmusic.command.list.success", String.valueOf(tempMap.size())),
                         false);
                 for (Map.Entry<String, MusicEntry> entry : tempMap.entrySet()) {
                     String musicName = entry.getValue().getMusicName();
@@ -143,7 +143,7 @@ public class LoginMusicCommand {
         try {
             MusicConfig.loadFromConfig();
             context.getSource().sendSuccess(
-                    () -> Component.translatable(LoginMusic.MODID + ".command.reload.success"),
+                    () -> Component.translatable("message.loginmusic.command.reload.success"),
                     true);
         } catch (Exception e) {
             LoginMusic.LOGGER.error("Fail to reload LoginMusic config: {}", e.getMessage());

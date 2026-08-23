@@ -2,7 +2,7 @@ package com.github.rd806.loginmusic.media;
 
 import com.github.rd806.loginmusic.LoginMusic;
 import com.github.rd806.loginmusic.config.ClientConfig;
-import com.github.rd806.loginmusic.media.download.DownloadMethod;
+import com.github.rd806.loginmusic.media.load.LoadMethod;
 import com.github.rd806.loginmusic.media.layer.MusicInfo;
 import com.github.rd806.loginmusic.media.lyric.LyricEntry;
 import com.github.rd806.loginmusic.media.lyric.LyricParser;
@@ -66,7 +66,7 @@ public class SimpleMusicPlayer {
                     if (mc.player != null) {
                         LoginMusic.LOGGER.info("Music {} stopped!", musicEntry.getMusicName());
                         mc.player.displayClientMessage(
-                                Component.translatable(LoginMusic.MODID + ".message.play_ended", musicName),
+                                Component.translatable("message.loginmusic.play.ended", musicName),
                                 false);
                     }
                 }
@@ -104,7 +104,7 @@ public class SimpleMusicPlayer {
         MusicInfo.stopMusicInfo();
         lyricPlaying = false;
         musicPlaying = false;
-        DownloadMethod.stopDownloading();
+        LoadMethod.stopDownloading();
     }
 
     // 立即停止播放
